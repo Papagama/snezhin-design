@@ -1,0 +1,1138 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<!--
+  ═══════════════════════════════════════════════════════════
+  index.html · snezhin.design · портфолио + CMS
+  ───────────────────────────────────────────────────────────
+  ЗАПУСК        : откройте файл в браузере (или npx serve .)
+  АДМИНКА       : #/admin → пользователь из Supabase Authentication
+  ССЫЛКИ САЙТОВ : в SEED поле site_url = заглушка SITE_PLACEHOLDER,
+                  замените на реальные ссылки (в коде или в админке)
+  ═══════════════════════════════════════════════════════════
+-->
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>snezhin.design — Портфолио digital-дизайнера</title>
+<meta name="description" content="Портфолио digital-дизайнера: веб-дизайн, UI/UX, креативная разработка.">
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fontsource/manrope@5/400.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fontsource/manrope@5/500.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fontsource/manrope@5/700.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fontsource/space-grotesk@5/400.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fontsource/space-grotesk@5/500.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fontsource/space-grotesk@5/700.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fontsource/jetbrains-mono@5/400.css">
+
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="./config.js"></script>
+
+<style>
+/* ── база ─────────────────────────────────────────────── */
+:root { --bg:#F4F3EF; --ink:#111; --line:#E3E1DA }
+* { box-sizing:border-box }
+body { background:var(--bg); color:var(--ink); font-family:'Manrope',system-ui,sans-serif; margin:0; overflow-x:hidden }
+h1,h2,h3,h4,.disp { font-family:'Space Grotesk',system-ui,sans-serif }
+.mono { font-family:'JetBrains Mono',ui-monospace,monospace }
+a { color:inherit; text-decoration:none }
+button { font-family:inherit; cursor:pointer }
+img { display:block; max-width:100% }
+
+/* ── кастомный курсор ─────────────────────────────────── */
+#cursor { position:fixed; top:0; left:0; width:14px; height:14px; border:1px solid var(--ink); border-radius:50%; pointer-events:none; z-index:9999; mix-blend-mode:difference; transition:width .25s,height .25s,background .25s }
+#cursor.big { width:56px; height:56px; background:#fff; opacity:.9 }
+body.admin-mode { cursor:auto }
+body.admin-mode #cursor { display:none }
+@media (hover:none) { #cursor{display:none} body{cursor:auto} }
+
+/* ── зерно (плёнка) ───────────────────────────────────── */
+.grain { position:fixed; inset:0; pointer-events:none; z-index:9990; opacity:.045; background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E") }
+
+/* ── стрелка «на главную» ─────────────────────────────── */
+.home-arrow { position:fixed; left:1.25rem; bottom:1.25rem; z-index:60; width:52px; height:52px; border:1px solid #fff; border-radius:50%; display:flex; align-items:center; justify-content:center; color:#fff; mix-blend-mode:difference; animation:haIn .5s cubic-bezier(.2,.7,.2,1) both; transition:transform .25s }
+.home-arrow:hover { transform:translateX(-4px) scale(1.06) }
+@keyframes haIn { from { opacity:0; transform:translateY(16px) } }
+
+/* ── hero ─────────────────────────────────────────────── */
+.hero-wrap { position:relative; height:100vh; overflow:hidden }
+.hero-base { position:absolute; inset:0; z-index:2; display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center; pointer-events:none }
+.hero-base a { pointer-events:auto }
+.hero-mask { position:absolute; inset:0; z-index:3; background:#EAE8E1; pointer-events:none; display:flex; align-items:center; justify-content:center;
+  mask-image:radial-gradient(circle at var(--mx,50%) var(--my,50%), transparent 140px, #000 260px);
+  -webkit-mask-image:radial-gradient(circle at var(--mx,50%) var(--my,50%), transparent 140px, #000 260px) }
+@media (max-width:768px) { .hero-wrap{height:auto;min-height:88vh} .hero-mask{display:none} .hero-base{position:relative;padding:7rem 1.25rem 4rem} }
+.hero-in { animation:heroIn 1s cubic-bezier(.2,.7,.2,1) both }
+.hero-in.d2 { animation-delay:.15s } .hero-in.d3 { animation-delay:.3s }
+@keyframes heroIn { from { opacity:0; transform:translateY(50px) } }
+
+/* ── появление при скролле ────────────────────────────── */
+.rv { opacity:0; transform:translateY(28px); transition:.8s cubic-bezier(.2,.6,.2,1) }
+.rv-in { opacity:1; transform:none }
+
+/* ── бегущая строка ───────────────────────────────────── */
+.marquee { overflow:hidden; white-space:nowrap }
+.marquee > div { display:inline-block; animation:mq 26s linear infinite }
+@keyframes mq { to { transform:translateX(-50%) } }
+
+/* ── скелетоны загрузки ───────────────────────────────── */
+.skel { background:linear-gradient(90deg,#eceae4 25%,#f5f4ef 50%,#eceae4 75%); background-size:200% 100%; animation:sk 1.1s infinite }
+@keyframes sk { to { background-position:-200% 0 } }
+
+/* ── карточка проекта ─────────────────────────────────── */
+.wcard img { transition:transform .8s cubic-bezier(.2,.6,.2,1) }
+.wcard:hover img { transform:scale(1.04) }
+.wcard .cta { opacity:0; transform:translateY(8px); transition:.35s }
+.wcard:hover .cta { opacity:1; transform:none }
+
+/* ── админка: каркас ──────────────────────────────────── */
+.a-side { position:fixed; left:0; top:0; bottom:0; width:230px; border-right:1px solid var(--line); background:#FBFAF7; display:flex; flex-direction:column; z-index:40 }
+.a-main { margin-left:230px; min-height:100vh; padding:2.2rem 2.6rem }
+@media (max-width:900px) { .a-side{position:static;width:100%;flex-direction:row;align-items:center;overflow-x:auto;padding:.6rem;gap:.2rem} .a-main{margin-left:0;padding:1.2rem} }
+.a-link { display:flex; gap:.6rem; align-items:center; padding:.55rem .8rem; font-size:.8rem; letter-spacing:.08em; text-transform:uppercase; color:#555; border-radius:4px; white-space:nowrap; border:0; background:none }
+.a-link:hover { background:#EFEDE6; color:#111 }
+.a-link.on { background:#111; color:#fff }
+.a-in { width:100%; border:1px solid #D8D6CF; background:#fff; padding:.6rem .75rem; font-size:.9rem; border-radius:4px; outline:none; font-family:'Manrope' }
+.a-in:focus { border-color:#111 }
+.a-lb { display:block; font-size:.68rem; letter-spacing:.12em; text-transform:uppercase; color:#888; margin:0 0 .35rem }
+.a-btn { display:inline-flex; align-items:center; gap:.5rem; background:#111; color:#fff; border:1px solid #111; padding:.55rem 1.1rem; font-size:.8rem; letter-spacing:.08em; text-transform:uppercase; border-radius:4px; transition:.2s }
+.a-btn:hover { background:#333 }
+.a-btn.ghost { background:transparent; color:#111 }
+.a-btn.ghost:hover { background:#EFEDE6 }
+.a-btn.danger { background:transparent; color:#B42318; border-color:#E4C8C4 }
+.a-btn.danger:hover { background:#FBEFEE }
+.badge { display:inline-block; padding:.15rem .55rem; font-size:.65rem; letter-spacing:.1em; text-transform:uppercase; border-radius:99px; border:1px solid }
+.badge.pub { color:#1B7F4D; border-color:#BFE3CF; background:#EFF8F2 }
+.badge.draft { color:#8A6D1A; border-color:#E6D9AE; background:#FBF6E7 }
+
+/* ── админка: загрузчики и чипы ───────────────────────── */
+.dropzone { border:1.5px dashed #C9C7BF; border-radius:6px; padding:1.4rem; text-align:center; font-size:.85rem; color:#777; background:#FBFAF7; transition:.2s; cursor:pointer }
+.dropzone.over { border-color:#111; background:#F1EFE8; color:#111 }
+.thumb { position:relative; width:96px; height:72px; border-radius:4px; overflow:hidden; border:1px solid var(--line); background:#fff }
+.thumb img { width:100%; height:100%; object-fit:cover }
+.thumb .tb { position:absolute; bottom:0; left:0; right:0; display:flex; justify-content:center; gap:2px; background:rgba(17,17,17,.72); padding:2px 0 }
+.thumb .tb button { color:#fff; font-size:.6rem; padding:1px 5px; border:0; background:none }
+.chip { display:inline-flex; align-items:center; gap:.4rem; border:1px solid #D8D6CF; border-radius:99px; padding:.35rem .8rem; font-size:.78rem; cursor:pointer; user-select:none; background:#fff }
+.chip.on { background:#111; color:#fff; border-color:#111 }
+
+/* ── тосты и модалки ──────────────────────────────────── */
+#toasts { position:fixed; bottom:1.4rem; right:1.4rem; z-index:10000; display:flex; flex-direction:column; gap:.5rem }
+.toast { background:#111; color:#fff; padding:.7rem 1.1rem; font-size:.85rem; border-radius:4px; animation:tin .3s ease }
+@keyframes tin { from { opacity:0; transform:translateY(10px) } }
+.modal-bg { position:fixed; inset:0; background:rgba(17,17,17,.45); z-index:9995; display:flex; align-items:center; justify-content:center; padding:1rem }
+.modal { background:#fff; border-radius:6px; max-width:440px; width:100%; padding:1.8rem; animation:tin .25s ease }
+.phone { width:230px; border:8px solid #111; border-radius:28px; overflow:hidden; background:#fff }
+.phone img { width:100%; height:420px; object-fit:cover }
+</style>
+</head>
+<body class="antialiased selection:bg-black selection:text-white">
+
+<div id="cursor"></div>
+<div class="grain"></div>
+<div id="toasts"></div>
+<div id="modal-root"></div>
+<div id="app"></div>
+
+<script>
+/* ════════════════════════════════════════════════════════
+   1. КОНФИГУРАЦИЯ
+   ════════════════════════════════════════════════════════ */
+
+/* Публичная конфигурация загружается из config.js. Секретные ключи здесь запрещены. */
+const ENV = {
+  ADMIN_EMAIL : window.APP_CONFIG?.ADMIN_EMAIL || "",
+  SUPABASE_URL : window.APP_CONFIG?.SUPABASE_URL || "",
+  SUPABASE_PUBLISHABLE_KEY : window.APP_CONFIG?.SUPABASE_PUBLISHABLE_KEY || ""
+};
+
+/* Соцсети и контакты */
+const SOCIALS = {
+  telegram : "https://t.me/SnezhinKirill",
+  vk       : "https://vk.ru/papagama",
+  email    : "snezhin.design@mail.ru"
+};
+
+/* Справочники */
+const CATS     = { landing:'Лендинг', 'multi-page':'Многостраничный', ecommerce:'Интернет-магазин' };
+const CASE_TITLES = { 'amber-soul':'AMBER SOUL — Ювелирная история', 'aero-x1':'AERO X1 — Точность в форме', 'dream-house':'DREAM HOUSE — Сайт строительной компании' };
+const projectTitle = p => CASE_TITLES[p?.slug] || p?.title || '';
+const SERVICES = ['UX/UI','Web Design','Development','Art Direction','Motion','E-commerce'];
+const TECHS    = ['Figma','Webflow','Tilda','React','Next.js','HTML/CSS','JavaScript','GSAP','Three.js'];
+
+/* ЗАГЛУШКА ссылки на сайт проекта — замените на реальные URL в SEED или через админку */
+const SITE_PLACEHOLDER = "https://example.com";
+
+
+/* ════════════════════════════════════════════════════════
+   2. УТИЛИТЫ
+   ════════════════════════════════════════════════════════ */
+const $   = s => document.querySelector(s);
+const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const uid = () => 'p' + Date.now().toString(36) + Math.random().toString(36).slice(2, 7);
+const now = () => new Date().toISOString();
+const delay = ms => new Promise(r => setTimeout(r, ms));
+
+function slugify(str){
+  const map = {а:'a',б:'b',в:'v',г:'g',д:'d',е:'e',ё:'e',ж:'zh',з:'z',и:'i',й:'y',к:'k',л:'l',м:'m',н:'n',о:'o',п:'p',р:'r',с:'s',т:'t',у:'u',ф:'f',х:'h',ц:'c',ч:'ch',ш:'sh',щ:'sch',ъ:'',ы:'y',ь:'',э:'e',ю:'yu',я:'ya'};
+  return String(str).toLowerCase().split('')
+    .map(ch => map[ch] !== undefined ? map[ch] : ch).join('')
+    .replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '').slice(0, 60);
+}
+
+/* Красная строка при фатальной ошибке */
+function showFatal(msg){
+  let el = document.getElementById('fatal');
+  if (!el) {
+    el = document.createElement('div');
+    el.id = 'fatal';
+    el.style.cssText = 'position:fixed;top:0;left:0;right:0;z-index:10001;background:#B42318;color:#fff;padding:.6rem 1rem;font:12px monospace';
+    document.body.appendChild(el);
+  }
+  el.textContent = 'Ошибка: ' + msg;
+}
+window.addEventListener('error', e => { if (e.target && e.target.tagName === 'IMG') return; showFatal(e.message); });
+window.addEventListener('unhandledrejection', e => showFatal((e.reason && e.reason.message) || 'async error'));
+
+/* Запасная картинка, если CDN недоступен */
+const PH = 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" width="800" height="600"><rect width="100%" height="100%" fill="#E7E5DE"/><text x="50%" y="50%" fill="#A5A29A" font-family="sans-serif" font-size="22" text-anchor="middle">изображение</text></svg>');
+document.addEventListener('error', e => {
+  const t = e.target;
+  if (t && t.tagName === 'IMG' && !t.dataset.fb) { t.dataset.fb = 1; t.src = PH; }
+}, true);
+
+/* ════════════════════════════════════════════════════════
+   3. ДАННЫЕ (SEED)
+   site_url — заглушка SITE_PLACEHOLDER, вставьте реальные ссылки
+   ════════════════════════════════════════════════════════ */
+const IMG = {
+  aura  : 'https://image.qwenlm.ai/public_source/d49954a2-3518-489a-ac20-3c6a071fd934/150efb65b-b8d3-4d63-810d-e4f09790ac14.png',
+  volt  : 'https://image.qwenlm.ai/public_source/d49954a2-3518-489a-ac20-3c6a071fd934/10371567e-e555-4fc8-b1a6-c6f11bb4ba4c.png',
+  north : 'https://image.qwenlm.ai/public_source/d49954a2-3518-489a-ac20-3c6a071fd934/1c63f8a99-8833-40b0-9f4c-bd326a1f35bc.png',
+  forma : 'https://image.qwenlm.ai/public_source/d49954a2-3518-489a-ac20-3c6a071fd934/1c5a58b16-ef91-491b-958e-3b1ce7dec19e.png',
+  noir  : 'https://image.qwenlm.ai/public_source/d49954a2-3518-489a-ac20-3c6a071fd934/1db2371a0-c1bf-4127-8dc9-9f8f32f974f4.png',
+  mono  : 'https://image.qwenlm.ai/public_source/d49954a2-3518-489a-ac20-3c6a071fd934/17e442800-4eda-42f4-89df-4faa89a87a48.png'
+};
+
+const SEED = [
+  {
+    id:'p-aura', title:'AURA — Premium Interior', slug:'aura-interior',
+    category:'landing', year:2025, client:'Aura Studio', site_url:SITE_PLACEHOLDER,
+    short_description:'Премиальный лендинг студии интерьерного дизайна: свет, воздух и крупная типографика.',
+    description:'<h3>Задача</h3><p>Создать цифровое пространство, которое ощущается как интерьер студии: спокойное, светлое, архитектурное.</p><h3>Решение</h3><p>Крупная editorial-типографика, щедрые отступы и фотография как главный герой.</p><h3>Результат</h3><p>Рост времени на сайте в 2,4 раза, 38% заявок с первого экрана.</p>',
+    cover_image:IMG.aura, gallery:[IMG.aura, IMG.mono], desktop_images:[IMG.aura], mobile_images:[IMG.aura],
+    services:['UX/UI','Web Design','Art Direction'], technologies:['Figma','Webflow'],
+    featured:true, status:'published', created_at:'2025-11-02T10:00:00Z', updated_at:'2025-11-02T10:00:00Z'
+  },
+  {
+    id:'p-volt', title:'VOLT — Electric Mobility', slug:'volt-mobility',
+    category:'landing', year:2025, client:'Volt Inc.', site_url:SITE_PLACEHOLDER,
+    short_description:'Динамичный лендинг бренда электрического транспорта: контраст, скорость, motion.',
+    description:'<h3>Задача</h3><p>Показать продукт как технологический манифест новой мобильности.</p><h3>Решение</h3><p>Тёмная сцена с неоновым акцентом и динамической типографикой.</p><h3>Результат</h3><p>+64% предзаказов за первый месяц.</p>',
+    cover_image:IMG.volt, gallery:[IMG.volt], desktop_images:[IMG.volt], mobile_images:[IMG.volt],
+    services:['UX/UI','Creative Development','Motion'], technologies:['Figma','React','Three.js'],
+    featured:true, status:'published', created_at:'2025-10-14T10:00:00Z', updated_at:'2025-10-14T10:00:00Z'
+  },
+  {
+    id:'p-north', title:'NORTH — Architecture Studio', slug:'north-architecture',
+    category:'multi-page', year:2024, client:'North Bureau', site_url:SITE_PLACEHOLDER,
+    short_description:'Многостраничный сайт архитектурного бюро: editorial-сетка и монохромная строгость.',
+    description:'<h3>Структура</h3><p>Home, About, Projects, Project Detail, Contact — единая модульная сетка.</p><h3>Решение</h3><p>Швейцарская типографика, тонкие линии и чёрно-белая фотография бетона.</p>',
+    cover_image:IMG.north, gallery:[IMG.north], desktop_images:[IMG.north], mobile_images:[IMG.north],
+    services:['UX/UI','Web Design','Development'], technologies:['Figma','Next.js','HTML/CSS'],
+    featured:true, status:'published', created_at:'2024-09-20T10:00:00Z', updated_at:'2024-09-20T10:00:00Z'
+  },
+  {
+    id:'p-forma', title:'FORMA — Creative Agency', slug:'forma-agency',
+    category:'multi-page', year:2025, client:'Forma Creative', site_url:SITE_PLACEHOLDER,
+    short_description:'Сайт креативного агентства: смелая типографика и экспериментальный motion.',
+    description:'<h3>Идея</h3><p>Сайт-высказывание: сетка ломается, формы живут, типографика кричит.</p>',
+    cover_image:IMG.forma, gallery:[IMG.forma], desktop_images:[IMG.forma], mobile_images:[IMG.forma],
+    services:['Art Direction','Web Design','Motion'], technologies:['Figma','Webflow'],
+    featured:false, status:'published', created_at:'2025-03-05T10:00:00Z', updated_at:'2025-03-05T10:00:00Z'
+  },
+  {
+    id:'p-noir', title:'NOIR — Fashion Store', slug:'noir-fashion',
+    category:'ecommerce', year:2025, client:'Noir Brand', site_url:SITE_PLACEHOLDER,
+    short_description:'Премиальный интернет-магазин одежды: editorial-фотография и бесшовный checkout.',
+    description:'<h3>Задача</h3><p>Перенести эстетику люксового бутика в e-commerce.</p><h3>Результат</h3><p>Конверсия в покупку +21%.</p>',
+    cover_image:IMG.noir, gallery:[IMG.noir], desktop_images:[IMG.noir], mobile_images:[IMG.noir],
+    services:['UX/UI','E-commerce','Development'], technologies:['Figma','React','Next.js'],
+    featured:true, status:'published', created_at:'2025-06-11T10:00:00Z', updated_at:'2025-06-11T10:00:00Z'
+  },
+  {
+    id:'p-mono', title:'MONO — Designer Furniture', slug:'mono-furniture',
+    category:'ecommerce', year:2024, client:'Mono Home', site_url:SITE_PLACEHOLDER,
+    short_description:'Интернет-магазин дизайнерской мебели: тёплый минимализм и продуманный каталог.',
+    description:'<h3>Решение</h3><p>Тёплая палитра, скульптурная предметная съёмка и умные фильтры коллекций.</p>',
+    cover_image:IMG.mono, gallery:[IMG.mono], desktop_images:[IMG.mono], mobile_images:[IMG.mono],
+    services:['UX/UI','E-commerce','Art Direction'], technologies:['Figma','Tilda','JavaScript'],
+    featured:false, status:'published', created_at:'2024-05-30T10:00:00Z', updated_at:'2024-05-30T10:00:00Z'
+  }
+];
+
+/* ════════════════════════════════════════════════════════
+   4. БАЗА ДАННЫХ (localStorage или Supabase)
+   ════════════════════════════════════════════════════════ */
+const DB_KEY = 'portfolio_cms_v5'; /* новая версия — старые кэши с водяными знаками не используются */
+
+let sb = null;
+
+async function ensureSupabase(){
+  const url = ENV.SUPABASE_URL.trim();
+  const key = ENV.SUPABASE_PUBLISHABLE_KEY.trim();
+  if (!url || !key || key.includes('ВСТАВЬТЕ_')) return false;
+  if (key.startsWith('sb_secret_')) {
+    throw new Error('В config.js указан секретный sb_secret_ ключ. Используйте только Publishable key.');
+  }
+  if (!/^https:\/\/[a-z0-9-]+\.supabase\.co\/?$/i.test(url)) {
+    throw new Error('Некорректный SUPABASE_URL в config.js');
+  }
+  if (sb) return true;
+  if (!window.supabase) throw new Error('Не загрузилась библиотека Supabase. Проверьте интернет и блокировщики CDN.');
+  sb = window.supabase.createClient(url, key);
+  return true;
+}
+const useSb = () => !!sb;
+const resultData = (result, action) => {
+  if (result.error) throw new Error(`${action}: ${result.error.message}`);
+  return result.data;
+};
+
+const localRead  = () => { try { return JSON.parse(localStorage.getItem(DB_KEY)) || null } catch (e) { return null } };
+const localWrite = rows => localStorage.setItem(DB_KEY, JSON.stringify(rows));
+if (!localRead()) localWrite(SEED);
+
+const db = {
+  async listAll(){
+    if (await ensureSupabase()) {
+      const result = await sb.from('projects').select('*').order('created_at', { ascending:false });
+      return resultData(result, 'Не удалось загрузить проекты') || [];
+    }
+    await delay(120);
+    return (localRead() || []).sort((a, b) => String(b.created_at).localeCompare(String(a.created_at)));
+  },
+  async listPublic(){
+    if (await ensureSupabase()) {
+      const result = await sb.from('projects').select('*').eq('status','published').order('created_at', { ascending:false });
+      return resultData(result, 'Не удалось загрузить опубликованные проекты') || [];
+    }
+    return (localRead() || []).filter(p => p.status === 'published');
+  },
+  async bySlug(slug){ return (await this.listAll()).find(p => p.slug === slug) || null },
+  async byId(id){ return (await this.listAll()).find(p => p.id === id) || null },
+  async create(row){
+    row.id = uid(); row.created_at = now(); row.updated_at = now();
+    if (await ensureSupabase()) {
+      resultData(await sb.from('projects').insert([row]), 'Не удалось создать проект');
+      return row;
+    }
+    const rows = localRead(); rows.push(row); localWrite(rows); return row;
+  },
+  async update(id, patch){
+    patch.updated_at = now();
+    if (await ensureSupabase()) {
+      resultData(await sb.from('projects').update(patch).eq('id', id), 'Не удалось сохранить проект');
+      return patch;
+    }
+    const rows = localRead();
+    const i = rows.findIndex(p => p.id === id);
+    if (i > -1) { rows[i] = { ...rows[i], ...patch }; localWrite(rows) }
+    return patch;
+  },
+  async remove(id){
+    if (await ensureSupabase()) {
+      resultData(await sb.from('projects').delete().eq('id', id), 'Не удалось удалить проект');
+      return true;
+    }
+    localWrite((localRead() || []).filter(p => p.id !== id));
+    return true;
+  },
+  async duplicate(id){
+    const src = await this.byId(id);
+    if (!src) return null;
+    const copy = { ...src, id:uid(), title:src.title + ' (копия)', slug:src.slug + '-copy', status:'draft', featured:false, created_at:now(), updated_at:now() };
+    if (await ensureSupabase()) {
+      resultData(await sb.from('projects').insert([copy]), 'Не удалось скопировать проект');
+      return copy;
+    }
+    const rows = localRead(); rows.push(copy); localWrite(rows); return copy;
+  }
+};
+
+/* ════════════════════════════════════════════════════════
+   5. АВТОРИЗАЦИЯ
+   ════════════════════════════════════════════════════════ */
+const auth = {
+  async isAuthed(){
+    if (!(await ensureSupabase())) return false;
+    const result = await sb.auth.getSession();
+    if (result.error) throw result.error;
+    return !!result.data.session;
+  },
+  async login(email, pass){
+    if (!(await ensureSupabase())) throw new Error('Supabase не настроен: вставьте Publishable key в config.js');
+    const { error } = await sb.auth.signInWithPassword({ email, password: pass });
+    if (error) throw error;
+  },
+  async logout(){ if (useSb()) await sb.auth.signOut() }
+};
+
+/* ════════════════════════════════════════════════════════
+   6. UI-ПОМОЩНИКИ: тосты, диалоги, reveal
+   ════════════════════════════════════════════════════════ */
+function toast(msg){
+  const t = document.createElement('div');
+  t.className = 'toast'; t.textContent = msg;
+  $('#toasts').appendChild(t);
+  setTimeout(() => t.remove(), 2600);
+}
+
+function confirmDialog(title, text, ok = 'Удалить'){
+  return new Promise(res => {
+    $('#modal-root').innerHTML = `
+      <div class="modal-bg"><div class="modal">
+        <h3 class="text-xl font-bold mb-2">${esc(title)}</h3>
+        <p class="text-sm text-gray-500 mb-6">${esc(text)}</p>
+        <div class="flex justify-end gap-3">
+          <button id="m-no" class="a-btn ghost">Отмена</button>
+          <button id="m-yes" class="a-btn danger">${esc(ok)}</button>
+        </div>
+      </div></div>`;
+    $('#m-no').onclick  = () => { $('#modal-root').innerHTML = ''; res(false) };
+    $('#m-yes').onclick = () => { $('#modal-root').innerHTML = ''; res(true) };
+  });
+}
+
+const io = ('IntersectionObserver' in window)
+  ? new IntersectionObserver(es => es.forEach(en => {
+      if (en.isIntersecting) { en.target.classList.add('rv-in'); io.unobserve(en.target); }
+    }), { threshold:.12 })
+  : null;
+function observeRv(){
+  document.querySelectorAll('.rv').forEach(el => io ? io.observe(el) : el.classList.add('rv-in'));
+}
+
+/* ════════════════════════════════════════════════════════
+   7. ОБЩИЕ КОМПОНЕНТЫ (навбар, футер, стрелка, карточка)
+   ════════════════════════════════════════════════════════ */
+function navbarHTML(){ return `
+<nav class="fixed top-0 w-full z-50 px-6 py-5 flex justify-between items-center mix-blend-difference text-white">
+  <a href="#/" class="text-xl font-bold tracking-tighter">snezhin.design</a>
+  <div class="hidden md:flex gap-8 text-xs uppercase tracking-[0.2em] items-center">
+    <a href="#/works" class="hover:opacity-50">Проекты</a>
+    <a href="#/about" class="hover:opacity-50">Обо мне</a>
+    <a href="#/services" class="hover:opacity-50">Услуги</a>
+    <a href="#/admin" class="opacity-25 hover:opacity-100 text-[9px]">ADMIN</a>
+  </div>
+  <a href="#/contact" class="border border-white px-5 py-2 rounded-full text-[10px] uppercase tracking-[0.2em] hover:bg-white hover:text-black transition">Обсудить проект</a>
+</nav>` }
+
+function footerHTML(){ return `
+<footer class="bg-black text-white">
+  <div class="max-w-7xl mx-auto px-6 py-16">
+    <div class="grid md:grid-cols-[1.4fr_1fr_1fr] gap-12 pb-12 border-b border-white/10">
+      <div>
+        <a href="#/" class="text-2xl font-bold tracking-tighter">snezhin.design</a>
+        <p class="text-sm text-white/40 mt-4 max-w-xs leading-relaxed">Дизайнер цифровых продуктов. Веб-дизайн, UI/UX и креативная разработка.</p>
+      </div>
+      <div>
+        <div class="mono text-[10px] uppercase tracking-[0.25em] text-white/30 mb-4">Меню</div>
+        <div class="flex flex-col gap-2.5 text-sm">
+          <a href="#/works" class="text-white/70 hover:text-white transition w-fit">Проекты</a>
+          <a href="#/about" class="text-white/70 hover:text-white transition w-fit">Обо мне</a>
+          <a href="#/services" class="text-white/70 hover:text-white transition w-fit">Услуги</a>
+          <a href="#/contact" class="text-white/70 hover:text-white transition w-fit">Контакт</a>
+        </div>
+      </div>
+      <div>
+        <div class="mono text-[10px] uppercase tracking-[0.25em] text-white/30 mb-4">Связь</div>
+        <div class="flex flex-col gap-2.5 text-sm">
+          <a href="mailto:${SOCIALS.email}" class="text-white/70 hover:text-white transition w-fit break-all">${SOCIALS.email}</a>
+          <a href="${SOCIALS.telegram}" target="_blank" rel="noopener" class="text-white/70 hover:text-white transition w-fit">Telegram</a>
+          <a href="${SOCIALS.vk}" target="_blank" rel="noopener" class="text-white/70 hover:text-white transition w-fit">VK</a>
+        </div>
+      </div>
+    </div>
+    <div class="pt-6 flex justify-between items-center text-[10px] uppercase tracking-[0.2em] text-white/30">
+      <span>© 2026 snezhin.design</span>
+      <a href="#/admin" class="hover:text-white/60 transition">Admin</a>
+    </div>
+  </div>
+</footer>` }
+
+/* Плавающая стрелка «на главную» (все страницы, кроме главной) */
+function homeArrowHTML(){ return `
+<a href="#/" class="home-arrow" title="На главную" aria-label="Вернуться на главную">
+  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5"/><path d="M11 18l-6-6 6-6"/></svg>
+</a>` }
+
+/* Карточка проекта (ratio: '4/5' — главная, '4/3' — список) */
+function workCardHTML(p, i, ratio = '4/5', offset = false){
+  return `
+<a href="#/works/${esc(p.slug)}" class="wcard group block ${offset && i % 2 ? 'md:mt-24' : ''}">
+  <div class="overflow-hidden relative aspect-[${ratio}] bg-[#EAE8E1] mb-3">
+    <img src="${esc(p.cover_image)}" alt="${esc(projectTitle(p))}" loading="lazy" class="w-full h-full object-cover">
+    <span class="cta absolute bottom-4 right-4 bg-black text-white text-[10px] uppercase tracking-[0.2em] px-4 py-2 rounded-full">Смотреть кейс →</span>
+  </div>
+  <div class="flex justify-between items-start gap-4">
+    <div>
+      <div class="mono text-[10px] text-gray-400 mb-1">0${i + 1} / ${CATS[p.category] || p.category}</div>
+      <h3 class="text-2xl font-bold">${esc(projectTitle(p))}</h3>
+    </div>
+    <span class="mono text-xs text-gray-400">${esc(p.year)}</span>
+  </div>
+</a>` }
+
+/* ════════════════════════════════════════════════════════
+   8. ПУБЛИЧНЫЕ СТРАНИЦЫ
+   ════════════════════════════════════════════════════════ */
+async function viewHome(){
+  const featured = (await db.listPublic()).filter(p => p.featured).slice(0, 4);
+  return navbarHTML() + `
+  <div class="hero-wrap" id="hero-wrap">
+    <canvas id="hero-canvas" class="absolute inset-0 w-full h-full z-0 pointer-events-none"></canvas>
+    <div class="hero-base">
+      <p class="hero-in text-xs md:text-sm uppercase tracking-[0.35em] mb-5 opacity-70">Дизайнер цифровых продуктов</p>
+      <h1 class="hero-in d2 text-[11vw] md:text-[7.5vw] font-bold leading-[0.95] tracking-tighter max-w-6xl px-4">СОЗДАЮ ЦИФРОВОЙ ОПЫТ, КОТОРЫЙ ЗАПОМИНАЕТСЯ.</h1>
+      <div class="hero-in d3 flex gap-4 mt-10 flex-wrap justify-center">
+        <a href="#/works" class="px-8 py-4 bg-black text-white rounded-full text-sm hover:scale-105 transition">Смотреть работы</a>
+        <a href="#/contact" class="px-8 py-4 border border-black rounded-full text-sm hover:bg-black hover:text-white transition">Связаться</a>
+      </div>
+    </div>
+    <div class="hero-mask"><div class="text-center opacity-40 pointer-events-none">
+      <h2 class="text-[14vw] font-bold leading-none tracking-tighter" style="-webkit-text-stroke:1px rgba(0,0,0,.18);color:transparent">ИССЛЕДУЙ</h2>
+    </div></div>
+  </div>
+  <section class="py-28 px-6 md:px-12 max-w-7xl mx-auto">
+    <div class="flex justify-between items-end mb-16">
+      <h2 class="rv text-4xl md:text-6xl font-bold tracking-tight">ИЗБРАННЫЕ<br>ПРОЕКТЫ</h2>
+      <a href="#/works" class="rv hidden md:block border-b border-black pb-1 text-sm">Все проекты →</a>
+    </div>
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-12 md:gap-24">
+      ${featured.map((p, i) => workCardHTML(p, i, '4/5', true)).join('') || '<p class="text-gray-400">Пока нет избранных проектов.</p>'}
+    </div>
+  </section>
+  <section class="py-16 border-y border-[#E3E1DA] marquee"><div class="text-6xl md:text-8xl font-bold text-[#E3E1DA]">${'ВЕБ-ДИЗАЙН — UI/UX — КРЕАТИВНАЯ РАЗРАБОТКА — МОУШН — '.repeat(3)}</div></section>
+  <section class="py-28 px-6 bg-white"><div class="max-w-4xl mx-auto">
+    <span class="mono text-[10px] uppercase tracking-[0.25em] text-gray-400 block mb-5">01 / Обо мне</span>
+    <h2 class="rv text-3xl md:text-5xl font-medium leading-tight mb-8">Я сочетаю стратегию и визуальную эстетику, чтобы продукты выделялись на фоне шума.</h2>
+    <p class="rv text-lg text-gray-500 mb-10 leading-relaxed">Минимализм, но выразительный. Я проектирую системы и опыт, которые дают бизнес-результат.</p>
+    <a href="#/about" class="rv underline underline-offset-4">Читать подробнее</a>
+  </div></section>` + footerHTML();
+}
+
+let WORKS_CACHE = [];
+async function viewWorks(){
+  WORKS_CACHE = await db.listPublic();
+  return navbarHTML() + `
+  <div class="pt-36 pb-24 px-6 md:px-12 max-w-7xl mx-auto min-h-screen">
+    <h1 class="text-6xl md:text-8xl font-bold mb-14 tracking-tighter">ПРОЕКТЫ</h1>
+    <div class="flex flex-wrap gap-6 mb-14 border-b border-gray-300 pb-4" id="filters">
+      ${[['all','Все'],['landing','Лендинги'],['multi-page','Многостраничные'],['ecommerce','Интернет-магазины']]
+        .map(([v, l]) => `<button data-f="${v}" class="fbtn text-sm md:text-base uppercase tracking-[0.15em] ${v === 'all' ? 'text-black' : 'text-gray-400 hover:text-black'}">${l}</button>`).join('')}
+    </div>
+    <div id="wgrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10" style="transition:opacity .18s"></div>
+  </div>` + footerHTML();
+}
+
+function bindWorks(){
+  const grid = $('#wgrid');
+  if (!grid) return;
+  const paint = filter => {
+    const list = filter === 'all' ? WORKS_CACHE : WORKS_CACHE.filter(p => p.category === filter);
+    grid.innerHTML = list.length
+      ? list.map((p, i) => workCardHTML(p, i, '4/3')).join('')
+      : '<div class="col-span-full py-24 text-center text-gray-400"><p class="text-2xl font-bold mb-2">Здесь пока пусто.</p><p class="text-sm">В этой категории ещё нет проектов.</p></div>';
+  };
+  paint('all');
+  $('#filters').addEventListener('click', e => {
+    const btn = e.target.closest('.fbtn');
+    if (!btn) return;
+    document.querySelectorAll('.fbtn').forEach(x => {
+      x.classList.toggle('text-black', x === btn);
+      x.classList.toggle('text-gray-400', x !== btn);
+    });
+    grid.style.opacity = 0;
+    setTimeout(() => { paint(btn.dataset.f); grid.style.opacity = 1; }, 180);
+  });
+}
+
+/* Страница кейса. Кнопка «Посмотреть сайт» — внизу, ссылка из p.site_url */
+async function viewDetail(slug){
+  const p = await db.bySlug(slug);
+  if (!p || p.status !== 'published') {
+    return navbarHTML() + '<div class="pt-48 pb-40 text-center"><h1 class="text-5xl font-bold mb-4">404</h1><p class="text-gray-500 mb-8">Проект не найден.</p><a class="underline" href="#/works">К проектам</a></div>';
+  }
+  const caseSites = { 'amber-soul':'https://papagama.github.io/ambersoul/', 'aero-x1':'https://papagama.github.io/aero-x1-showroom/', 'dream-house':'https://papagama.github.io/dream-house/' };
+  const site = esc(caseSites[p.slug] || p.site_url || '');
+  return navbarHTML() + `
+  <article class="pt-36 px-6 md:px-12 max-w-6xl mx-auto pb-24">
+    <a href="#/works" class="mono text-[11px] uppercase tracking-[0.2em] text-gray-400 hover:text-black">← Все проекты</a>
+    <header class="mt-8 mb-14">
+      <h1 class="text-5xl md:text-8xl font-bold tracking-tighter mb-8">${esc(projectTitle(p))}</h1>
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-6 border-t border-gray-300 pt-6 text-sm">
+        <div><span class="mono block text-[10px] uppercase text-gray-400 mb-1">Клиент</span>${esc(p.client || '—')}</div>
+        <div><span class="mono block text-[10px] uppercase text-gray-400 mb-1">Категория</span>${CATS[p.category] || p.category}</div>
+        <div><span class="mono block text-[10px] uppercase text-gray-400 mb-1">Год</span>${esc(p.year)}</div>
+        <div><span class="mono block text-[10px] uppercase text-gray-400 mb-1">Роль</span>Дизайн / Арт-дирекшн</div>
+      </div>
+    </header>
+    <p class="text-2xl md:text-3xl font-light leading-relaxed max-w-3xl mb-12">${esc(p.short_description)}</p>
+    <div class="aspect-video overflow-hidden mb-14 bg-[#EAE8E1]"><img src="${esc(p.cover_image)}" alt="${esc(projectTitle(p))}" class="w-full h-full object-cover"></div>
+    <div class="max-w-none text-lg leading-relaxed mb-16 [&_h3]:text-2xl [&_h3]:font-bold [&_h3]:mt-10 [&_h3]:mb-3 [&_p]:text-gray-600">${p.description || ''}</div>
+    ${(p.gallery || []).length ? '<h3 class="text-2xl font-bold mb-6">Галерея</h3><div class="grid md:grid-cols-2 gap-6 mb-16">' + p.gallery.map(g => '<div class="overflow-hidden bg-[#EAE8E1]"><img src="' + esc(g) + '" alt="Кадр проекта" loading="lazy" class="w-full object-cover"></div>').join('') + '</div>' : ''}
+    ${(p.desktop_images || []).length ? '<h3 class="text-2xl font-bold mb-6">Desktop</h3><div class="space-y-10 mb-16">' + p.desktop_images.map(g => '<div class="border border-gray-300 rounded-md overflow-hidden shadow-sm"><div class="flex gap-1.5 px-3 py-2 border-b border-gray-300 bg-white"><span class="w-2.5 h-2.5 rounded-full bg-[#FF5F57]"></span><span class="w-2.5 h-2.5 rounded-full bg-[#FEBC2E]"></span><span class="w-2.5 h-2.5 rounded-full bg-[#28C840]"></span></div><img src="' + esc(g) + '" alt="Desktop" loading="lazy"></div>').join('') + '</div>' : ''}
+    ${(p.mobile_images || []).length ? '<h3 class="text-2xl font-bold mb-6">Mobile</h3><div class="flex gap-6 overflow-x-auto pb-6 mb-16">' + p.mobile_images.map(g => '<div class="phone shrink-0"><img src="' + esc(g) + '" alt="Mobile" loading="lazy"></div>').join('') + '</div>' : ''}
+    <div class="flex flex-wrap gap-2 mb-16">
+      ${(p.services || []).map(s => '<span class="chip on" style="cursor:default">' + esc(s) + '</span>').join('')}
+      ${(p.technologies || []).map(t => '<span class="chip" style="cursor:default">' + esc(t) + '</span>').join('')}
+    </div>
+    <div class="py-16 border-t border-black flex justify-between items-center flex-wrap gap-4">
+      <span class="text-xl">Понравился кейс?</span>
+      <div class="flex gap-3 flex-wrap">
+        ${site ? `<a href="${site}" target="_blank" rel="noopener" class="a-btn !rounded-full">Посмотреть сайт ↗</a>` : ''}
+        <a href="#/contact" class="a-btn ghost !rounded-full">Обсудить похожий проект →</a>
+      </div>
+    </div>
+  </article>`;
+}
+
+function viewAbout(){ return navbarHTML() + `
+<div class="pt-40 pb-28 px-6 max-w-5xl mx-auto min-h-screen">
+  <span class="mono text-[10px] uppercase tracking-[0.25em] text-gray-400">Обо мне</span>
+  <h1 class="text-4xl md:text-7xl font-bold leading-tight tracking-tight mt-6 mb-14">6 лет проектирую цифровые продукты, которые работают на бизнес и запоминаются людям.</h1>
+  <div class="grid md:grid-cols-2 gap-14 text-gray-600 leading-relaxed">
+    <p>Начинал как графический дизайнер, вырос в web-дизайнера и креативного разработчика.</p>
+    <p>Мой процесс — исследование, стратегия, UX, визуальный язык и аккуратная разработка. Каждый проект — система, а не набор экранов.</p>
+  </div>
+  <div class="grid grid-cols-2 md:grid-cols-4 gap-8 mt-20 border-t border-gray-300 pt-10">
+    ${[['30+','проектов'],['6','лет опыта'],['',''],['3','категории работ']].map(([n, l]) => `<div><div class="text-4xl md:text-5xl font-bold">${n}</div><div class="text-xs uppercase tracking-[0.2em] text-gray-400 mt-2">${l}</div></div>`).join('')}
+  </div>
+</div>` + footerHTML() }
+
+function viewServices(){
+  const items = [
+    ['01','Landing Pages','Продающие лендинги с сильным визуальным языком'],
+    ['02','Multi-page Websites','Корпоративные и имиджевые сайты'],
+    ['03','E-commerce','Интернет-магазины премиального уровня'],
+    ['04','UI/UX Design','Продуктовый дизайн и прототипы'],
+    ['05','Creative Development','']
+  ];
+  return navbarHTML() + `
+  <div class="pt-40 pb-28 px-6 max-w-5xl mx-auto min-h-screen">
+    <h1 class="text-5xl md:text-8xl font-bold tracking-tighter mb-16">УСЛУГИ</h1>
+    ${items.map(([n, t, d]) => `<div class="group border-t border-gray-300 py-8 grid md:grid-cols-[80px_1fr_2fr] gap-4 items-baseline hover:pl-4 transition-all"><span class="mono text-xs text-gray-400">${n}</span><h2 class="text-2xl md:text-4xl font-bold group-hover:italic transition">${t}</h2><p class="text-gray-500">${d}</p></div>`).join('')}
+    <div class="border-t border-gray-300"></div>
+  </div>` + footerHTML()
+}
+
+function viewContact(){ return navbarHTML() + `
+<div class="pt-44 pb-32 px-6 text-center min-h-screen">
+  <p class="mono text-[10px] uppercase tracking-[0.25em] text-gray-400 mb-6">Контакт</p>
+  <h1 class="text-5xl md:text-8xl font-bold tracking-tighter mb-10">ЕСТЬ ПРОЕКТ?<br>ДАВАЙТЕ ОБСУДИМ.</h1>
+  <a href="mailto:${SOCIALS.email}" class="inline-block text-2xl md:text-4xl border-b-2 border-black pb-1 break-all">${SOCIALS.email}</a>
+  <div class="mt-10 flex justify-center gap-6 flex-wrap text-sm uppercase tracking-[0.2em] text-gray-500">
+    <a href="${SOCIALS.telegram}" target="_blank" rel="noopener" class="hover:text-black transition">Telegram: @SnezhinKirill</a>
+    <a href="${SOCIALS.vk}" target="_blank" rel="noopener" class="hover:text-black transition">VK: papagama</a>
+  </div>
+</div>` + footerHTML() }
+
+/* ════════════════════════════════════════════════════════
+   9. АДМИН-ПАНЕЛЬ
+   ════════════════════════════════════════════════════════ */
+function adminShell(active, inner){ return `
+<div class="a-side">
+  <a href="#/admin" class="a-link font-bold !text-base tracking-tighter normal-case">snezhin.design <span class="badge draft">CMS</span></a>
+  <a href="#/admin" class="a-link ${active === 'dash' ? 'on' : ''}">▦ Dashboard</a>
+  <a href="#/admin/projects" class="a-link ${active === 'list' ? 'on' : ''}">▤ Проекты</a>
+  <a href="#/admin/projects/new" class="a-link ${active === 'new' ? 'on' : ''}">+ Добавить</a>
+  <a href="#/admin/setup" class="a-link ${active === 'setup' ? 'on' : ''}">⚙ Supabase</a>
+  <div class="flex-1"></div>
+  <a href="#/" class="a-link">↗ На сайт</a>
+  <button id="a-logout" class="a-link" style="color:#B42318">⎋ Выйти</button>
+</div>
+<div class="a-main">${inner}</div>` }
+
+function viewLogin(){ return `
+<div class="min-h-screen flex items-center justify-center px-4">
+  <form id="login-form" class="w-full max-w-sm bg-white border border-[#E3E1DA] p-8 rounded-md shadow-sm">
+    <div class="mono text-[10px] uppercase tracking-[0.25em] text-gray-400 mb-2">Admin area</div>
+    <h1 class="text-2xl font-bold mb-6">Вход в панель</h1>
+    <label class="a-lb">Email</label><input id="lg-e" class="a-in mb-4" value="${esc(ENV.ADMIN_EMAIL)}">
+    <label class="a-lb">Пароль</label><input id="lg-p" type="password" class="a-in mb-2" placeholder="••••••••••••" autocomplete="current-password">
+    <div id="lg-err" class="text-xs text-[#B42318] mb-4" style="min-height:1rem"></div>
+    <button class="a-btn w-full justify-center">Войти →</button>
+    <p class="text-[11px] text-gray-400 mt-4">Данные для входа задаются в Supabase → Authentication → Users.</p>
+    <a href="#/" class="block text-center text-[11px] text-gray-400 mt-2 hover:text-black">← Вернуться на сайт</a>
+  </form>
+</div>` }
+
+async function viewDash(){
+  const rows = await db.listAll();
+  const count = f => rows.filter(f).length;
+  const stats = [
+    ['Всего проектов', rows.length],
+    ['Landing', count(p => p.category === 'landing')],
+    ['Multi-page', count(p => p.category === 'multi-page')],
+    ['E-commerce', count(p => p.category === 'ecommerce')],
+    ['Published', count(p => p.status === 'published')],
+    ['Draft', count(p => p.status === 'draft')]
+  ];
+  return adminShell('dash', `
+  <div class="flex justify-between items-center mb-8 flex-wrap gap-4">
+    <h1 class="text-3xl font-bold tracking-tight">Dashboard</h1>
+    <a href="#/admin/projects/new" class="a-btn">+ Add project</a>
+  </div>
+  <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3 mb-10">
+    ${stats.map(([l, v]) => `<div class="bg-white border border-[#E3E1DA] rounded-md p-4"><div class="text-[10px] uppercase tracking-[0.15em] text-gray-400 mb-2">${l}</div><div class="text-3xl font-bold mono">${String(v).padStart(2, '0')}</div></div>`).join('')}
+  </div>
+  <h2 class="text-sm uppercase tracking-[0.2em] text-gray-400 mb-4">Последние проекты</h2>
+  <div class="bg-white border border-[#E3E1DA] rounded-md divide-y divide-[#EFEDE6]">
+    ${rows.slice(0, 5).map(p => `<div class="flex items-center gap-4 p-3"><img src="${esc(p.cover_image)}" class="w-14 h-10 object-cover rounded" alt=""><div class="flex-1 min-w-0"><div class="font-semibold text-sm truncate">${esc(projectTitle(p))}</div><div class="text-[11px] text-gray-400">${CATS[p.category] || p.category} · ${esc(p.year)}</div></div><span class="badge ${p.status === 'published' ? 'pub' : 'draft'}">${p.status}</span><a href="#/admin/projects/${p.id}/edit" class="text-xs underline">Изменить</a></div>`).join('')}
+  </div>`)
+}
+
+async function viewProjects(){
+  const rows = await db.listAll();
+  return adminShell('list', `
+  <div class="flex justify-between items-center mb-8 flex-wrap gap-4">
+    <h1 class="text-3xl font-bold tracking-tight">Проекты <span class="mono text-sm text-gray-400">(${rows.length})</span></h1>
+    <a href="#/admin/projects/new" class="a-btn">+ Add project</a>
+  </div>
+  <div class="bg-white border border-[#E3E1DA] rounded-md overflow-x-auto">
+    <table class="w-full text-left text-sm" style="min-width:760px">
+      <thead><tr class="border-b border-[#E3E1DA] text-[10px] uppercase tracking-[0.15em] text-gray-400">
+        <th class="p-3">Preview</th><th class="p-3">Название</th><th class="p-3">Категория</th><th class="p-3">Год</th><th class="p-3">Статус</th><th class="p-3">Featured</th><th class="p-3 text-right">Действия</th>
+      </tr></thead>
+      <tbody class="divide-y divide-[#EFEDE6]">
+        ${rows.map(p => `<tr class="hover:bg-[#FBFAF7]">
+          <td class="p-3"><img src="${esc(p.cover_image)}" class="w-16 h-11 object-cover rounded" alt=""></td>
+          <td class="p-3 font-semibold">${esc(projectTitle(p))}<div class="mono text-[10px] text-gray-400 font-normal">/${esc(p.slug)}</div></td>
+          <td class="p-3">${CATS[p.category] || p.category}</td>
+          <td class="p-3 mono">${esc(p.year)}</td>
+          <td class="p-3"><button data-act="status" data-id="${p.id}" class="badge ${p.status === 'published' ? 'pub' : 'draft'}" title="Переключить">${p.status}</button></td>
+          <td class="p-3"><button data-act="feat" data-id="${p.id}" class="text-lg ${p.featured ? '' : 'grayscale opacity-30'}" title="Featured">★</button></td>
+          <td class="p-3 text-right whitespace-nowrap">
+            <a class="text-xs underline mr-3" href="#/works/${esc(p.slug)}">Открыть</a>
+            <a class="text-xs underline mr-3" href="#/admin/projects/${p.id}/edit">Edit</a>
+            <button class="text-xs underline mr-3 text-gray-500" data-act="dup" data-id="${p.id}">Duplicate</button>
+            <button class="text-xs underline text-[#B42318]" data-act="del" data-id="${p.id}" data-title="${esc(projectTitle(p))}">Delete</button>
+          </td>
+        </tr>`).join('')}
+      </tbody>
+    </table>
+  </div>`)
+}
+
+/* ── форма проекта ─────────────────────────────────────── */
+let FORM_STATE = null;
+
+function uploaderHTML(key, label, multiple){ return `
+<div>
+  <label class="a-lb">${label}</label>
+  <div class="dropzone" data-key="${key}">Перетащите изображения или <span class="underline">выберите файлы</span>
+    <input type="file" accept="image/*" ${multiple ? 'multiple' : ''} hidden>
+  </div>
+  <div class="flex items-center gap-2 mt-2">
+    <input class="a-in" data-url="${key}" placeholder="…или вставьте URL изображения">
+    <button type="button" class="a-btn ghost shrink-0" data-addurl="${key}">Add</button>
+  </div>
+  <div class="flex flex-wrap gap-2 mt-3" id="th-${key}"></div>
+</div>` }
+
+async function viewForm(id){
+  const p = id ? await db.byId(id) : null;
+  if (id && !p) return adminShell('list', '<p>Проект не найден.</p>');
+  FORM_STATE = {
+    images : { gallery:[...(p?.gallery || [])], desktop:[...(p?.desktop_images || [])], mobile:[...(p?.mobile_images || [])] },
+    cover  : p?.cover_image || '',
+    services : [...(p?.services || [])],
+    tech   : [...(p?.technologies || [])]
+  };
+  return adminShell('list', `
+  <div class="max-w-4xl">
+    <div class="flex justify-between items-center mb-8">
+      <h1 class="text-3xl font-bold tracking-tight">${id ? 'Редактирование' : 'Новый проект'}</h1>
+      <a href="#/admin/projects" class="a-btn ghost">← К списку</a>
+    </div>
+    <form id="pform" class="bg-white border border-[#E3E1DA] rounded-md p-6 md:p-8 space-y-6">
+      <div class="grid md:grid-cols-2 gap-5">
+        <div><label class="a-lb">Project title *</label><input id="f-title" class="a-in" value="${esc(projectTitle(p))}" required></div>
+        <div><label class="a-lb">Slug * (url)</label><input id="f-slug" class="a-in mono" value="${esc(p?.slug || '')}" placeholder="aura-interior" required></div>
+      </div>
+      <div class="grid md:grid-cols-4 gap-5">
+        <div><label class="a-lb">Category</label><select id="f-cat" class="a-in">${Object.entries(CATS).map(([v, l]) => `<option value="${v}" ${v === (p?.category || 'landing') ? 'selected' : ''}>${l}</option>`).join('')}</select></div>
+        <div><label class="a-lb">Year</label><input id="f-year" type="number" class="a-in" value="${esc(p?.year || 2026)}"></div>
+        <div><label class="a-lb">Client</label><input id="f-client" class="a-in" value="${esc(p?.client || '')}"></div>
+        <div><label class="a-lb">Site URL</label><input id="f-url" class="a-in mono" value="${esc(p?.site_url || '')}" placeholder="https://…"></div>
+      </div>
+      <div><label class="a-lb">Short description</label><textarea id="f-short" class="a-in" rows="2">${esc(p?.short_description || '')}</textarea></div>
+      <div><label class="a-lb">Full description (HTML)</label><textarea id="f-desc" class="a-in mono !text-xs" rows="7">${esc(p?.description || '')}</textarea></div>
+      ${uploaderHTML('cover', 'Cover image', false)}
+      ${uploaderHTML('gallery', 'Gallery', true)}
+      ${uploaderHTML('desktop', 'Desktop screenshots', true)}
+      ${uploaderHTML('mobile', 'Mobile screenshots', true)}
+      <div class="grid md:grid-cols-2 gap-6">
+        <div><label class="a-lb">Services</label><div class="flex flex-wrap gap-2" id="f-svc">${SERVICES.map(s => `<span class="chip ${FORM_STATE.services.includes(s) ? 'on' : ''}" data-v="${s}">${s}</span>`).join('')}</div></div>
+        <div><label class="a-lb">Technologies</label><div class="flex flex-wrap gap-2" id="f-tech">${TECHS.map(t => `<span class="chip ${FORM_STATE.tech.includes(t) ? 'on' : ''}" data-v="${t}">${t}</span>`).join('')}</div></div>
+      </div>
+      <div class="flex flex-wrap items-center gap-8 pt-2 border-t border-[#EFEDE6]">
+        <label class="flex items-center gap-2 text-sm cursor-pointer"><input id="f-feat" type="checkbox" ${p?.featured ? 'checked' : ''} class="accent-black w-4 h-4"> Featured (на главной)</label>
+        <div><label class="a-lb">Status</label>
+          <select id="f-status" class="a-in" style="width:10rem">
+            <option value="draft" ${p?.status === 'draft' ? 'selected' : ''}>Draft</option>
+            <option value="published" ${p?.status === 'published' ? 'selected' : ''}>Published</option>
+          </select>
+        </div>
+      </div>
+      <div class="flex justify-end gap-3 pt-2">
+        <a href="#/admin/projects" class="a-btn ghost">Отмена</a>
+        <button class="a-btn" id="f-save">Сохранить проект →</button>
+      </div>
+    </form>
+  </div>`)
+}
+
+const formImgs = key => key === 'cover' ? (FORM_STATE.cover ? [FORM_STATE.cover] : []) : FORM_STATE.images[key];
+
+function renderThumbs(key){
+  const box = $('#th-' + key);
+  if (!box) return;
+  const arr = formImgs(key);
+  box.innerHTML = arr.map((src, i) => `<div class="thumb"><img src="${esc(src)}" alt=""><div class="tb">
+    ${i > 0 ? `<button data-mv="${i}" data-key="${key}" data-dir="-1">←</button>` : ''}
+    ${i < arr.length - 1 ? `<button data-mv="${i}" data-key="${key}" data-dir="1">→</button>` : ''}
+    <button data-rm="${i}" data-key="${key}">✕</button>
+  </div></div>`).join('');
+}
+
+async function compressFile(file){
+  const url = await new Promise(r => { const f = new FileReader(); f.onload = () => r(f.result); f.readAsDataURL(file); });
+  const img = new Image();
+  await new Promise(r => { img.onload = r; img.src = url; });
+  const MAX = 1600;
+  let w = img.width, h = img.height;
+  if (w > MAX) { h = Math.round(h * MAX / w); w = MAX; }
+  const canvas = document.createElement('canvas');
+  canvas.width = w; canvas.height = h;
+  canvas.getContext('2d').drawImage(img, 0, 0, w, h);
+  return canvas.toDataURL('image/jpeg', 0.85);
+}
+
+async function handleFiles(key, files){
+  for (const f of [...files]) {
+    if (!f.type.startsWith('image/')) continue;
+    const src = await compressFile(f);
+    if (key === 'cover') FORM_STATE.cover = src; else FORM_STATE.images[key].push(src);
+  }
+  renderThumbs(key);
+}
+
+function bindForm(id){
+  if (!$('#pform')) return;
+
+  $('#f-title').addEventListener('input', e => { if (!id) $('#f-slug').value = slugify(e.target.value); });
+
+  [['#f-svc','services'], ['#f-tech','tech']].forEach(([sel, key]) => {
+    $(sel).addEventListener('click', e => {
+      const chip = e.target.closest('.chip');
+      if (!chip) return;
+      chip.classList.toggle('on');
+      const v = chip.dataset.v, arr = FORM_STATE[key];
+      arr.includes(v) ? arr.splice(arr.indexOf(v), 1) : arr.push(v);
+    });
+  });
+
+  document.querySelectorAll('.dropzone').forEach(dz => {
+    const key = dz.dataset.key, input = dz.querySelector('input');
+    dz.onclick = () => input.click();
+    input.onchange = () => handleFiles(key, input.files);
+    ['dragover','dragleave','drop'].forEach(ev => dz.addEventListener(ev, e => {
+      e.preventDefault();
+      dz.classList.toggle('over', ev === 'dragover');
+      if (ev === 'drop') handleFiles(key, e.dataTransfer.files);
+    }));
+  });
+
+  document.querySelectorAll('[data-addurl]').forEach(btn => btn.onclick = () => {
+    const key = btn.dataset.addurl;
+    const input = document.querySelector(`[data-url="${key}"]`);
+    if (!input || !input.value.trim()) return;
+    if (key === 'cover') FORM_STATE.cover = input.value.trim();
+    else FORM_STATE.images[key].push(input.value.trim());
+    input.value = '';
+    renderThumbs(key);
+  });
+  ['cover','gallery','desktop','mobile'].forEach(renderThumbs);
+
+  $('#f-save').onclick = async e => {
+    e.preventDefault();
+    const title = $('#f-title').value.trim();
+    const slug = slugify($('#f-slug').value || title);
+    if (!title || !slug) { toast('Заполните title и slug'); return; }
+    const all = await db.listAll();
+    if (all.some(x => x.slug === slug && x.id !== id)) { toast('Slug уже занят'); return; }
+    const row = {
+      title, slug,
+      category : $('#f-cat').value,
+      year : +$('#f-year').value || 2026,
+      client : $('#f-client').value.trim(),
+      site_url : $('#f-url').value.trim(),
+      short_description : $('#f-short').value.trim(),
+      description : $('#f-desc').value,
+      cover_image : FORM_STATE.cover,
+      gallery : FORM_STATE.images.gallery,
+      desktop_images : FORM_STATE.images.desktop,
+      mobile_images : FORM_STATE.images.mobile,
+      services : FORM_STATE.services,
+      technologies : FORM_STATE.tech,
+      featured : $('#f-feat').checked,
+      status : $('#f-status').value
+    };
+    if (id) { await db.update(id, row); toast('Изменения сохранены ✓'); }
+    else { await db.create(row); toast('Проект создан ✓'); }
+    nav('#/admin/projects');
+  };
+}
+
+/* ── страница настройки Supabase ───────────────────────── */
+function viewSetup(){ return adminShell('setup', `
+<h1 class="text-3xl font-bold tracking-tight mb-2">Подключение Supabase</h1>
+<p class="text-sm text-gray-500 mb-8 max-w-2xl">Если в <span class="mono">config.js</span> не задан публичный ключ, сайт работает в локальном режиме. Для подключения выполните SQL, создайте пользователя и вставьте URL и <b>Publishable key</b> в <span class="mono">config.js</span>. Ключ <span class="mono">sb_secret_</span> в браузере использовать нельзя.</p>
+<ol class="list-decimal pl-5 text-sm space-y-2 mb-8 max-w-2xl text-gray-600">
+  <li>Создайте проект на supabase.com</li>
+  <li>SQL Editor → выполните скрипт ниже</li>
+  <li>Authentication → Users → Add user (email/пароль администратора)</li>
+  <li>Settings → API Keys → скопируйте URL и Publishable key в config.js</li>
+  <li>Перезагрузите сайт — админка начнёт писать в PostgreSQL</li>
+</ol>
+<pre class="mono text-[11px] bg-[#111] text-[#D7F8E8] p-5 rounded-md overflow-x-auto leading-relaxed">create table public.projects (
+  id text primary key, title text not null, slug text unique not null,
+  category text not null check (category in ('landing','multi-page','ecommerce')),
+  year int, client text, site_url text, short_description text, description text, cover_image text,
+  gallery jsonb default '[]', desktop_images jsonb default '[]', mobile_images jsonb default '[]',
+  services jsonb default '[]', technologies jsonb default '[]',
+  featured boolean default false,
+  status text default 'draft' check (status in ('draft','published')),
+  created_at timestamptz default now(), updated_at timestamptz default now());
+alter table public.projects enable row level security;
+grant select on public.projects to anon;
+grant select, insert, update, delete on public.projects to authenticated;
+
+drop policy if exists "public read published" on public.projects;
+drop policy if exists "admin insert" on public.projects;
+drop policy if exists "admin update" on public.projects;
+drop policy if exists "admin delete" on public.projects;
+
+create policy "public read published" on public.projects for select
+  using (status = 'published' or (select auth.jwt()-&gt;&gt;'email') = 'snezhin.design@mail.ru');
+create policy "admin insert" on public.projects for insert to authenticated
+  with check ((select auth.jwt()-&gt;&gt;'email') = 'snezhin.design@mail.ru');
+create policy "admin update" on public.projects for update to authenticated
+  using ((select auth.jwt()-&gt;&gt;'email') = 'snezhin.design@mail.ru')
+  with check ((select auth.jwt()-&gt;&gt;'email') = 'snezhin.design@mail.ru');
+create policy "admin delete" on public.projects for delete to authenticated
+  using ((select auth.jwt()-&gt;&gt;'email') = 'snezhin.design@mail.ru');</pre>`) }
+
+/* ── делегированные клики админки ──────────────────────── */
+document.addEventListener('click', async e => {
+  /* миниатюры: удалить / переставить */
+  const rm = e.target.closest('[data-rm]');
+  if (rm && FORM_STATE) {
+    const k = rm.dataset.key, arr = formImgs(k);
+    arr.splice(+rm.dataset.rm, 1);
+    if (k === 'cover') FORM_STATE.cover = arr[0] || '';
+    renderThumbs(k); return;
+  }
+  const mv = e.target.closest('[data-mv]');
+  if (mv && FORM_STATE) {
+    const k = mv.dataset.key, arr = formImgs(k);
+    const i = +mv.dataset.mv, j = i + +mv.dataset.dir;
+    [arr[i], arr[j]] = [arr[j], arr[i]];
+    if (k === 'cover') FORM_STATE.cover = arr[0] || '';
+    renderThumbs(k); return;
+  }
+  /* действия в таблице проектов */
+  const act = e.target.closest('[data-act]');
+  if (act) {
+    const id = act.dataset.id;
+    if (act.dataset.act === 'status') {
+      const p = await db.byId(id);
+      await db.update(id, { status: p.status === 'published' ? 'draft' : 'published' });
+      toast('Статус обновлён'); route();
+    }
+    if (act.dataset.act === 'feat') {
+      const p = await db.byId(id);
+      await db.update(id, { featured: !p.featured });
+      toast(p.featured ? 'Убрано с главной' : 'Добавлено на главную'); route();
+    }
+    if (act.dataset.act === 'dup') { await db.duplicate(id); toast('Копия создана (draft)'); route(); }
+    if (act.dataset.act === 'del') {
+      if (await confirmDialog('Удалить проект?', `«${act.dataset.title || ''}» будет удалён из базы безвозвратно.`)) {
+        await db.remove(id); toast('Проект удалён'); route();
+      }
+    }
+    return;
+  }
+  if (e.target.closest('#a-logout')) { auth.logout(); nav('#/'); toast('Вы вышли из панели'); }
+});
+
+/* ════════════════════════════════════════════════════════
+   10. ЭФФЕКТЫ: 3D-объект в hero + курсор
+   ════════════════════════════════════════════════════════ */
+let HERO3D = null;
+
+function initHero3D(){
+  const canvas = $('#hero-canvas');
+  if (!canvas || !window.THREE || matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  try {
+    const scene = new THREE.Scene();
+    const camera = new THREE.PerspectiveCamera(60, innerWidth / innerHeight, .1, 100);
+    camera.position.z = 6;
+    const renderer = new THREE.WebGLRenderer({ canvas, alpha:true, antialias:true });
+    renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
+    renderer.setSize(canvas.clientWidth || innerWidth, canvas.clientHeight || innerHeight, false);
+
+    const knot = new THREE.Mesh(
+      new THREE.TorusKnotGeometry(1.15, .34, 140, 20),
+      new THREE.MeshStandardMaterial({ color:0x141414, roughness:.25, metalness:.85 })
+    );
+    knot.position.set(3.4, -.4, 0);
+    scene.add(knot);
+    scene.add(new THREE.AmbientLight(0xffffff, .55));
+    const light = new THREE.PointLight(0xffffff, 1.1);
+    light.position.set(4, 5, 6);
+    scene.add(light);
+
+    let mx = 0, my = 0;
+    const onMove = e => { mx = e.clientX / innerWidth * 2 - 1; my = -(e.clientY / innerHeight * 2 - 1); };
+    addEventListener('mousemove', onMove);
+    const onResize = () => {
+      camera.aspect = innerWidth / innerHeight;
+      camera.updateProjectionMatrix();
+      renderer.setSize(canvas.clientWidth || innerWidth, canvas.clientHeight || innerHeight, false);
+      knot.position.set(innerWidth < 768 ? 0 : 3.4, innerWidth < 768 ? 2.4 : -.4, 0);
+    };
+    addEventListener('resize', onResize);
+    onResize();
+
+    let raf;
+    const loop = () => {
+      raf = requestAnimationFrame(loop);
+      knot.rotation.x += .004 + my * .006;
+      knot.rotation.y += .005 + mx * .006;
+      renderer.render(scene, camera);
+    };
+    loop();
+    HERO3D = { raf, renderer, onMove, onResize };
+  } catch (e) { /* webgl недоступен — не критично */ }
+}
+
+function destroyHero3D(){
+  if (!HERO3D) return;
+  cancelAnimationFrame(HERO3D.raf);
+  removeEventListener('mousemove', HERO3D.onMove);
+  removeEventListener('resize', HERO3D.onResize);
+  try { HERO3D.renderer.dispose() } catch (e) {}
+  HERO3D = null;
+}
+
+/* Курсор + маска-«фонарик» в hero */
+const cursorEl = $('#cursor');
+let targetX = innerWidth / 2, targetY = innerHeight / 2, curX = targetX, curY = targetY;
+
+addEventListener('pointermove', e => {
+  targetX = e.clientX; targetY = e.clientY;
+  const hero = $('#hero-wrap');
+  if (hero) {
+    const r = hero.getBoundingClientRect();
+    hero.style.setProperty('--mx', ((e.clientX - r.left) / r.width * 100) + '%');
+    hero.style.setProperty('--my', ((e.clientY - r.top) / r.height * 100) + '%');
+  }
+});
+(function cursorLoop(){
+  curX += (targetX - curX) * .18;
+  curY += (targetY - curY) * .18;
+  cursorEl.style.transform = `translate(${curX}px, ${curY}px) translate(-50%, -50%)`;
+  requestAnimationFrame(cursorLoop);
+})();
+document.addEventListener('mouseover', e => cursorEl.classList.toggle('big', !!e.target.closest('a,button')));
+
+/* ════════════════════════════════════════════════════════
+   11. РОУТЕР И ИНИЦИАЛИЗАЦИЯ
+   ════════════════════════════════════════════════════════ */
+let pendingAdminRoute = null;
+const nav = h => location.hash = h;
+window.addEventListener('hashchange', () => route());
+
+async function route(){
+  destroyHero3D();
+  document.body.classList.remove('admin-mode');
+  try {
+    const seg = location.hash.replace(/^#\/?/, '').split('/').filter(Boolean);
+    if (seg[0] === 'admin') {
+      document.body.classList.add('admin-mode');
+      await renderAdmin(seg);
+    } else {
+      await renderPublic(seg);
+    }
+    window.scrollTo(0, 0);
+  } catch (e) { showFatal(e && e.message || e); }
+}
+
+async function renderPublic(seg){
+  const app = $('#app');
+  const [a, b] = seg;
+  app.innerHTML = '<div class="pt-40 pb-40 text-center"><div class="skel h-10 w-64 mx-auto mb-6 rounded"></div><div class="skel h-5 w-96 max-w-full mx-auto rounded"></div></div>';
+
+  let html;
+  if (!a) html = await viewHome();
+  else if (a === 'works' && !b) html = await viewWorks();
+  else if (a === 'works' && b) html = await viewDetail(b);
+  else if (a === 'about') html = viewAbout();
+  else if (a === 'services') html = viewServices();
+  else if (a === 'contact') html = viewContact();
+  else html = navbarHTML() + '<div class="pt-48 text-center min-h-screen"><h1 class="text-6xl font-bold">404</h1><p class="my-6 text-gray-500">Страница не найдена</p><a class="underline" href="#/">На главную</a></div>';
+
+  if (a) html += homeArrowHTML(); /* стрелка «на главную» везде, кроме главной */
+  app.innerHTML = html;
+
+  if (a === 'works' && !b) bindWorks();
+  if (!a) initHero3D();
+  observeRv();
+}
+
+async function renderAdmin(seg){
+  const app = $('#app');
+  if (!(await auth.isAuthed())) {
+    app.innerHTML = viewLogin();
+    pendingAdminRoute = '#/' + seg.join('/');
+    $('#login-form').onsubmit = async e => {
+      e.preventDefault();
+      try {
+        await auth.login($('#lg-e').value.trim(), $('#lg-p').value);
+        toast('Добро пожаловать ✓');
+        nav(pendingAdminRoute || '#/admin');
+        route();
+      } catch (err) { $('#lg-err').textContent = err.message || 'Ошибка входа'; }
+    };
+    return;
+  }
+  const [_, a, b, c] = seg;
+  if (!a) app.innerHTML = await viewDash();
+  else if (a === 'projects' && !b) app.innerHTML = await viewProjects();
+  else if (a === 'projects' && b === 'new') { app.innerHTML = await viewForm(null); bindForm(null); }
+  else if (a === 'projects' && c === 'edit') { app.innerHTML = await viewForm(b); bindForm(b); }
+  else if (a === 'setup') app.innerHTML = viewSetup();
+  else app.innerHTML = await viewDash();
+}
+
+async function init(){
+  route();
+}
+if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init);
+else init();
+</script>
+</body>
+</html>
