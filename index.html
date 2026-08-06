@@ -155,7 +155,7 @@ const SOCIALS = {
 
 /* Справочники */
 const CATS     = { landing:'Лендинг', 'multi-page':'Многостраничный', ecommerce:'Интернет-магазин' };
-const CASE_TITLES = { 'amber-soul':'AMBER SOUL — Ювелирная история', 'aero-x1':'AERO X1 — Точность в форме', 'dream-house':'DREAM HOUSE — Сайт строительной компании' };
+const CASE_TITLES = { 'amber-soul':'AMBER SOUL — Ювелирная история', 'aero-x1':'AERO X1 — Точность в форме', 'dream-house':'DREAM HOUSE — Сайт строительной компании', 'melnik':'MELNIK — Путь настоящего зерна' };
 const projectTitle = p => CASE_TITLES[p?.slug] || p?.title || '';
 const SERVICES = ['UX/UI','Web Design','Development','Art Direction','Motion','E-commerce'];
 const TECHS    = ['Figma','Webflow','Tilda','React','Next.js','HTML/CSS','JavaScript','GSAP','Three.js'];
@@ -564,7 +564,7 @@ async function viewDetail(slug){
   if (!p || p.status !== 'published') {
     return navbarHTML() + '<div class="pt-48 pb-40 text-center"><h1 class="text-5xl font-bold mb-4">404</h1><p class="text-gray-500 mb-8">Проект не найден.</p><a class="underline" href="#/works">К проектам</a></div>';
   }
-  const caseSites = { 'amber-soul':'https://papagama.github.io/ambersoul/', 'aero-x1':'https://papagama.github.io/aero-x1-showroom/', 'dream-house':'https://papagama.github.io/dream-house/' };
+  const caseSites = { 'amber-soul':'https://papagama.github.io/ambersoul/', 'aero-x1':'https://papagama.github.io/aero-x1-showroom/', 'dream-house':'https://papagama.github.io/dream-house/', 'melnik':'https://papagama.github.io/melnik/' };
   const site = esc(caseSites[p.slug] || p.site_url || '');
   return navbarHTML() + `
   <article class="pt-36 px-6 md:px-12 max-w-6xl mx-auto pb-24">
