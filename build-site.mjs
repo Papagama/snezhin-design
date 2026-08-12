@@ -13,8 +13,7 @@ await mkdir(server, { recursive: true });
 await cp(resolve(root, 'index.html'), resolve(client, 'index.html'));
 await cp(resolve(root, 'config.js'), resolve(client, 'config.js'));
 await cp(resolve(root, 'assets', 'cases'), resolve(client, 'assets', 'cases'), { recursive: true });
-await cp(resolve(root, 'sites'), resolve(client, 'sites'), { recursive: true });
-await cp(resolve(root, 'public'), resolve(client), { recursive: true });
+await cp(resolve(root, 'public'), resolve(client, 'public'), { recursive: true });
 
 const worker = `
 const assetRequest = (request, pathname) => {

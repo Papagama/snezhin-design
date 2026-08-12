@@ -18,11 +18,14 @@
 <meta property="og:type" content="website">
 <meta property="og:title" content="snezhin.design — веб-дизайн и разработка для брендов">
 <meta property="og:description" content="Сайты и цифровые продукты: от структуры и визуальной идеи до готового запуска.">
-<meta property="og:image" content="https://papagama.github.io/snezhin-design/og.png">
+<meta property="og:image" content="https://papagama.github.io/snezhin-design/public/og.png">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="snezhin.design — веб-дизайн и разработка для брендов">
 <meta name="twitter:description" content="Сайты и цифровые продукты: от структуры и визуальной идеи до готового запуска.">
-<meta name="twitter:image" content="https://papagama.github.io/snezhin-design/og.png">
+<meta name="twitter:image" content="https://papagama.github.io/snezhin-design/public/og.png">
+<link rel="icon" href="./public/favicon.svg" type="image/svg+xml">
+<link rel="alternate icon" href="./public/favicon.ico" sizes="any">
+<link rel="apple-touch-icon" href="./public/apple-touch-icon.png">
 
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fontsource/manrope@5/400.css">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fontsource/manrope@5/500.css">
@@ -106,7 +109,7 @@ body.admin-mode #cursor { display:none }
 .wcard:hover .cta { opacity:1; transform:none }
 
 /* ── кейс: сначала смысл и сценарий, затем экраны ─────── */
-.case-kicker { display:inline-flex; align-items:center; gap:.55rem; margin-bottom:1.25rem; color:#ff5a1f; font-family:'JetBrains Mono',monospace; font-size:.7rem; letter-spacing:.12em; text-transform:uppercase }
+.case-kicker { display:inline-flex; align-items:center; gap:.55rem; margin-bottom:1.25rem; color:var(--ink); font-family:'JetBrains Mono',monospace; font-size:.7rem; letter-spacing:.12em; text-transform:uppercase }
 .case-kicker::before { content:''; width:.55rem; height:.55rem; border-radius:50%; background:currentColor }
 .case-lede { max-width:48rem; color:#626262; font-size:clamp(1.1rem,2vw,1.45rem); line-height:1.55 }
 .case-facts { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:1px; margin:3rem 0 4rem; background:#d6d4cc; border:1px solid #d6d4cc }
@@ -116,18 +119,18 @@ body.admin-mode #cursor { display:none }
 .case-cover-shell { padding:.75rem; background:#dedcd5; border:1px solid #cbc9c1 }
 .case-cover-shell img { display:block; width:100%; aspect-ratio:3 / 2; object-fit:cover }
 .case-section { padding-top:clamp(5rem,10vw,9rem) }
-.case-section-label { color:#ff5a1f; font-family:'JetBrains Mono',monospace; font-size:.7rem; letter-spacing:.14em; text-transform:uppercase }
+.case-section-label { color:var(--ink); font-family:'JetBrains Mono',monospace; font-size:.7rem; letter-spacing:.14em; text-transform:uppercase }
 .case-section-title { max-width:46rem; margin:.9rem 0 1.2rem; font-family:'Space Grotesk',sans-serif; font-size:clamp(2rem,5vw,4.6rem); font-weight:700; line-height:.98; letter-spacing:-.06em; text-transform:uppercase }
 .case-section-copy { max-width:42rem; color:#626262; font-size:1.05rem; line-height:1.65 }
 .case-principles { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:1rem; margin-top:2.5rem }
-.case-principle { padding:1.5rem; background:#ebeae5; border-top:2px solid #ff5a1f }
+.case-principle { padding:1.5rem; background:#ebeae5; border-top:2px solid var(--ink) }
 .case-principle-number { color:#77736c; font-family:'JetBrains Mono',monospace; font-size:.72rem }
 .case-principle h3 { margin:2.6rem 0 .75rem; font-family:'Space Grotesk',sans-serif; font-size:1.15rem; font-weight:700; line-height:1.05 }
 .case-principle p { margin:0; color:#65635e; font-size:.93rem; line-height:1.55 }
 .case-screens { margin-top:3rem }
 .case-screen { margin:0 0 3.5rem }
 .case-screen-head { display:grid; grid-template-columns:5rem minmax(0,1fr); gap:1.25rem; max-width:48rem; margin:0 0 1.1rem }
-.case-screen-number { color:#ff5a1f; font-family:'JetBrains Mono',monospace; font-size:.72rem; letter-spacing:.12em; padding-top:.45rem }
+.case-screen-number { color:var(--ink); font-family:'JetBrains Mono',monospace; font-size:.72rem; letter-spacing:.12em; padding-top:.45rem }
 .case-screen h3 { margin:0 0 .45rem; font-family:'Space Grotesk',sans-serif; font-size:clamp(1.25rem,2vw,1.75rem); font-weight:700; line-height:1.05 }
 .case-screen p { margin:0; color:#696762; font-size:.98rem; line-height:1.55 }
 .case-browser { padding:.55rem; background:#dedcd5; border:1px solid #cbc9c1; box-shadow:0 1.4rem 3.5rem rgba(0,0,0,.11) }
@@ -137,12 +140,12 @@ body.admin-mode #cursor { display:none }
 .case-browser img { display:block; width:100%; background:#111 }
 .case-impact { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:1px; margin-top:2.5rem; background:#d6d4cc; border:1px solid #d6d4cc }
 .case-impact-item { padding:1.35rem 1.5rem; background:#fff; color:#353535; font-size:.96rem; line-height:1.5 }
-.case-impact-item::before { content:'↗'; display:block; margin-bottom:1.1rem; color:#ff5a1f; font-family:'JetBrains Mono',monospace; font-size:1.1rem }
-.case-next { margin-top:clamp(5rem,10vw,9rem); padding:clamp(2rem,6vw,4rem); background:#ff5a1f; color:#151515 }
+.case-impact-item::before { content:'↗'; display:block; margin-bottom:1.1rem; color:var(--ink); font-family:'JetBrains Mono',monospace; font-size:1.1rem }
+.case-next { margin-top:clamp(5rem,10vw,9rem); padding:clamp(2rem,6vw,4rem); background:var(--ink); color:var(--bg) }
 .case-next p { margin:0 0 .65rem; font-family:'JetBrains Mono',monospace; font-size:.72rem; letter-spacing:.12em; text-transform:uppercase }
 .case-next h2 { max-width:44rem; margin:0 0 1.75rem; font-family:'Space Grotesk',sans-serif; font-size:clamp(2rem,5vw,4rem); font-weight:700; line-height:.98; letter-spacing:-.06em; text-transform:uppercase }
-.case-next .btn { background:#171717; color:#fff }
-.case-next .btn:hover { background:#fff; color:#171717 }
+.case-next .btn { background:var(--bg); color:var(--ink) }
+.case-next .btn:hover { background:#d7d5ce; color:var(--ink) }
 @media (max-width:768px) {
   .case-facts, .case-principles, .case-impact { grid-template-columns:1fr }
   .case-fact { min-height:auto }
@@ -1251,22 +1254,41 @@ function initHero3D(){
   if (!canvas || !window.THREE || matchMedia('(prefers-reduced-motion: reduce)').matches) return;
   try {
     const scene = new THREE.Scene();
-    const camera = new THREE.PerspectiveCamera(60, innerWidth / innerHeight, .1, 100);
+    const camera = new THREE.PerspectiveCamera(45, innerWidth / innerHeight, .1, 100);
     camera.position.z = 6;
-    const renderer = new THREE.WebGLRenderer({ canvas, alpha:true, antialias:true });
-    renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
+    const renderer = new THREE.WebGLRenderer({ canvas, alpha:true, antialias:true, powerPreference:'high-performance' });
+    renderer.setPixelRatio(Math.min(devicePixelRatio, 2.5));
+    renderer.outputEncoding = THREE.sRGBEncoding;
+    renderer.physicallyCorrectLights = true;
+    renderer.toneMapping = THREE.ACESFilmicToneMapping;
+    renderer.toneMappingExposure = 1.15;
     renderer.setSize(canvas.clientWidth || innerWidth, canvas.clientHeight || innerHeight, false);
 
+    const object = new THREE.Group();
     const knot = new THREE.Mesh(
-      new THREE.TorusKnotGeometry(1.15, .34, 140, 20),
-      new THREE.MeshStandardMaterial({ color:0x141414, roughness:.25, metalness:.85 })
+      new THREE.TorusKnotGeometry(1.15, .31, 260, 48, 2, 3),
+      new THREE.MeshPhysicalMaterial({ color:0x0b0b0b, roughness:.16, metalness:.94, clearcoat:1, clearcoatRoughness:.12 })
     );
-    knot.position.set(3.4, -.4, 0);
-    scene.add(knot);
-    scene.add(new THREE.AmbientLight(0xffffff, .55));
-    const light = new THREE.PointLight(0xffffff, 1.1);
-    light.position.set(4, 5, 6);
-    scene.add(light);
+    const wire = new THREE.Mesh(
+      new THREE.TorusKnotGeometry(1.155, .315, 260, 48, 2, 3),
+      new THREE.MeshBasicMaterial({ color:0xffffff, wireframe:true, transparent:true, opacity:.045 })
+    );
+    object.add(knot, wire);
+    object.position.set(3.4, -.4, 0);
+    object.rotation.set(.18, -.42, .1);
+    scene.add(object);
+
+    const hemisphere = new THREE.HemisphereLight(0xffffff, 0x2b2b2b, 1.8);
+    scene.add(hemisphere);
+    const key = new THREE.DirectionalLight(0xffffff, 4.5);
+    key.position.set(4, 5, 7);
+    scene.add(key);
+    const rim = new THREE.DirectionalLight(0xd9d9d9, 3.2);
+    rim.position.set(-5, 1, -4);
+    scene.add(rim);
+    const fill = new THREE.PointLight(0xffffff, 18, 18);
+    fill.position.set(0, -2, 4);
+    scene.add(fill);
 
     let mx = 0, my = 0;
     const onMove = e => { mx = e.clientX / innerWidth * 2 - 1; my = -(e.clientY / innerHeight * 2 - 1); };
@@ -1279,8 +1301,8 @@ function initHero3D(){
       camera.updateProjectionMatrix();
       camera.position.z = isMobile ? 5.2 : 6;
       renderer.setSize(width, height, false);
-      knot.position.set(isMobile ? 0 : 3.4, isMobile ? 0 : -.4, 0);
-      knot.scale.setScalar(isMobile ? .92 : 1);
+      object.position.set(isMobile ? 0 : 3.4, isMobile ? 0 : -.4, 0);
+      object.scale.setScalar(isMobile ? 1.02 : 1);
     };
     addEventListener('resize', onResize);
     onResize();
@@ -1288,12 +1310,13 @@ function initHero3D(){
     let raf;
     const loop = () => {
       raf = requestAnimationFrame(loop);
-      knot.rotation.x += .004 + my * .006;
-      knot.rotation.y += .005 + mx * .006;
+      object.rotation.x += .002 + my * .0025;
+      object.rotation.y += .003 + mx * .003;
+      wire.rotation.copy(object.rotation);
       renderer.render(scene, camera);
     };
     loop();
-    HERO3D = { raf, renderer, onMove, onResize };
+    HERO3D = { raf, renderer, onMove, onResize, knot, wire };
   } catch (e) { /* webgl недоступен — не критично */ }
 }
 
@@ -1302,7 +1325,7 @@ function destroyHero3D(){
   cancelAnimationFrame(HERO3D.raf);
   removeEventListener('mousemove', HERO3D.onMove);
   removeEventListener('resize', HERO3D.onResize);
-  try { HERO3D.renderer.dispose() } catch (e) {}
+  try { HERO3D.knot.geometry.dispose(); HERO3D.knot.material.dispose(); HERO3D.wire.geometry.dispose(); HERO3D.wire.material.dispose(); HERO3D.renderer.dispose() } catch (e) {}
   HERO3D = null;
 }
 
