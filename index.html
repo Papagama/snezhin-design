@@ -1268,7 +1268,10 @@ function initHero3D(){
     const camera = new THREE.PerspectiveCamera(42, innerWidth / innerHeight, .1, 100);
     camera.position.z = 6.25;
     const renderer = new THREE.WebGLRenderer({ canvas, alpha:true, antialias:true, powerPreference:'high-performance' });
-    renderer.setPixelRatio(Math.min(devicePixelRatio || 1, 2));
+    // Рендерим с запасом по плотности: на обычных экранах canvas не должен
+    // выглядеть как растянутая картинка, особенно внутри увеличивающей маски.
+    const renderPixelRatio = Math.min(Math.max(devicePixelRatio || 1, 2), 3);
+    renderer.setPixelRatio(renderPixelRatio);
     renderer.outputEncoding = THREE.sRGBEncoding;
     renderer.physicallyCorrectLights = true;
     renderer.toneMapping = THREE.ACESFilmicToneMapping;
@@ -1277,8 +1280,8 @@ function initHero3D(){
 
     const object = new THREE.Group();
     const knot = new THREE.Mesh(
-      new THREE.TorusKnotGeometry(1.14, .285, 320, 64, 2, 3),
-      new THREE.MeshPhysicalMaterial({ color:0x454545, roughness:.08, metalness:1, clearcoat:1, clearcoatRoughness:.035, reflectivity:1 })
+      new THREE.TorusKnotGeometry(1.14, .285, 420, 96, 2, 3),
+      new THREE.MeshPhysicalMaterial({ color:0x515151, roughness:.055, metalness:1, clearcoat:1, clearcoatRoughness:.02, reflectivity:1 })
     );
     object.add(knot);
     object.position.set(3.3, -2, 0);
