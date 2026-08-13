@@ -138,6 +138,11 @@ body.admin-mode #cursor { display:none }
 .case-browser-bar span { width:.45rem; height:.45rem; border-radius:50%; background:#8f8c84 }
 .case-browser-bar i { display:block; width:35%; height:.42rem; margin-left:.35rem; border-radius:99px; background:#b4b1a9 }
 .case-browser img { display:block; width:100%; background:#111 }
+.case-screen--dream .case-screen-head { max-width:54rem }
+.case-screen--dream .case-browser { max-width:76rem; margin-inline:auto; padding:.65rem; overflow:hidden; background:#eef0ed; border-color:#d3d7d1; box-shadow:0 1.6rem 4rem rgba(18,25,28,.14) }
+.case-screen--dream .case-browser-bar { height:2.1rem; padding:0 .7rem; background:#fff; border:1px solid #d8ddd7; border-bottom:0 }
+.case-screen--dream .case-browser-bar strong { margin-left:auto; color:#606763; font-family:'JetBrains Mono',monospace; font-size:.63rem; font-weight:400; letter-spacing:.08em; text-transform:uppercase }
+.case-screen--dream .case-browser img { background:#e8edee; image-rendering:auto }
 .case-impact { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:1px; margin-top:2.5rem; background:#d6d4cc; border:1px solid #d6d4cc }
 .case-impact-item { padding:1.35rem 1.5rem; background:#fff; color:#353535; font-size:.96rem; line-height:1.5 }
 .case-impact-item::before { content:'↗'; display:block; margin-bottom:1.1rem; color:var(--ink); font-family:'JetBrains Mono',monospace; font-size:1.1rem }
@@ -146,6 +151,8 @@ body.admin-mode #cursor { display:none }
 .case-next h2 { max-width:44rem; margin:0 0 1.75rem; font-family:'Space Grotesk',sans-serif; font-size:clamp(2rem,5vw,4rem); font-weight:700; line-height:.98; letter-spacing:-.06em; text-transform:uppercase }
 .case-next .btn { background:var(--bg); color:var(--ink) }
 .case-next .btn:hover { background:#d7d5ce; color:var(--ink) }
+.case-next .case-concept-link { background:transparent !important; color:var(--bg) !important; border:1px solid var(--bg) !important; box-shadow:inset 0 0 0 1px rgba(255,255,255,.16) }
+.case-next .case-concept-link:hover { background:var(--bg) !important; color:var(--ink) !important }
 @media (max-width:768px) {
   .case-facts, .case-principles, .case-impact { grid-template-columns:1fr }
   .case-fact { min-height:auto }
@@ -154,6 +161,9 @@ body.admin-mode #cursor { display:none }
   .case-screen-head { grid-template-columns:3.5rem minmax(0,1fr); gap:.75rem }
   .case-browser { padding:.35rem }
   .case-browser-bar { height:1.45rem }
+  .case-screen--dream .case-browser { padding:.35rem }
+  .case-screen--dream .case-browser-bar { height:1.65rem; padding:0 .45rem }
+  .case-screen--dream .case-browser-bar strong { font-size:.52rem }
 }
 
 /* ── админка: каркас ──────────────────────────────────── */
@@ -747,11 +757,12 @@ async function viewDetail(slug){
   const caseSites = { 'amber-soul':'https://papagama.github.io/ambersoul/', 'aero-x1':'https://papagama.github.io/aero-x1-showroom/', 'dream-house':'https://papagama.github.io/dream-house/', 'melnik':'https://papagama.github.io/melnik/' };
   const site = esc(caseSites[p.slug] || p.site_url || '');
   const frames = (p.gallery || []).filter(Boolean);
+  const isDreamHouse = p.slug === 'dream-house';
   const screenBlocks = frames.map((src, index) => {
     const screen = story.screens[index] || [`Экран ${String(index + 1).padStart(2, '0')}`, 'Ключевой фрагмент пользовательского сценария и визуального языка.'];
-    return `<figure class="case-screen">
+    return `<figure class="case-screen${isDreamHouse ? ' case-screen--dream' : ''}">
       <figcaption class="case-screen-head"><span class="case-screen-number">${String(index + 1).padStart(2, '0')} / ${String(frames.length).padStart(2, '0')}</span><div><h3>${esc(screen[0])}</h3><p>${esc(screen[1])}</p></div></figcaption>
-      <div class="case-browser"><div class="case-browser-bar"><span></span><span></span><span></span><i></i></div><img src="${esc(src)}" alt="${esc(projectTitle(p))}: ${esc(screen[0])}" loading="lazy"></div>
+      <div class="case-browser${isDreamHouse ? ' case-browser--dream' : ''}"><div class="case-browser-bar"><span></span><span></span><span></span><i></i>${isDreamHouse ? `<strong>${index === 0 ? 'Каталог домов' : 'Калькулятор стоимости'}</strong>` : ''}</div><img src="${esc(src)}" alt="${esc(projectTitle(p))}: ${esc(screen[0])}" loading="lazy"></div>
     </figure>`;
   }).join('');
   const chips = [...(p.services || []), ...(p.technologies || [])].map(value => '<span class="chip" style="cursor:default">' + esc(value) + '</span>').join('');
@@ -796,7 +807,7 @@ async function viewDetail(slug){
       <h2>Нужен сайт, который объясняет ценность и ведёт к действию?</h2>
       <div class="flex gap-3 flex-wrap">
         <a href="#/contact" class="btn inline-flex items-center px-6 py-3 text-sm font-medium transition-colors">Обсудить проект →</a>
-        ${site ? `<a href="${site}" target="_blank" rel="noopener" class="btn inline-flex items-center px-6 py-3 text-sm font-medium transition-colors !bg-transparent !text-[#171717] !border !border-[#171717] hover:!bg-[#171717] hover:!text-white">Открыть концепт ↗</a>` : ''}
+        ${site ? `<a href="${site}" target="_blank" rel="noopener" class="btn case-concept-link inline-flex items-center px-6 py-3 text-sm font-medium transition-colors">Открыть концепт ↗</a>` : ''}
       </div>
     </section>
   </article>`;
@@ -1254,43 +1265,43 @@ function initHero3D(){
   if (!canvas || !window.THREE || matchMedia('(prefers-reduced-motion: reduce)').matches) return;
   try {
     const scene = new THREE.Scene();
-    const camera = new THREE.PerspectiveCamera(45, innerWidth / innerHeight, .1, 100);
-    camera.position.z = 6;
+    const camera = new THREE.PerspectiveCamera(42, innerWidth / innerHeight, .1, 100);
+    camera.position.z = 6.25;
     const renderer = new THREE.WebGLRenderer({ canvas, alpha:true, antialias:true, powerPreference:'high-performance' });
-    renderer.setPixelRatio(Math.min(devicePixelRatio, 2.5));
+    renderer.setPixelRatio(Math.min(devicePixelRatio || 1, 2));
     renderer.outputEncoding = THREE.sRGBEncoding;
     renderer.physicallyCorrectLights = true;
     renderer.toneMapping = THREE.ACESFilmicToneMapping;
-    renderer.toneMappingExposure = 1.15;
+    renderer.toneMappingExposure = 1.28;
     renderer.setSize(canvas.clientWidth || innerWidth, canvas.clientHeight || innerHeight, false);
 
     const object = new THREE.Group();
     const knot = new THREE.Mesh(
-      new THREE.TorusKnotGeometry(1.15, .31, 260, 48, 2, 3),
-      new THREE.MeshPhysicalMaterial({ color:0x0b0b0b, roughness:.16, metalness:.94, clearcoat:1, clearcoatRoughness:.12 })
+      new THREE.TorusKnotGeometry(1.14, .285, 320, 64, 2, 3),
+      new THREE.MeshPhysicalMaterial({ color:0x454545, roughness:.08, metalness:1, clearcoat:1, clearcoatRoughness:.035, reflectivity:1 })
     );
-    const wire = new THREE.Mesh(
-      new THREE.TorusKnotGeometry(1.155, .315, 260, 48, 2, 3),
-      new THREE.MeshBasicMaterial({ color:0xffffff, wireframe:true, transparent:true, opacity:.045 })
-    );
-    object.add(knot, wire);
-    object.position.set(3.4, -.4, 0);
-    object.rotation.set(.18, -.42, .1);
+    object.add(knot);
+    object.position.set(3.25, -.2, 0);
+    object.rotation.set(.38, -1.18, .1);
     scene.add(object);
 
-    const hemisphere = new THREE.HemisphereLight(0xffffff, 0x2b2b2b, 1.8);
+    const hemisphere = new THREE.HemisphereLight(0xffffff, 0x404040, 2.15);
     scene.add(hemisphere);
-    const key = new THREE.DirectionalLight(0xffffff, 4.5);
-    key.position.set(4, 5, 7);
+    const key = new THREE.DirectionalLight(0xffffff, 5.8);
+    key.position.set(5, 6, 7);
     scene.add(key);
-    const rim = new THREE.DirectionalLight(0xd9d9d9, 3.2);
-    rim.position.set(-5, 1, -4);
+    const rim = new THREE.DirectionalLight(0xdfe8f2, 4.8);
+    rim.position.set(-6, 2, -4);
     scene.add(rim);
-    const fill = new THREE.PointLight(0xffffff, 18, 18);
-    fill.position.set(0, -2, 4);
+    const fill = new THREE.PointLight(0xffffff, 32, 16);
+    fill.position.set(-1, -1, 5);
     scene.add(fill);
+    const sparkle = new THREE.PointLight(0xe8f4ff, 20, 12);
+    sparkle.position.set(2, 4, 2);
+    scene.add(sparkle);
 
     let mx = 0, my = 0;
+    let baseScale = 1;
     const onMove = e => { mx = e.clientX / innerWidth * 2 - 1; my = -(e.clientY / innerHeight * 2 - 1); };
     addEventListener('mousemove', onMove);
     const onResize = () => {
@@ -1299,24 +1310,30 @@ function initHero3D(){
       const isMobile = innerWidth < 768;
       camera.aspect = width / height;
       camera.updateProjectionMatrix();
-      camera.position.z = isMobile ? 5.2 : 6;
+      camera.position.z = isMobile ? 5.2 : 6.25;
       renderer.setSize(width, height, false);
-      object.position.set(isMobile ? 0 : 3.4, isMobile ? 0 : -.4, 0);
-      object.scale.setScalar(isMobile ? 1.02 : 1);
+      object.position.set(isMobile ? 0 : 3.25, isMobile ? 0 : -.2, 0);
+      baseScale = isMobile ? 1.02 : 1.08;
+      object.scale.setScalar(baseScale);
     };
     addEventListener('resize', onResize);
     onResize();
 
     let raf;
+    const startedAt = performance.now();
     const loop = () => {
       raf = requestAnimationFrame(loop);
-      object.rotation.x += .002 + my * .0025;
-      object.rotation.y += .003 + mx * .003;
-      wire.rotation.copy(object.rotation);
+      const time = (performance.now() - startedAt) / 1000;
+      const reveal = Math.min(time / 1.15, 1);
+      const ease = 1 - Math.pow(1 - reveal, 4);
+      object.scale.setScalar(baseScale * (.9 + .1 * ease));
+      object.rotation.x = .4 - .16 * ease + Math.sin(time * .78) * .052 + my * .08;
+      object.rotation.y = -1.18 + .7 * ease + Math.sin(time * .62) * .12 + mx * .12;
+      object.rotation.z = .1 + Math.cos(time * .72) * .045 - mx * .035;
       renderer.render(scene, camera);
     };
     loop();
-    HERO3D = { raf, renderer, onMove, onResize, knot, wire };
+    HERO3D = { raf, renderer, onMove, onResize, knot };
   } catch (e) { /* webgl недоступен — не критично */ }
 }
 
@@ -1325,7 +1342,7 @@ function destroyHero3D(){
   cancelAnimationFrame(HERO3D.raf);
   removeEventListener('mousemove', HERO3D.onMove);
   removeEventListener('resize', HERO3D.onResize);
-  try { HERO3D.knot.geometry.dispose(); HERO3D.knot.material.dispose(); HERO3D.wire.geometry.dispose(); HERO3D.wire.material.dispose(); HERO3D.renderer.dispose() } catch (e) {}
+  try { HERO3D.knot.geometry.dispose(); HERO3D.knot.material.dispose(); HERO3D.renderer.dispose() } catch (e) {}
   HERO3D = null;
 }
 
