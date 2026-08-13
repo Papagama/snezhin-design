@@ -70,8 +70,9 @@ body.admin-mode #cursor { display:none }
 .hero-wrap { position:relative; height:100vh; overflow:hidden }
 .hero-base { position:absolute; inset:0; z-index:2; display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center; pointer-events:none }
 .hero-base a { pointer-events:auto }
-.hero-mask { position:absolute; inset:0; z-index:1; pointer-events:none; display:flex; align-items:center; justify-content:center;
-  background:radial-gradient(circle at var(--mx,72%) var(--my,46%), rgba(234,232,225,0) 0, rgba(234,232,225,.08) 26%, rgba(234,232,225,.26) 72%, rgba(234,232,225,.38) 100%) }
+.hero-mask { position:absolute; inset:0; z-index:1; background:#EAE8E1; pointer-events:none; display:flex; align-items:center; justify-content:center;
+  mask-image:radial-gradient(circle at var(--mx,72%) var(--my,50%), transparent 0 180px, rgba(0,0,0,.58) 245px, #000 330px);
+  -webkit-mask-image:radial-gradient(circle at var(--mx,72%) var(--my,50%), transparent 0 180px, rgba(0,0,0,.58) 245px, #000 330px) }
 @media (max-width:768px) {
   .hero-wrap { height:auto; min-height:820px; display:flex; align-items:flex-start }
   .hero-mask { display:none }
@@ -1280,7 +1281,7 @@ function initHero3D(){
       new THREE.MeshPhysicalMaterial({ color:0x454545, roughness:.08, metalness:1, clearcoat:1, clearcoatRoughness:.035, reflectivity:1 })
     );
     object.add(knot);
-    object.position.set(2.4, -.1, 0);
+    object.position.set(2, -.1, 0);
     object.rotation.set(.38, -1.18, .1);
     scene.add(object);
 
@@ -1311,7 +1312,7 @@ function initHero3D(){
       camera.updateProjectionMatrix();
       camera.position.z = isMobile ? 5.2 : 6.25;
       renderer.setSize(width, height, false);
-      object.position.set(isMobile ? 0 : 2.4, isMobile ? 0 : -.1, 0);
+      object.position.set(isMobile ? 0 : 2, isMobile ? 0 : -.1, 0);
       baseScale = isMobile ? 1.02 : 1.08;
       object.scale.setScalar(baseScale);
     };
