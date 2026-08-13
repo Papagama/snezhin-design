@@ -71,8 +71,8 @@ body.admin-mode #cursor { display:none }
 .hero-base { position:absolute; inset:0; z-index:2; display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center; pointer-events:none }
 .hero-base a { pointer-events:auto }
 .hero-mask { position:absolute; inset:0; z-index:1; background:#EAE8E1; pointer-events:none; display:flex; align-items:center; justify-content:center;
-  mask-image:radial-gradient(circle at var(--mx,82%) var(--my,62%), transparent 0 170px, rgba(0,0,0,.58) 235px, #000 315px);
-  -webkit-mask-image:radial-gradient(circle at var(--mx,82%) var(--my,62%), transparent 0 170px, rgba(0,0,0,.58) 235px, #000 315px) }
+  mask-image:radial-gradient(circle at var(--mx,85%) var(--my,72%), transparent 0 170px, rgba(0,0,0,.58) 235px, #000 315px);
+  -webkit-mask-image:radial-gradient(circle at var(--mx,85%) var(--my,72%), transparent 0 170px, rgba(0,0,0,.58) 235px, #000 315px) }
 @media (max-width:768px) {
   .hero-wrap { height:auto; min-height:820px; display:flex; align-items:flex-start }
   .hero-mask { display:none }
@@ -1281,7 +1281,7 @@ function initHero3D(){
       new THREE.MeshPhysicalMaterial({ color:0x454545, roughness:.08, metalness:1, clearcoat:1, clearcoatRoughness:.035, reflectivity:1 })
     );
     object.add(knot);
-    object.position.set(3.05, -.92, 0);
+    object.position.set(3.3, -2, 0);
     object.rotation.set(.38, -1.18, .1);
     scene.add(object);
 
@@ -1312,8 +1312,8 @@ function initHero3D(){
       camera.updateProjectionMatrix();
       camera.position.z = isMobile ? 5.2 : 6.25;
       renderer.setSize(width, height, false);
-      object.position.set(isMobile ? 0 : 3.05, isMobile ? 0 : -.92, 0);
-      baseScale = isMobile ? 1.02 : .78;
+      object.position.set(isMobile ? 0 : 3.3, isMobile ? 0 : -2, 0);
+      baseScale = isMobile ? 1.02 : .65;
       object.scale.setScalar(baseScale);
     };
     addEventListener('resize', onResize);
