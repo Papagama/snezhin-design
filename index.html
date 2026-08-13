@@ -74,10 +74,10 @@ body.admin-mode #cursor { display:none }
   mask-image:radial-gradient(circle at var(--mx,50%) var(--my,50%), transparent 140px, #000 260px);
   -webkit-mask-image:radial-gradient(circle at var(--mx,50%) var(--my,50%), transparent 140px, #000 260px) }
 @media (max-width:768px) {
-  .hero-wrap { height:100svh; min-height:680px; display:flex; align-items:flex-start }
+  .hero-wrap { height:auto; min-height:820px; display:flex; align-items:flex-start }
   .hero-mask { display:none }
-  .hero-base { position:relative; inset:auto; width:100%; min-height:100svh; justify-content:flex-start; padding:7.5rem 1.25rem 20rem }
-  #hero-canvas { top:auto; bottom:0; height:19rem !important; z-index:1 }
+  .hero-base { position:relative; inset:auto; width:100%; min-height:820px; justify-content:flex-start; padding:7.5rem 1.25rem 14rem }
+  #hero-canvas { top:auto; bottom:-1rem; height:12rem !important; z-index:1 }
   .featured-cases, #wgrid { display:flex !important; gap:1rem; overflow-x:auto; overscroll-behavior-x:contain; scroll-snap-type:x mandatory; scroll-padding-left:1.5rem; -webkit-overflow-scrolling:touch; margin-right:-1.5rem; padding:0 1.5rem 1.25rem 0 }
   .featured-cases .wcard, #wgrid .wcard { flex:0 0 min(82vw, 22rem); scroll-snap-align:start; scroll-snap-stop:always; margin-top:0 !important }
   #filters { flex-wrap:nowrap; overflow-x:auto; overscroll-behavior-x:contain; -webkit-overflow-scrolling:touch; margin-right:-1.5rem; padding-right:1.5rem }
