@@ -36,13 +36,12 @@
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fontsource/jetbrains-mono@5/400.css">
 
 <script src="https://cdn.tailwindcss.com"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="./config.js"></script>
 
 <style>
 /* ── база ─────────────────────────────────────────────── */
-:root { --bg:#F4F3EF; --ink:#111; --line:#E3E1DA }
+:root { --bg:#F5F4F0; --ink:#151515; --muted:#6C6A65; --line:#DEDCD4; --paper:#FBFAF7 }
 * { box-sizing:border-box }
 body { background:var(--bg); color:var(--ink); font-family:'Manrope',system-ui,sans-serif; margin:0; overflow-x:hidden }
 h1,h2,h3,h4,.disp { font-family:'Space Grotesk',system-ui,sans-serif }
@@ -51,33 +50,54 @@ a { color:inherit; text-decoration:none }
 button { font-family:inherit; cursor:pointer }
 img { display:block; max-width:100% }
 
-/* ── кастомный курсор ─────────────────────────────────── */
-#cursor { position:fixed; top:0; left:0; width:14px; height:14px; border:1px solid var(--ink); border-radius:50%; pointer-events:none; z-index:9999; mix-blend-mode:difference; transition:width .25s,height .25s,background .25s }
-#cursor.big { width:56px; height:56px; background:#fff; opacity:.9 }
-body.admin-mode { cursor:auto }
-body.admin-mode #cursor { display:none }
-@media (hover:none) { #cursor{display:none} body{cursor:auto} }
-
-/* ── зерно (плёнка) ───────────────────────────────────── */
-.grain { position:fixed; inset:0; pointer-events:none; z-index:9990; opacity:.045; background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E") }
-
 /* ── стрелка «на главную» ─────────────────────────────── */
 .home-arrow { position:fixed; left:1.25rem; bottom:1.25rem; z-index:60; width:52px; height:52px; border:1px solid #fff; border-radius:50%; display:flex; align-items:center; justify-content:center; color:#fff; mix-blend-mode:difference; animation:haIn .5s cubic-bezier(.2,.7,.2,1) both; transition:transform .25s }
 .home-arrow:hover { transform:translateX(-4px) scale(1.06) }
 @keyframes haIn { from { opacity:0; transform:translateY(16px) } }
 
-/* ── hero ─────────────────────────────────────────────── */
-.hero-wrap { position:relative; height:100vh; overflow:hidden }
-.hero-base { position:absolute; inset:0; z-index:2; display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center; pointer-events:none }
+/* ── навигация + первый экран ──────────────────────────── */
+.site-nav { position:fixed; inset:0 0 auto; z-index:50; display:flex; align-items:center; justify-content:space-between; width:100%; padding:1.25rem clamp(1.25rem,3vw,3rem); color:var(--ink); background:linear-gradient(180deg,rgba(245,244,240,.97),rgba(245,244,240,.78) 72%,transparent); backdrop-filter:blur(10px) }
+.site-nav a { transition:opacity .2s ease,background .2s ease,color .2s ease }
+.site-nav a:hover { opacity:.58 }
+.site-nav-links { display:flex; align-items:center; gap:2rem; font-size:.67rem; letter-spacing:.18em; text-transform:uppercase }
+.site-nav-cta { padding:.65rem 1rem; border:1px solid var(--ink); border-radius:999px; font-size:.64rem; letter-spacing:.16em; text-transform:uppercase }
+.site-nav-cta:hover { opacity:1 !important; color:var(--paper); background:var(--ink) }
+
+.hero-wrap { position:relative; display:flex; align-items:center; min-height:100svh; padding:7.25rem clamp(1.25rem,5vw,5rem) 3.5rem; overflow:hidden; background:var(--bg) }
+.hero-wrap::before { content:''; position:absolute; width:clamp(24rem,48vw,50rem); aspect-ratio:1; right:-18rem; top:-21rem; border:1px solid rgba(21,21,21,.08); border-radius:50%; pointer-events:none }
+.hero-base { position:relative; z-index:1; display:grid; grid-template-columns:minmax(0,1.2fr) minmax(19rem,.8fr); align-items:center; gap:clamp(2rem,7vw,9rem); width:min(100%,84rem); margin:auto }
+.hero-copy { max-width:48rem }
 .hero-base a { pointer-events:auto }
-.hero-mask { position:absolute; inset:0; z-index:1; background:#EAE8E1; pointer-events:none; display:flex; align-items:center; justify-content:center;
-  mask-image:radial-gradient(circle at var(--mx,82%) var(--my,74%), transparent 0 225px, #000 227px);
-  -webkit-mask-image:radial-gradient(circle at var(--mx,82%) var(--my,74%), transparent 0 225px, #000 227px) }
+.hero-kicker { margin:0 0 1.6rem; color:var(--muted); font-family:'JetBrains Mono',ui-monospace,monospace; font-size:.68rem; letter-spacing:.16em; text-transform:uppercase }
+.hero-title { max-width:45rem; margin:0; font-family:'Space Grotesk',system-ui,sans-serif; font-size:clamp(3.2rem,6.3vw,6.9rem); font-weight:700; line-height:.88; letter-spacing:-.075em; text-wrap:balance }
+.hero-description { max-width:33rem; margin:2rem 0 0; color:var(--muted); font-size:clamp(1rem,1.35vw,1.17rem); line-height:1.62 }
+.hero-actions { display:flex; flex-wrap:wrap; gap:.75rem; margin-top:2.35rem }
+.hero-primary,.hero-secondary { display:inline-flex; align-items:center; justify-content:center; min-height:3.35rem; padding:0 1.45rem; border:1px solid var(--ink); border-radius:999px; font-size:.83rem; transition:transform .25s ease,background .25s ease,color .25s ease }
+.hero-primary { color:#fff; background:var(--ink) }
+.hero-primary:hover { transform:translateY(-2px); background:#30302f }
+.hero-secondary:hover { transform:translateY(-2px); color:#fff; background:var(--ink) }
+.hero-art { justify-self:end; width:min(31vw,29rem); min-width:19rem; animation:artIn 1.15s cubic-bezier(.16,1,.3,1) .12s both }
+.hero-art-frame { position:relative; display:grid; place-items:center; aspect-ratio:1; overflow:hidden; border:1px solid rgba(21,21,21,.16); border-radius:50%; background:radial-gradient(circle at 45% 35%,#fff 0,#eeece6 46%,#d9d6ce 100%); box-shadow:0 1.6rem 4rem rgba(29,28,25,.14),inset 0 1px rgba(255,255,255,.85) }
+.hero-art-frame::after { content:''; position:absolute; inset:1.1rem; border:1px solid rgba(21,21,21,.1); border-radius:50%; pointer-events:none }
+.hero-sculpture { position:relative; z-index:1; width:124%; max-width:none; height:124%; object-fit:contain; transform:translate(-1%,1%) scale(1.01); filter:contrast(1.08) saturate(.86) }
+.hero-art-label { margin:.85rem .15rem 0; color:var(--muted); font-family:'JetBrains Mono',ui-monospace,monospace; font-size:.62rem; letter-spacing:.14em; text-align:right; text-transform:uppercase }
+@keyframes artIn { from { opacity:0; transform:translate3d(1.5rem,1.5rem,0) scale(.94) } to { opacity:1; transform:none } }
 @media (max-width:768px) {
-  .hero-wrap { height:auto; min-height:820px; display:flex; align-items:flex-start }
-  .hero-mask { display:none }
-  .hero-base { position:relative; inset:auto; width:100%; min-height:820px; justify-content:flex-start; padding:7.5rem 1.25rem 14rem }
-  #hero-canvas { top:auto; bottom:-1rem; height:12rem !important; z-index:1 }
+  .site-nav { padding:1.05rem 1.25rem }
+  .site-nav-links { display:none }
+  .site-nav-cta { padding:.58rem .78rem; font-size:.58rem }
+  .hero-wrap { align-items:flex-start; min-height:100svh; padding:7.75rem 1.25rem 2rem }
+  .hero-wrap::before { width:28rem; right:-13rem; top:auto; bottom:-18rem }
+  .hero-base { display:flex; flex-direction:column; align-items:stretch; gap:2rem; width:100%; margin:0 }
+  .hero-title { max-width:24rem; font-size:clamp(3.25rem,13vw,4.9rem); line-height:.9 }
+  .hero-description { max-width:31rem; margin-top:1.45rem; font-size:1rem }
+  .hero-actions { flex-direction:column; align-items:stretch; margin-top:1.75rem }
+  .hero-primary,.hero-secondary { width:100% }
+  .hero-art { align-self:flex-end; width:min(74vw,23rem); min-width:0; margin-top:-.7rem }
+  .hero-art-frame::after { inset:.8rem }
+  .service-row { grid-template-columns:2.3rem minmax(0,1fr); gap:.6rem }
+  .service-row p { grid-column:2; margin:0 }
+  .work-card-link { font-size:0 }
   .featured-cases, #wgrid { display:flex !important; gap:1rem; overflow-x:auto; overscroll-behavior-x:contain; scroll-snap-type:x mandatory; scroll-padding-left:1.5rem; -webkit-overflow-scrolling:touch; margin-right:-1.5rem; padding:0 1.5rem 1.25rem 0 }
   .featured-cases .wcard, #wgrid .wcard { flex:0 0 min(82vw, 22rem); scroll-snap-align:start; scroll-snap-stop:always; margin-top:0 !important }
   #filters { flex-wrap:nowrap; overflow-x:auto; overscroll-behavior-x:contain; -webkit-overflow-scrolling:touch; margin-right:-1.5rem; padding-right:1.5rem }
@@ -93,20 +113,25 @@ body.admin-mode #cursor { display:none }
 .rv { opacity:0; transform:translateY(28px); transition:.8s cubic-bezier(.2,.6,.2,1) }
 .rv-in { opacity:1; transform:none }
 
-/* ── бегущая строка ───────────────────────────────────── */
-.marquee { overflow:hidden; white-space:nowrap }
-.marquee > div { display:inline-block; animation:mq 26s linear infinite }
-@keyframes mq { to { transform:translateX(-50%) } }
-
 /* ── скелетоны загрузки ───────────────────────────────── */
 .skel { background:linear-gradient(90deg,#eceae4 25%,#f5f4ef 50%,#eceae4 75%); background-size:200% 100%; animation:sk 1.1s infinite }
 @keyframes sk { to { background-position:-200% 0 } }
 
 /* ── карточка проекта ─────────────────────────────────── */
-.wcard img { transition:transform .8s cubic-bezier(.2,.6,.2,1) }
-.wcard:hover img { transform:scale(1.04) }
-.wcard .cta { opacity:0; transform:translateY(8px); transition:.35s }
-.wcard:hover .cta { opacity:1; transform:none }
+.wcard { display:block; padding-bottom:1.25rem; border-bottom:1px solid var(--line) }
+.work-image { position:relative; overflow:hidden; margin-bottom:1rem; background:#EAE8E1 }
+.work-image::after { content:''; position:absolute; inset:0; background:linear-gradient(135deg,transparent 55%,rgba(255,255,255,.24)); opacity:0; transition:opacity .35s ease; pointer-events:none }
+.wcard img { width:100%; height:100%; object-fit:cover; transition:transform .8s cubic-bezier(.2,.6,.2,1) }
+.wcard:hover img { transform:scale(1.025) }
+.wcard:hover .work-image::after { opacity:1 }
+.work-card-meta { display:grid; grid-template-columns:minmax(0,1fr) auto; align-items:end; gap:1rem }
+.work-card-index { margin:0 0 .5rem; color:#87847d; font-family:'JetBrains Mono',ui-monospace,monospace; font-size:.62rem; letter-spacing:.1em; text-transform:uppercase }
+.work-card-title { margin:0; font-family:'Space Grotesk',system-ui,sans-serif; font-size:clamp(1.55rem,2.4vw,2.3rem); font-weight:700; line-height:.98; letter-spacing:-.055em }
+.work-card-link { display:inline-flex; align-items:center; gap:.55rem; color:var(--ink); font-family:'JetBrains Mono',ui-monospace,monospace; font-size:.62rem; letter-spacing:.1em; white-space:nowrap; text-transform:uppercase }
+.work-card-link span { display:grid; width:1.55rem; height:1.55rem; place-items:center; border:1px solid var(--ink); border-radius:50%; font-size:1rem; transition:transform .25s ease,background .25s ease,color .25s ease }
+.wcard:hover .work-card-link span { color:#fff; background:var(--ink); transform:translate(2px,-2px) }
+.service-row { display:grid; grid-template-columns:3rem 8rem minmax(0,1fr); gap:.75rem; padding:1rem 0; border-bottom:1px solid var(--line) }
+@media (prefers-reduced-motion:reduce) { *,*::before,*::after { scroll-behavior:auto!important; animation-duration:.01ms!important; animation-iteration-count:1!important; transition-duration:.01ms!important } }
 
 /* ── кейс: сначала смысл и сценарий, затем экраны ─────── */
 .case-kicker { display:inline-flex; align-items:center; gap:.55rem; margin-bottom:1.25rem; color:var(--ink); font-family:'JetBrains Mono',monospace; font-size:.7rem; letter-spacing:.12em; text-transform:uppercase }
@@ -208,8 +233,6 @@ body.admin-mode #cursor { display:none }
 </head>
 <body class="antialiased selection:bg-black selection:text-white">
 
-<div id="cursor"></div>
-<div class="grain"></div>
 <div id="toasts"></div>
 <div id="modal-root"></div>
 <div id="app"></div>
@@ -498,15 +521,15 @@ function observeRv(){
    7. ОБЩИЕ КОМПОНЕНТЫ (навбар, футер, стрелка, карточка)
    ════════════════════════════════════════════════════════ */
 function navbarHTML(){ return `
-<nav class="fixed top-0 w-full z-50 px-6 py-5 flex justify-between items-center mix-blend-difference text-white">
-  <a href="#/" class="text-xl font-bold tracking-tighter">snezhin.design</a>
-  <div class="hidden md:flex gap-8 text-xs uppercase tracking-[0.2em] items-center">
-    <a href="#/works" class="hover:opacity-50">Концепты</a>
-    <a href="#/about" class="hover:opacity-50">Обо мне</a>
-    <a href="#/services" class="hover:opacity-50">Услуги</a>
-  </div>
-  <a href="#/contact" class="border border-white px-5 py-2 rounded-full text-[10px] uppercase tracking-[0.2em] hover:bg-white hover:text-black transition">Получить оценку</a>
-</nav>` }
+ <nav class="site-nav">
+   <a href="#/" class="text-xl font-bold tracking-tighter">snezhin.design</a>
+   <div class="site-nav-links">
+     <a href="#/works">Концепты</a>
+     <a href="#/about">Обо мне</a>
+     <a href="#/services">Услуги</a>
+   </div>
+   <a href="#/contact" class="site-nav-cta">Получить оценку</a>
+ </nav>` }
 
 function footerHTML(){ return `
 <footer class="bg-black text-white">
@@ -551,16 +574,15 @@ function homeArrowHTML(){ return `
 function workCardHTML(p, i, ratio = '4/5', offset = false){
   return `
 <a href="#/works/${esc(p.slug)}" class="wcard group block ${offset && i % 2 ? 'md:mt-24' : ''}">
-  <div class="overflow-hidden relative aspect-[${ratio}] bg-[#EAE8E1] mb-3">
-    <img src="${esc(p.cover_image)}" alt="${esc(projectTitle(p))}" loading="lazy" class="w-full h-full object-cover">
-    <span class="cta absolute bottom-4 right-4 bg-black text-white text-[10px] uppercase tracking-[0.2em] px-4 py-2 rounded-full">Открыть концепт →</span>
+  <div class="work-image aspect-[${ratio}]">
+    <img src="${esc(p.cover_image)}" alt="${esc(projectTitle(p))}" loading="lazy">
   </div>
-  <div class="flex justify-between items-start gap-4">
+  <div class="work-card-meta">
     <div>
-      <div class="mono text-[10px] text-gray-400 mb-1">0${i + 1} / ${CATS[p.category] || p.category}</div>
-      <h3 class="text-2xl font-bold">${esc(projectTitle(p))}</h3>
+      <p class="work-card-index">0${i + 1} / ${CATS[p.category] || p.category} / ${esc(p.year)}</p>
+      <h3 class="work-card-title">${esc(projectTitle(p))}</h3>
     </div>
-    <span class="mono text-xs text-gray-400">${esc(p.year)}</span>
+    <span class="work-card-link">Открыть <span aria-hidden="true">↗</span></span>
   </div>
 </a>` }
 
@@ -571,29 +593,29 @@ async function viewHome(){
   const featured = (await db.listPublic()).filter(p => p.featured).slice(0, 4);
   return navbarHTML() + `
   <div class="hero-wrap" id="hero-wrap">
-    <canvas id="hero-canvas" class="absolute inset-0 w-full h-full z-0 pointer-events-none"></canvas>
     <div class="hero-base">
-      <p class="hero-in text-xs md:text-sm uppercase tracking-[0.28em] mb-5 opacity-70">Веб-дизайн и разработка</p>
-      <h1 class="hero-in d2 text-[10vw] md:text-[6.2vw] font-bold leading-[0.95] tracking-tighter max-w-5xl px-4">САЙТЫ, КОТОРЫЕ ПОМОГАЮТ ПОНЯТНО РАССКАЗАТЬ О ПРОДУКТЕ.</h1>
-      <p class="hero-in d3 max-w-xl px-5 mt-6 text-base md:text-lg leading-relaxed text-black/70">Для брендов, экспертов и новых проектов — от структуры и визуальной идеи до готового сайта.</p>
-      <div class="hero-in d3 flex gap-4 mt-10 flex-wrap justify-center">
-        <a href="#/contact" class="px-8 py-4 bg-black text-white rounded-full text-sm hover:scale-105 transition">Получить оценку проекта</a>
-        <a href="#/works" class="px-8 py-4 border border-black rounded-full text-sm hover:bg-black hover:text-white transition">Смотреть концепты</a>
+      <div class="hero-copy">
+        <p class="hero-kicker hero-in">Веб-дизайн и разработка</p>
+        <h1 class="hero-title hero-in d2">Сайты, которые помогают понятно рассказать о продукте.</h1>
+        <p class="hero-description hero-in d3">Для брендов, экспертов и новых проектов — от структуры и визуальной идеи до готового сайта.</p>
+        <div class="hero-actions hero-in d3">
+          <a href="#/contact" class="hero-primary">Получить оценку проекта</a>
+          <a href="#/works" class="hero-secondary">Смотреть концепты</a>
+        </div>
+      </div>
+      <div class="hero-art" aria-hidden="true">
+        <div class="hero-art-frame"><img src="./assets/generated/hero-sculpture-v2.png" alt="" class="hero-sculpture" fetchpriority="high"></div>
+        <p class="hero-art-label">Visual direction / 01</p>
       </div>
     </div>
-    <div class="hero-mask"><div class="text-center opacity-40 pointer-events-none">
-      <h2 class="text-[14vw] font-bold leading-none tracking-tighter" style="-webkit-text-stroke:1px rgba(0,0,0,.18);color:transparent">ИССЛЕДУЙ</h2>
-    </div></div>
   </div>
   <section class="py-24 px-6 md:px-12 max-w-7xl mx-auto">
     <div class="grid md:grid-cols-[1fr_1.7fr] gap-10 md:gap-20 border-y border-[#E3E1DA] py-12 mb-24">
       <div><span class="mono text-[10px] uppercase tracking-[0.25em] text-gray-400">Что могу сделать</span></div>
       <div>
         <h2 class="text-3xl md:text-5xl font-bold tracking-tight mb-8">Помогаю превратить идею или сложный продукт в сайт с понятной логикой и сильным характером.</h2>
-        <div class="grid sm:grid-cols-3 gap-6 text-sm leading-relaxed text-gray-600">
-          <p><b class="block text-black mb-2">Запустить</b>Первый сайт, лендинг или страницу нового предложения.</p>
-          <p><b class="block text-black mb-2">Объяснить</b>Структурировать сложный продукт, услуги или ценность бренда.</p>
-          <p><b class="block text-black mb-2">Обновить</b>Собрать более цельный и современный цифровой образ.</p>
+        <div class="border-t border-[#E3E1DA] text-sm leading-relaxed text-gray-600">
+          ${[['01','Запустить','Первый сайт, лендинг или страницу нового предложения.'],['02','Объяснить','Структурировать сложный продукт, услуги или ценность бренда.'],['03','Обновить','Собрать более цельный и современный цифровой образ.']].map(([n,t,d]) => `<div class="service-row"><span class="mono text-[10px] text-gray-400">${n}</span><b class="text-black">${t}</b><p class="m-0">${d}</p></div>`).join('')}
         </div>
       </div>
     </div>
@@ -607,7 +629,6 @@ async function viewHome(){
       ${featured.map((p, i) => workCardHTML(p, i, '4/5', true)).join('') || '<p class="text-gray-400">Пока нет избранных концептов.</p>'}
     </div>
   </section>
-  <section class="py-16 border-y border-[#E3E1DA] marquee"><div class="text-6xl md:text-8xl font-bold text-[#E3E1DA]">${'СТРУКТУРА — UX — ВЕБ-ДИЗАЙН — РАЗРАБОТКА — '.repeat(3)}</div></section>
   <section class="py-28 px-6 bg-white"><div class="max-w-7xl mx-auto grid md:grid-cols-[.8fr_2fr] gap-10 md:gap-20">
     <div><span class="mono text-[10px] uppercase tracking-[0.25em] text-gray-400">Как строится работа</span></div>
     <div>
@@ -1256,121 +1277,6 @@ document.addEventListener('click', async e => {
 });
 
 /* ════════════════════════════════════════════════════════
-   10. ЭФФЕКТЫ: 3D-объект в hero + курсор
-   ════════════════════════════════════════════════════════ */
-let HERO3D = null;
-
-function initHero3D(){
-  const canvas = $('#hero-canvas');
-  if (!canvas || !window.THREE || matchMedia('(prefers-reduced-motion: reduce)').matches) return;
-  try {
-    const scene = new THREE.Scene();
-    const camera = new THREE.PerspectiveCamera(42, innerWidth / innerHeight, .1, 100);
-    camera.position.z = 6.25;
-    const renderer = new THREE.WebGLRenderer({ canvas, alpha:true, antialias:true, powerPreference:'high-performance' });
-    // Рендерим с запасом по плотности: на обычных экранах canvas не должен
-    // выглядеть как растянутая картинка, особенно внутри увеличивающей маски.
-    const renderPixelRatio = Math.min(Math.max(devicePixelRatio || 1, 2), 3);
-    renderer.setPixelRatio(renderPixelRatio);
-    renderer.outputEncoding = THREE.sRGBEncoding;
-    renderer.physicallyCorrectLights = true;
-    renderer.toneMapping = THREE.ACESFilmicToneMapping;
-    renderer.toneMappingExposure = 1.28;
-    renderer.setSize(canvas.clientWidth || innerWidth, canvas.clientHeight || innerHeight, false);
-
-    const object = new THREE.Group();
-    const knot = new THREE.Mesh(
-      new THREE.TorusKnotGeometry(1.14, .285, 420, 96, 2, 3),
-      new THREE.MeshPhysicalMaterial({ color:0x515151, roughness:.055, metalness:1, clearcoat:1, clearcoatRoughness:.02, reflectivity:1 })
-    );
-    object.add(knot);
-    object.position.set(2.75, -1.6, 0);
-    object.rotation.set(.38, -1.18, .1);
-    scene.add(object);
-
-    const hemisphere = new THREE.HemisphereLight(0xffffff, 0x404040, 2.15);
-    scene.add(hemisphere);
-    const key = new THREE.DirectionalLight(0xffffff, 5.8);
-    key.position.set(5, 6, 7);
-    scene.add(key);
-    const rim = new THREE.DirectionalLight(0xdfe8f2, 4.8);
-    rim.position.set(-6, 2, -4);
-    scene.add(rim);
-    const fill = new THREE.PointLight(0xffffff, 32, 16);
-    fill.position.set(-1, -1, 5);
-    scene.add(fill);
-    const sparkle = new THREE.PointLight(0xe8f4ff, 20, 12);
-    sparkle.position.set(2, 4, 2);
-    scene.add(sparkle);
-
-    let mx = 0, my = 0;
-    let baseScale = 1;
-    const onMove = e => { mx = e.clientX / innerWidth * 2 - 1; my = -(e.clientY / innerHeight * 2 - 1); };
-    addEventListener('mousemove', onMove);
-    const onResize = () => {
-      const width = canvas.clientWidth || innerWidth;
-      const height = canvas.clientHeight || innerHeight;
-      const isMobile = innerWidth < 768;
-      camera.aspect = width / height;
-      camera.updateProjectionMatrix();
-      camera.position.z = isMobile ? 5.2 : 6.25;
-      renderer.setSize(width, height, false);
-      object.position.set(isMobile ? 0 : 2.75, isMobile ? 0 : -1.6, 0);
-      baseScale = isMobile ? 1.02 : .63;
-      object.scale.setScalar(baseScale);
-    };
-    addEventListener('resize', onResize);
-    onResize();
-
-    let raf;
-    const startedAt = performance.now();
-    const loop = () => {
-      raf = requestAnimationFrame(loop);
-      const time = (performance.now() - startedAt) / 1000;
-      const reveal = Math.min(time / 1.15, 1);
-      const ease = 1 - Math.pow(1 - reveal, 4);
-      object.scale.setScalar(baseScale * (.9 + .1 * ease));
-      object.rotation.x = .4 - .16 * ease + Math.sin(time * .78) * .052 + my * .08;
-      object.rotation.y = -1.18 + .7 * ease + Math.sin(time * .62) * .12 + mx * .12;
-      object.rotation.z = .1 + Math.cos(time * .72) * .045 - mx * .035;
-      renderer.render(scene, camera);
-    };
-    loop();
-    HERO3D = { raf, renderer, onMove, onResize, knot };
-  } catch (e) { /* webgl недоступен — не критично */ }
-}
-
-function destroyHero3D(){
-  if (!HERO3D) return;
-  cancelAnimationFrame(HERO3D.raf);
-  removeEventListener('mousemove', HERO3D.onMove);
-  removeEventListener('resize', HERO3D.onResize);
-  try { HERO3D.knot.geometry.dispose(); HERO3D.knot.material.dispose(); HERO3D.renderer.dispose() } catch (e) {}
-  HERO3D = null;
-}
-
-/* Курсор + маска-«фонарик» в hero */
-const cursorEl = $('#cursor');
-let targetX = innerWidth / 2, targetY = innerHeight / 2, curX = targetX, curY = targetY;
-
-addEventListener('pointermove', e => {
-  targetX = e.clientX; targetY = e.clientY;
-  const hero = $('#hero-wrap');
-  if (hero) {
-    const r = hero.getBoundingClientRect();
-    hero.style.setProperty('--mx', ((e.clientX - r.left) / r.width * 100) + '%');
-    hero.style.setProperty('--my', ((e.clientY - r.top) / r.height * 100) + '%');
-  }
-});
-(function cursorLoop(){
-  curX += (targetX - curX) * .18;
-  curY += (targetY - curY) * .18;
-  cursorEl.style.transform = `translate(${curX}px, ${curY}px) translate(-50%, -50%)`;
-  requestAnimationFrame(cursorLoop);
-})();
-document.addEventListener('mouseover', e => cursorEl.classList.toggle('big', !!e.target.closest('a,button')));
-
-/* ════════════════════════════════════════════════════════
    11. РОУТЕР И ИНИЦИАЛИЗАЦИЯ
    ════════════════════════════════════════════════════════ */
 let pendingAdminRoute = null;
@@ -1378,7 +1284,6 @@ const nav = h => location.hash = h;
 window.addEventListener('hashchange', () => route());
 
 async function route(){
-  destroyHero3D();
   document.body.classList.remove('admin-mode');
   try {
     const seg = location.hash.replace(/^#\/?/, '').split('/').filter(Boolean);
@@ -1411,7 +1316,6 @@ async function renderPublic(seg){
 
   if (a === 'works' && !b) bindWorks();
   if (a === 'contact') bindContact();
-  if (!a) initHero3D();
   observeRv();
 }
 

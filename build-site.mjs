@@ -8,11 +8,13 @@ const server = resolve(dist, 'server');
 
 await rm(dist, { recursive: true, force: true });
 await mkdir(resolve(client, 'assets', 'cases'), { recursive: true });
+await mkdir(resolve(client, 'assets', 'generated'), { recursive: true });
 await mkdir(server, { recursive: true });
 
 await cp(resolve(root, 'index.html'), resolve(client, 'index.html'));
 await cp(resolve(root, 'config.js'), resolve(client, 'config.js'));
 await cp(resolve(root, 'assets', 'cases'), resolve(client, 'assets', 'cases'), { recursive: true });
+await cp(resolve(root, 'assets', 'generated'), resolve(client, 'assets', 'generated'), { recursive: true });
 await cp(resolve(root, 'public'), resolve(client, 'public'), { recursive: true });
 
 const worker = `
