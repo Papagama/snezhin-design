@@ -63,40 +63,41 @@ img { display:block; max-width:100% }
 .site-nav-cta { padding:.65rem 1rem; border:1px solid var(--ink); border-radius:999px; font-size:.64rem; letter-spacing:.16em; text-transform:uppercase }
 .site-nav-cta:hover { opacity:1 !important; color:var(--paper); background:var(--ink) }
 
-.hero-wrap { position:relative; display:flex; align-items:center; min-height:100svh; padding:7.25rem clamp(1.25rem,5vw,5rem) 3.5rem; overflow:hidden; background:var(--bg) }
-.hero-wrap::before { content:''; position:absolute; width:clamp(24rem,48vw,50rem); aspect-ratio:1; right:-18rem; top:-21rem; border:1px solid rgba(21,21,21,.08); border-radius:50%; pointer-events:none }
-.hero-base { position:relative; z-index:1; display:grid; grid-template-columns:minmax(0,1.2fr) minmax(19rem,.8fr); align-items:center; gap:clamp(2rem,7vw,9rem); width:min(100%,84rem); margin:auto }
+.hero-wrap { position:relative; display:flex; align-items:center; min-height:100svh; padding:6.5rem clamp(1.25rem,5vw,5rem) 3.5rem; overflow:hidden; background:var(--bg) }
+.hero-base { position:relative; z-index:1; display:grid; grid-template-columns:minmax(0,1.05fr) minmax(21rem,.95fr); align-items:center; gap:clamp(2rem,6vw,7rem); width:min(100%,84rem); margin:auto }
 .hero-copy { max-width:48rem }
 .hero-base a { pointer-events:auto }
 .hero-kicker { margin:0 0 1.6rem; color:var(--muted); font-family:'JetBrains Mono',ui-monospace,monospace; font-size:.68rem; letter-spacing:.16em; text-transform:uppercase }
-.hero-title { max-width:45rem; margin:0; font-family:'Space Grotesk',system-ui,sans-serif; font-size:clamp(3.2rem,6.3vw,6.9rem); font-weight:700; line-height:.88; letter-spacing:-.075em; text-wrap:balance }
-.hero-description { max-width:33rem; margin:2rem 0 0; color:var(--muted); font-size:clamp(1rem,1.35vw,1.17rem); line-height:1.62 }
+.hero-title { max-width:39rem; margin:0; font-family:'Space Grotesk',system-ui,sans-serif; font-size:clamp(3rem,5.4vw,5.9rem); font-weight:700; line-height:.94; letter-spacing:-.065em; text-wrap:balance }
+.hero-description { max-width:31rem; margin:1.65rem 0 0; color:var(--muted); font-size:clamp(1rem,1.35vw,1.17rem); line-height:1.62 }
 .hero-actions { display:flex; flex-wrap:wrap; gap:.75rem; margin-top:2.35rem }
 .hero-primary,.hero-secondary { display:inline-flex; align-items:center; justify-content:center; min-height:3.35rem; padding:0 1.45rem; border:1px solid var(--ink); border-radius:999px; font-size:.83rem; transition:transform .25s ease,background .25s ease,color .25s ease }
 .hero-primary { color:#fff; background:var(--ink) }
 .hero-primary:hover { transform:translateY(-2px); background:#30302f }
 .hero-secondary:hover { transform:translateY(-2px); color:#fff; background:var(--ink) }
-.hero-art { justify-self:end; width:min(31vw,29rem); min-width:19rem; animation:artIn 1.15s cubic-bezier(.16,1,.3,1) .12s both }
-.hero-art-frame { position:relative; display:grid; place-items:center; aspect-ratio:1; overflow:hidden; border:1px solid rgba(21,21,21,.16); border-radius:50%; background:radial-gradient(circle at 45% 35%,#fff 0,#eeece6 46%,#d9d6ce 100%); box-shadow:0 1.6rem 4rem rgba(29,28,25,.14),inset 0 1px rgba(255,255,255,.85) }
-.hero-art-frame::after { content:''; position:absolute; inset:1.1rem; border:1px solid rgba(21,21,21,.1); border-radius:50%; pointer-events:none }
-.hero-sculpture { position:relative; z-index:1; width:124%; max-width:none; height:124%; object-fit:contain; transform:translate(-1%,1%) scale(1.01); filter:contrast(1.08) saturate(.86) }
-.hero-art-label { margin:.85rem .15rem 0; color:var(--muted); font-family:'JetBrains Mono',ui-monospace,monospace; font-size:.62rem; letter-spacing:.14em; text-align:right; text-transform:uppercase }
+.hero-art { justify-self:end; width:min(34vw,32rem); min-width:21rem; animation:artIn .85s cubic-bezier(.16,1,.3,1) .12s both }
+.hero-art-frame { position:relative; display:grid; place-items:center; aspect-ratio:1; overflow:hidden; border-radius:50%; background:#d4d1ca; box-shadow:0 1.7rem 4.5rem rgba(69,66,58,.16) }
+.hero-sculpture { width:100%; height:100%; object-fit:cover; object-position:center 36%; transform:scale(1.02); filter:contrast(1.02) saturate(.94) }
 @keyframes artIn { from { opacity:0; transform:translate3d(1.5rem,1.5rem,0) scale(.94) } to { opacity:1; transform:none } }
 @media (max-width:768px) {
   .site-nav { padding:1.05rem 1.25rem }
   .site-nav-links { display:none }
   .site-nav-cta { padding:.58rem .78rem; font-size:.58rem }
-  .hero-wrap { align-items:flex-start; min-height:100svh; padding:7.75rem 1.25rem 2rem }
-  .hero-wrap::before { width:28rem; right:-13rem; top:auto; bottom:-18rem }
+  .hero-wrap { align-items:flex-start; min-height:100svh; padding:7rem 1.25rem 2rem }
   .hero-base { display:flex; flex-direction:column; align-items:stretch; gap:2rem; width:100%; margin:0 }
-  .hero-title { max-width:24rem; font-size:clamp(3.25rem,13vw,4.9rem); line-height:.9 }
+  .hero-title { max-width:24rem; font-size:clamp(2.6rem,10.5vw,3.8rem); line-height:.94 }
   .hero-description { max-width:31rem; margin-top:1.45rem; font-size:1rem }
   .hero-actions { flex-direction:column; align-items:stretch; margin-top:1.75rem }
   .hero-primary,.hero-secondary { width:100% }
-  .hero-art { align-self:flex-end; width:min(74vw,23rem); min-width:0; margin-top:-.7rem }
-  .hero-art-frame::after { inset:.8rem }
-  .service-row { grid-template-columns:2.3rem minmax(0,1fr); gap:.6rem }
-  .service-row p { grid-column:2; margin:0 }
+  .hero-art { align-self:flex-end; width:min(74vw,23rem); min-width:0; margin-top:-.2rem }
+  .home-showcase { padding:4.5rem 1.25rem }
+  .home-showcase-head { grid-template-columns:1fr; gap:1.35rem; margin-bottom:2.5rem }
+  .home-showcase-title { max-width:20rem; font-size:clamp(3rem,14vw,4.3rem) }
+  .home-services { padding:5rem 1.25rem }
+  .home-services-inner { grid-template-columns:1fr; gap:1.5rem }
+  .home-services-title { margin-bottom:2rem }
+  .service-row { grid-template-columns:1fr; gap:.35rem }
+  .service-row p { grid-column:auto; margin:0 }
   .work-card-link { font-size:0 }
   .featured-cases, #wgrid { display:flex !important; gap:1rem; overflow-x:auto; overscroll-behavior-x:contain; scroll-snap-type:x mandatory; scroll-padding-left:1.5rem; -webkit-overflow-scrolling:touch; margin-right:-1.5rem; padding:0 1.5rem 1.25rem 0 }
   .featured-cases .wcard, #wgrid .wcard { flex:0 0 min(82vw, 22rem); scroll-snap-align:start; scroll-snap-stop:always; margin-top:0 !important }
@@ -118,7 +119,7 @@ img { display:block; max-width:100% }
 @keyframes sk { to { background-position:-200% 0 } }
 
 /* ── карточка проекта ─────────────────────────────────── */
-.wcard { display:block; padding-bottom:1.25rem; border-bottom:1px solid var(--line) }
+.wcard { display:block; padding-bottom:1.25rem }
 .work-image { position:relative; overflow:hidden; margin-bottom:1rem; background:#EAE8E1 }
 .work-image::after { content:''; position:absolute; inset:0; background:linear-gradient(135deg,transparent 55%,rgba(255,255,255,.24)); opacity:0; transition:opacity .35s ease; pointer-events:none }
 .wcard img { width:100%; height:100%; object-fit:cover; transition:transform .8s cubic-bezier(.2,.6,.2,1) }
@@ -128,9 +129,21 @@ img { display:block; max-width:100% }
 .work-card-index { margin:0 0 .5rem; color:#87847d; font-family:'JetBrains Mono',ui-monospace,monospace; font-size:.62rem; letter-spacing:.1em; text-transform:uppercase }
 .work-card-title { margin:0; font-family:'Space Grotesk',system-ui,sans-serif; font-size:clamp(1.55rem,2.4vw,2.3rem); font-weight:700; line-height:.98; letter-spacing:-.055em }
 .work-card-link { display:inline-flex; align-items:center; gap:.55rem; color:var(--ink); font-family:'JetBrains Mono',ui-monospace,monospace; font-size:.62rem; letter-spacing:.1em; white-space:nowrap; text-transform:uppercase }
-.work-card-link span { display:grid; width:1.55rem; height:1.55rem; place-items:center; border:1px solid var(--ink); border-radius:50%; font-size:1rem; transition:transform .25s ease,background .25s ease,color .25s ease }
-.wcard:hover .work-card-link span { color:#fff; background:var(--ink); transform:translate(2px,-2px) }
-.service-row { display:grid; grid-template-columns:3rem 8rem minmax(0,1fr); gap:.75rem; padding:1rem 0; border-bottom:1px solid var(--line) }
+.work-card-link span { display:inline-block; font-size:1.15rem; line-height:1; transition:transform .25s ease }
+.wcard:hover .work-card-link span { transform:translate(2px,-2px) }
+.home-showcase { padding:clamp(4.5rem,9vw,8rem) 1.5rem; background:#EBE9E3 }
+.home-showcase-inner { width:min(100%,84rem); margin:auto }
+.home-showcase-head { display:grid; grid-template-columns:minmax(0,1.1fr) minmax(16rem,.9fr); align-items:end; gap:2rem; margin-bottom:3.5rem }
+.home-showcase-title { margin:0; font-family:'Space Grotesk',system-ui,sans-serif; font-size:clamp(3rem,6vw,6.25rem); font-weight:700; line-height:.88; letter-spacing:-.07em; text-wrap:balance }
+.home-showcase-copy { max-width:29rem; margin:0; color:var(--muted); font-size:1rem; line-height:1.65 }
+.home-showcase-link { display:inline-flex; align-items:center; gap:.5rem; margin-top:1.25rem; color:var(--ink); font-size:.9rem }
+.home-showcase-link span { font-size:1.15rem; transition:transform .25s ease }
+.home-showcase-link:hover span { transform:translate(2px,-2px) }
+.home-services { padding:clamp(5rem,10vw,9rem) 1.5rem; background:var(--bg) }
+.home-services-inner { display:grid; grid-template-columns:minmax(0,1fr) minmax(22rem,1.25fr); gap:clamp(2rem,8vw,9rem); width:min(100%,84rem); margin:auto }
+.home-services-title { max-width:42rem; margin:0 0 2.5rem; font-family:'Space Grotesk',system-ui,sans-serif; font-size:clamp(2.15rem,4vw,4.2rem); font-weight:700; line-height:1; letter-spacing:-.06em; text-wrap:balance }
+.service-row { display:grid; grid-template-columns:8rem minmax(0,1fr); gap:1rem; padding:0 0 1.2rem; margin:0 0 1.2rem }
+.service-row:last-child { padding-bottom:0; margin-bottom:0 }
 @media (prefers-reduced-motion:reduce) { *,*::before,*::after { scroll-behavior:auto!important; animation-duration:.01ms!important; animation-iteration-count:1!important; transition-duration:.01ms!important } }
 
 /* ── кейс: сначала смысл и сценарий, затем экраны ─────── */
@@ -596,37 +609,42 @@ async function viewHome(){
     <div class="hero-base">
       <div class="hero-copy">
         <p class="hero-kicker hero-in">Веб-дизайн и разработка</p>
-        <h1 class="hero-title hero-in d2">Сайты, которые помогают понятно рассказать о продукте.</h1>
-        <p class="hero-description hero-in d3">Для брендов, экспертов и новых проектов — от структуры и визуальной идеи до готового сайта.</p>
+        <h1 class="hero-title hero-in d2">Делаю<br>понятные сайты.</h1>
+        <p class="hero-description hero-in d3">Структура, дизайн и разработка для брендов, экспертов и новых проектов.</p>
         <div class="hero-actions hero-in d3">
           <a href="#/contact" class="hero-primary">Получить оценку проекта</a>
           <a href="#/works" class="hero-secondary">Смотреть концепты</a>
         </div>
       </div>
       <div class="hero-art" aria-hidden="true">
-        <div class="hero-art-frame"><img src="./assets/generated/hero-sculpture-v2.png" alt="" class="hero-sculpture" fetchpriority="high"></div>
-        <p class="hero-art-label">Visual direction / 01</p>
+        <div class="hero-art-frame"><img src="./assets/generated/hero-portrait-sculpture-v1.png" alt="" class="hero-sculpture" fetchpriority="high"></div>
       </div>
     </div>
   </div>
-  <section class="py-24 px-6 md:px-12 max-w-7xl mx-auto">
-    <div class="grid md:grid-cols-[1fr_1.7fr] gap-10 md:gap-20 border-y border-[#E3E1DA] py-12 mb-24">
-      <div><span class="mono text-[10px] uppercase tracking-[0.25em] text-gray-400">Что могу сделать</span></div>
-      <div>
-        <h2 class="text-3xl md:text-5xl font-bold tracking-tight mb-8">Помогаю превратить идею или сложный продукт в сайт с понятной логикой и сильным характером.</h2>
-        <div class="border-t border-[#E3E1DA] text-sm leading-relaxed text-gray-600">
-          ${[['01','Запустить','Первый сайт, лендинг или страницу нового предложения.'],['02','Объяснить','Структурировать сложный продукт, услуги или ценность бренда.'],['03','Обновить','Собрать более цельный и современный цифровой образ.']].map(([n,t,d]) => `<div class="service-row"><span class="mono text-[10px] text-gray-400">${n}</span><b class="text-black">${t}</b><p class="m-0">${d}</p></div>`).join('')}
+  <section class="home-showcase">
+    <div class="home-showcase-inner">
+      <div class="home-showcase-head">
+        <h2 class="home-showcase-title rv">Избранные<br>концепты</h2>
+        <div>
+          <p class="home-showcase-copy">Авторские работы показывают, как я ищу идею, выстраиваю путь пользователя и собираю визуальный язык без выдуманных результатов.</p>
+          <a href="#/works" class="home-showcase-link">Смотреть все концепты <span aria-hidden="true">↗</span></a>
         </div>
       </div>
+      <p class="swipe-hint mono text-[10px] uppercase tracking-[0.2em] text-gray-400 mb-5" aria-hidden="true">Листайте концепты →</p>
+      <div class="featured-cases grid grid-cols-1 md:grid-cols-2 gap-12 md:gap-24">
+        ${featured.map((p, i) => workCardHTML(p, i, '4/5', true)).join('') || '<p class="text-gray-400">Пока нет избранных концептов.</p>'}
+      </div>
     </div>
-    <div class="flex justify-between items-end mb-16">
-      <div><span class="mono text-[10px] uppercase tracking-[0.25em] text-gray-400 block mb-4">Подход в работе</span><h2 class="rv text-4xl md:text-6xl font-bold tracking-tight">ИЗБРАННЫЕ<br>КОНЦЕПТЫ</h2></div>
-      <a href="#/works" class="rv hidden md:block border-b border-black pb-1 text-sm">Все концепты →</a>
-    </div>
-    <p class="max-w-2xl text-gray-500 leading-relaxed mb-12">Это авторские концепты. Они показывают, как я исследую тему, выстраиваю пользовательский путь и собираю визуальный язык — без выдуманных результатов и клиентских логотипов.</p>
-    <p class="swipe-hint mono text-[10px] uppercase tracking-[0.2em] text-gray-400 mb-5" aria-hidden="true">Листайте концепты →</p>
-    <div class="featured-cases grid grid-cols-1 md:grid-cols-2 gap-12 md:gap-24">
-      ${featured.map((p, i) => workCardHTML(p, i, '4/5', true)).join('') || '<p class="text-gray-400">Пока нет избранных концептов.</p>'}
+  </section>
+  <section class="home-services">
+    <div class="home-services-inner">
+      <p class="mono text-[10px] uppercase tracking-[0.25em] text-gray-400 m-0">Что могу сделать</p>
+      <div>
+        <h2 class="home-services-title">Помогаю превратить идею или сложный продукт в сайт с понятной логикой и сильным характером.</h2>
+        <div class="text-sm leading-relaxed text-gray-600">
+          ${[['Запустить','Первый сайт, лендинг или страницу нового предложения.'],['Объяснить','Структурировать сложный продукт, услуги или ценность бренда.'],['Обновить','Собрать более цельный и современный цифровой образ.']].map(([t,d]) => `<div class="service-row"><b class="text-black">${t}</b><p class="m-0">${d}</p></div>`).join('')}
+        </div>
+      </div>
     </div>
   </section>
   <section class="py-28 px-6 bg-white"><div class="max-w-7xl mx-auto grid md:grid-cols-[.8fr_2fr] gap-10 md:gap-20">
