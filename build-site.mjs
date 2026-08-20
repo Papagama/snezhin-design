@@ -13,6 +13,9 @@ await mkdir(server, { recursive: true });
 
 await cp(resolve(root, 'index.html'), resolve(client, 'index.html'));
 await cp(resolve(root, 'config.js'), resolve(client, 'config.js'));
+for (const filename of ['portfolio.html', 'services.html', 'about.html', 'contact.html', 'seo.css', 'robots.txt', 'sitemap.xml']) {
+  await cp(resolve(root, filename), resolve(client, filename));
+}
 await cp(resolve(root, 'assets', 'cases'), resolve(client, 'assets', 'cases'), { recursive: true });
 await cp(resolve(root, 'assets', 'generated'), resolve(client, 'assets', 'generated'), { recursive: true });
 await cp(resolve(root, 'public'), resolve(client, 'public'), { recursive: true });
