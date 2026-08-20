@@ -2,4 +2,4 @@ User-agent: *
 Allow: /
 Disallow: /admin
 
-Sitemap: https://papagama.github.io/snezhin-design/sitemap.xml
+Sitemap: https://design.kirill-verstak.ru/sitemap.xml
