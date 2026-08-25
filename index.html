@@ -12,7 +12,7 @@
   ═══════════════════════════════════════════════════════════
 -->
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>Веб-дизайнер Кирилл Снежин | Дизайн и разработка сайтов</title>
 <meta name="description" content="Кирилл Снежин — веб-дизайнер. Проектирую и разрабатываю понятные сайты для брендов, экспертов и новых продуктов.">
 <meta name="author" content="Кирилл Снежин">
@@ -75,15 +75,17 @@
 /* ── база ─────────────────────────────────────────────── */
 :root { --bg:#F5F4F0; --ink:#151515; --muted:#6C6A65; --line:#DEDCD4; --paper:#FBFAF7 }
 * { box-sizing:border-box }
+html { scroll-behavior:smooth }
 body { background:var(--bg); color:var(--ink); font-family:'Manrope',system-ui,sans-serif; margin:0; overflow-x:hidden }
 h1,h2,h3,h4,.disp { font-family:'Space Grotesk',system-ui,sans-serif }
 .mono { font-family:'JetBrains Mono',ui-monospace,monospace }
 a { color:inherit; text-decoration:none }
 button { font-family:inherit; cursor:pointer }
 img { display:block; max-width:100% }
+a:focus-visible,button:focus-visible,summary:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible { outline:2px solid var(--ink); outline-offset:4px }
 
 /* ── стрелка «на главную» ─────────────────────────────── */
-.home-arrow { position:fixed; left:1.25rem; bottom:1.25rem; z-index:60; width:52px; height:52px; border:1px solid #fff; border-radius:50%; display:flex; align-items:center; justify-content:center; color:#fff; mix-blend-mode:difference; animation:haIn .5s cubic-bezier(.2,.7,.2,1) both; transition:transform .25s }
+.home-arrow { position:fixed; left:max(1.25rem,env(safe-area-inset-left)); bottom:max(1.25rem,env(safe-area-inset-bottom)); z-index:60; width:52px; height:52px; border:1px solid #fff; border-radius:50%; display:flex; align-items:center; justify-content:center; color:#fff; mix-blend-mode:difference; animation:haIn .5s cubic-bezier(.2,.7,.2,1) both; transition:transform .25s }
 .home-arrow:hover { transform:translateX(-4px) scale(1.06) }
 @keyframes haIn { from { opacity:0; transform:translateY(16px) } }
 
@@ -94,6 +96,7 @@ img { display:block; max-width:100% }
 .site-nav-links { display:flex; align-items:center; gap:2rem; font-size:.67rem; letter-spacing:.18em; text-transform:uppercase }
 .site-nav-cta { padding:.65rem 1rem; border:1px solid var(--ink); border-radius:999px; font-size:.64rem; letter-spacing:.16em; text-transform:uppercase }
 .site-nav-cta:hover { opacity:1 !important; color:var(--paper); background:var(--ink) }
+.site-nav-menu,.site-nav-cta-short { display:none }
 
 .hero-wrap { position:relative; display:flex; align-items:center; min-height:100svh; padding:6.5rem clamp(1.25rem,5vw,5rem) 3.5rem; overflow:hidden; background:var(--bg) }
 .hero-base { position:relative; z-index:1; display:grid; grid-template-columns:minmax(0,1.05fr) minmax(21rem,.95fr); align-items:center; gap:clamp(2rem,6vw,7rem); width:min(100%,84rem); margin:auto }
@@ -112,9 +115,18 @@ img { display:block; max-width:100% }
 .hero-sculpture { width:100%; height:100%; object-fit:cover; object-position:center 36%; transform:scale(1.02); filter:contrast(1.02) saturate(.94) }
 @keyframes artIn { from { opacity:0; transform:translate3d(1.5rem,1.5rem,0) scale(.94) } to { opacity:1; transform:none } }
 @media (max-width:768px) {
-  .site-nav { padding:1.05rem 1.25rem }
+  .site-nav { gap:.5rem; padding:max(1rem,env(safe-area-inset-top)) max(1rem,env(safe-area-inset-right)) 1rem max(1rem,env(safe-area-inset-left)) }
   .site-nav-links { display:none }
-  .site-nav-cta { padding:.58rem .78rem; font-size:.58rem }
+  .site-nav-menu { position:relative; display:block }
+  .site-nav-menu summary { display:flex; align-items:center; justify-content:center; min-width:44px; min-height:44px; padding:0 .8rem; border:1px solid var(--ink); border-radius:999px; color:var(--ink); font-size:.62rem; font-weight:700; letter-spacing:.12em; list-style:none; text-transform:uppercase; cursor:pointer }
+  .site-nav-menu summary::-webkit-details-marker { display:none }
+  .site-nav-menu nav { position:absolute; top:calc(100% + .5rem); right:0; display:grid; width:min(78vw,18rem); overflow:hidden; border:1px solid var(--ink); background:var(--paper); box-shadow:0 1rem 2.5rem rgba(21,21,21,.14) }
+  .site-nav-menu nav a { display:flex; align-items:center; min-height:50px; padding:0 1rem; border-bottom:1px solid var(--line); font-size:.72rem; font-weight:700; letter-spacing:.12em; text-transform:uppercase }
+  .site-nav-menu nav a:last-child { border-bottom:0 }
+  .site-nav-menu nav a:active { color:var(--paper); background:var(--ink) }
+  .site-nav-cta { display:inline-flex; align-items:center; min-height:44px; padding:.58rem .78rem; font-size:.58rem; white-space:nowrap }
+  .site-nav-cta-long { display:none }
+  .site-nav-cta-short { display:inline }
   .hero-wrap { align-items:flex-start; min-height:100svh; padding:7rem 1.25rem 2rem }
   .hero-base { display:flex; flex-direction:column; align-items:stretch; gap:2rem; width:100%; margin:0 }
   .hero-title { max-width:24rem; font-size:clamp(2.6rem,10.5vw,3.8rem); line-height:.94 }
@@ -137,6 +149,8 @@ img { display:block; max-width:100% }
   .fbtn { flex:0 0 auto; min-height:44px }
   .swipe-hint { display:block }
 }
+@media (max-width:380px) { .site-nav { padding-inline:max(.75rem,env(safe-area-inset-left)) } .site-nav > a:first-child { font-size:.94rem } .site-nav-menu summary { padding-inline:.62rem } .site-nav-cta { padding-inline:.62rem; letter-spacing:.11em } }
+@media (hover:none) { .home-arrow:hover,.hero-primary:hover,.hero-secondary:hover { transform:none }.wcard:hover img { transform:none }.wcard:hover .work-image::after { opacity:0 } }
 @media (min-width:769px) { .swipe-hint { display:none } }
 .hero-in { animation:heroIn 1s cubic-bezier(.2,.7,.2,1) both }
 .hero-in.d2 { animation-delay:.15s } .hero-in.d3 { animation-delay:.3s }
@@ -573,7 +587,8 @@ function navbarHTML(){ return `
      <a href="#/about">Обо мне</a>
      <a href="#/services">Услуги</a>
    </div>
-   <a href="#/contact" class="site-nav-cta">Получить оценку</a>
+   <details class="site-nav-menu"><summary>Меню</summary><nav aria-label="Мобильная навигация"><a href="#/works">Концепты</a><a href="#/about">Обо мне</a><a href="#/services">Услуги</a><a href="#/contact">Обсудить проект</a></nav></details>
+   <a href="#/contact" class="site-nav-cta"><span class="site-nav-cta-long">Получить оценку</span><span class="site-nav-cta-short">Написать</span></a>
  </nav>` }
 
 function footerHTML(){ return `
