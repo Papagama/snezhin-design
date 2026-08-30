@@ -96,7 +96,8 @@ a:focus-visible,button:focus-visible,summary:focus-visible,input:focus-visible,s
 .site-nav-links { display:flex; align-items:center; gap:2rem; font-size:.67rem; letter-spacing:.18em; text-transform:uppercase }
 .site-nav-cta { padding:.65rem 1rem; border:1px solid var(--ink); border-radius:999px; font-size:.64rem; letter-spacing:.16em; text-transform:uppercase }
 .site-nav-cta:hover { opacity:1 !important; color:var(--paper); background:var(--ink) }
-.site-nav-menu,.site-nav-cta-short { display:none }
+.site-nav-mobile,.site-nav-cta-short { display:none }
+.visually-hidden { position:absolute; width:1px; height:1px; padding:0; margin:-1px; overflow:hidden; clip:rect(0,0,0,0); white-space:nowrap; border:0 }
 
 .hero-wrap { position:relative; display:flex; align-items:center; min-height:100svh; padding:6.5rem clamp(1.25rem,5vw,5rem) 3.5rem; overflow:hidden; background:var(--bg) }
 .hero-base { position:relative; z-index:1; display:grid; grid-template-columns:minmax(0,1.05fr) minmax(21rem,.95fr); align-items:center; gap:clamp(2rem,6vw,7rem); width:min(100%,84rem); margin:auto }
@@ -117,16 +118,27 @@ a:focus-visible,button:focus-visible,summary:focus-visible,input:focus-visible,s
 @media (max-width:768px) {
   .site-nav { gap:.5rem; padding:max(1rem,env(safe-area-inset-top)) max(1rem,env(safe-area-inset-right)) 1rem max(1rem,env(safe-area-inset-left)) }
   .site-nav-links { display:none }
-  .site-nav-menu { position:relative; display:block }
-  .site-nav-menu summary { display:flex; align-items:center; justify-content:center; min-width:44px; min-height:44px; padding:0 .8rem; border:1px solid var(--ink); border-radius:999px; color:var(--ink); font-size:.62rem; font-weight:700; letter-spacing:.12em; list-style:none; text-transform:uppercase; cursor:pointer }
-  .site-nav-menu summary::-webkit-details-marker { display:none }
-  .site-nav-menu nav { position:absolute; top:calc(100% + .5rem); right:0; display:grid; width:min(78vw,18rem); overflow:hidden; border:1px solid var(--ink); background:var(--paper); box-shadow:0 1rem 2.5rem rgba(21,21,21,.14) }
-  .site-nav-menu nav a { display:flex; align-items:center; min-height:50px; padding:0 1rem; border-bottom:1px solid var(--line); font-size:.72rem; font-weight:700; letter-spacing:.12em; text-transform:uppercase }
-  .site-nav-menu nav a:last-child { border-bottom:0 }
-  .site-nav-menu nav a:active { color:var(--paper); background:var(--ink) }
-  .site-nav-cta { display:inline-flex; align-items:center; min-height:44px; padding:.58rem .78rem; font-size:.58rem; white-space:nowrap }
-  .site-nav-cta-long { display:none }
-  .site-nav-cta-short { display:inline }
+  .site-nav-mobile { position:relative; display:block; margin-left:auto }
+  .site-nav-toggle { position:relative; display:grid; width:48px; height:48px; padding:0; overflow:hidden; border:1px solid var(--ink); border-radius:50%; color:var(--ink); background:var(--paper); box-shadow:0 .35rem 1rem rgba(21,21,21,.06); place-items:center; transition:color .28s ease,background .28s ease,box-shadow .4s cubic-bezier(.16,1,.3,1),transform .4s cubic-bezier(.16,1,.3,1) }
+  .site-nav-toggle::before { position:absolute; width:100%; height:100%; border:1px solid var(--ink); border-radius:inherit; content:''; opacity:0; transform:scale(.68); transition:opacity .35s ease,transform .45s cubic-bezier(.16,1,.3,1) }
+  .site-nav-toggle:active { transform:scale(.94) }
+  .site-nav-toggle-icon { position:relative; display:block; width:19px; height:14px }
+  .site-nav-toggle-icon span { position:absolute; left:0; display:block; width:100%; height:1.5px; border-radius:999px; background:currentColor; transform-origin:center; transition:transform .48s cubic-bezier(.16,1,.3,1),opacity .2s ease }
+  .site-nav-toggle-icon span:nth-child(1) { top:0 }
+  .site-nav-toggle-icon span:nth-child(2) { top:6.25px; width:72%; left:auto; right:0 }
+  .site-nav-toggle-icon span:nth-child(3) { bottom:0 }
+  .site-nav-mobile.is-open .site-nav-toggle { color:var(--paper); background:var(--ink); box-shadow:0 .9rem 1.6rem rgba(21,21,21,.17); transform:rotate(90deg) }
+  .site-nav-mobile.is-open .site-nav-toggle::before { opacity:.25; transform:scale(1.22) }
+  .site-nav-mobile.is-open .site-nav-toggle-icon span:nth-child(1) { transform:translateY(6.25px) rotate(45deg) }
+  .site-nav-mobile.is-open .site-nav-toggle-icon span:nth-child(2) { opacity:0; transform:scaleX(0) }
+  .site-nav-mobile.is-open .site-nav-toggle-icon span:nth-child(3) { transform:translateY(-6.25px) rotate(-45deg) }
+  .site-nav-drawer { position:fixed; top:calc(max(1rem,env(safe-area-inset-top)) + 4.25rem); right:max(1rem,env(safe-area-inset-right)); z-index:49; width:min(calc(100vw - 2rem),21rem); padding:.5rem; border:1px solid var(--ink); border-radius:1.25rem; color:var(--ink); background:rgba(251,250,247,.98); box-shadow:0 1.35rem 3.5rem rgba(21,21,21,.17); opacity:0; pointer-events:none; transform:translate3d(0,-.8rem,0) scale(.96); clip-path:inset(0 0 100% 0 round 1.1rem); transition:clip-path .48s cubic-bezier(.16,1,.3,1),opacity .18s ease,transform .48s cubic-bezier(.16,1,.3,1) }
+  .site-nav-drawer.is-visible { opacity:1; pointer-events:auto; transform:none; clip-path:inset(0 0 0 0 round 1.1rem) }
+  .site-nav-drawer nav { display:grid }
+  .site-nav-drawer a { display:flex; align-items:center; min-height:56px; padding:0 1rem; border-bottom:1px solid var(--line); font-size:.72rem; font-weight:700; letter-spacing:.12em; text-transform:uppercase; transition:color .2s ease,background .2s ease,transform .35s cubic-bezier(.16,1,.3,1) }
+  .site-nav-drawer a:last-child { margin-top:.35rem; border:0; border-radius:.8rem; color:var(--paper); background:var(--ink) }
+  .site-nav-drawer a:active { color:var(--paper); background:var(--ink); transform:translateX(.25rem) }
+  .site-nav-cta { display:none }
   .hero-wrap { align-items:flex-start; min-height:100svh; padding:7rem 1.25rem 2rem }
   .hero-base { display:flex; flex-direction:column; align-items:stretch; gap:2rem; width:100%; margin:0 }
   .hero-title { max-width:24rem; font-size:clamp(2.6rem,10.5vw,3.8rem); line-height:.94 }
@@ -149,9 +161,10 @@ a:focus-visible,button:focus-visible,summary:focus-visible,input:focus-visible,s
   .fbtn { flex:0 0 auto; min-height:44px }
   .swipe-hint { display:block }
 }
-@media (max-width:380px) { .site-nav { padding-inline:max(.75rem,env(safe-area-inset-left)) } .site-nav > a:first-child { font-size:.94rem } .site-nav-menu summary { padding-inline:.62rem } .site-nav-cta { padding-inline:.62rem; letter-spacing:.11em } }
+@media (max-width:380px) { .site-nav { padding-inline:max(.75rem,env(safe-area-inset-left)) } .site-nav > a:first-child { font-size:.94rem } .site-nav-toggle { width:46px; height:46px } .site-nav-drawer { right:max(.75rem,env(safe-area-inset-right)); width:min(calc(100vw - 1.5rem),21rem) } }
 @media (hover:none) { .home-arrow:hover,.hero-primary:hover,.hero-secondary:hover { transform:none }.wcard:hover img { transform:none }.wcard:hover .work-image::after { opacity:0 } }
 @media (min-width:769px) { .swipe-hint { display:none } }
+@media (prefers-reduced-motion:reduce) { .site-nav-toggle,.site-nav-toggle::before,.site-nav-toggle-icon span,.site-nav-drawer,.site-nav-drawer a { transition:none } }
 .hero-in { animation:heroIn 1s cubic-bezier(.2,.7,.2,1) both }
 .hero-in.d2 { animation-delay:.15s } .hero-in.d3 { animation-delay:.3s }
 @keyframes heroIn { from { opacity:0; transform:translateY(50px) } }
@@ -190,6 +203,21 @@ a:focus-visible,button:focus-visible,summary:focus-visible,input:focus-visible,s
 .home-services-title { max-width:42rem; margin:0 0 2.5rem; font-family:'Space Grotesk',system-ui,sans-serif; font-size:clamp(2.15rem,4vw,4.2rem); font-weight:700; line-height:1; letter-spacing:-.06em; text-wrap:balance }
 .service-row { display:grid; grid-template-columns:8rem minmax(0,1fr); gap:1rem; padding:0 0 1.2rem; margin:0 0 1.2rem }
 .service-row:last-child { padding-bottom:0; margin-bottom:0 }
+
+/* Эти правила стоят после десктопных объявлений намеренно: мобильная композиция
+   не должна наследовать двухколоночную сетку и создавать горизонтальный скролл. */
+@media (max-width:768px) {
+  .home-showcase { padding:4.5rem 1.25rem }
+  .home-showcase-head { grid-template-columns:1fr; gap:1.35rem; margin-bottom:2.5rem }
+  .home-showcase-title { max-width:20rem; font-size:clamp(3rem,14vw,4.3rem) }
+  .home-services { padding:5rem 1.25rem }
+  .home-services-inner { grid-template-columns:minmax(0,1fr); gap:1.5rem }
+  .home-services-title { margin-bottom:2rem }
+  .service-row { grid-template-columns:minmax(0,1fr); gap:.35rem }
+  .service-row p { grid-column:auto; margin:0 }
+  .work-card-link { font-size:0 }
+  .featured-cases { margin-right:-1.25rem; padding-right:1.25rem; scroll-padding-left:1.25rem }
+}
 @media (prefers-reduced-motion:reduce) { *,*::before,*::after { scroll-behavior:auto!important; animation-duration:.01ms!important; animation-iteration-count:1!important; transition-duration:.01ms!important } }
 
 /* ── кейс: сначала смысл и сценарий, затем экраны ─────── */
@@ -576,6 +604,52 @@ function observeRv(){
   document.querySelectorAll('.rv').forEach(el => io ? io.observe(el) : el.classList.add('rv-in'));
 }
 
+let mobileNavAbortController = null;
+function bindMobileNav(){
+  mobileNavAbortController?.abort();
+
+  const mobileNav = document.querySelector('.site-nav-mobile');
+  const toggle = mobileNav?.querySelector('.site-nav-toggle');
+  const drawer = mobileNav?.querySelector('.site-nav-drawer');
+  if (!mobileNav || !toggle || !drawer) return;
+
+  mobileNavAbortController = new AbortController();
+  const { signal } = mobileNavAbortController;
+  let closeTimer = null;
+
+  const setOpen = open => {
+    window.clearTimeout(closeTimer);
+    mobileNav.classList.toggle('is-open', open);
+    toggle.setAttribute('aria-expanded', String(open));
+    toggle.setAttribute('aria-label', open ? 'Закрыть меню' : 'Открыть меню');
+
+    if (open) {
+      drawer.hidden = false;
+      requestAnimationFrame(() => drawer.classList.add('is-visible'));
+      return;
+    }
+
+    drawer.classList.remove('is-visible');
+    closeTimer = window.setTimeout(() => {
+      if (!mobileNav.classList.contains('is-open')) drawer.hidden = true;
+    }, 500);
+  };
+
+  toggle.addEventListener('click', () => setOpen(!mobileNav.classList.contains('is-open')), { signal });
+  document.addEventListener('pointerdown', event => {
+    if (mobileNav.classList.contains('is-open') && !mobileNav.contains(event.target)) setOpen(false);
+  }, { signal });
+  document.addEventListener('keydown', event => {
+    if (event.key === 'Escape' && mobileNav.classList.contains('is-open')) {
+      setOpen(false);
+      toggle.focus();
+    }
+  }, { signal });
+  window.matchMedia('(min-width:769px)').addEventListener('change', event => {
+    if (event.matches) setOpen(false);
+  }, { signal });
+}
+
 /* ════════════════════════════════════════════════════════
    7. ОБЩИЕ КОМПОНЕНТЫ (навбар, футер, стрелка, карточка)
    ════════════════════════════════════════════════════════ */
@@ -587,7 +661,14 @@ function navbarHTML(){ return `
      <a href="#/about">Обо мне</a>
      <a href="#/services">Услуги</a>
    </div>
-   <details class="site-nav-menu"><summary>Меню</summary><nav aria-label="Мобильная навигация"><a href="#/works">Концепты</a><a href="#/about">Обо мне</a><a href="#/services">Услуги</a><a href="#/contact">Обсудить проект</a></nav></details>
+   <div class="site-nav-mobile">
+     <button class="site-nav-toggle" type="button" aria-expanded="false" aria-controls="mobile-navigation" aria-label="Открыть меню">
+       <span class="site-nav-toggle-icon" aria-hidden="true"><span></span><span></span><span></span></span>
+     </button>
+     <div class="site-nav-drawer" id="mobile-navigation" hidden>
+       <nav aria-label="Мобильная навигация"><a href="#/works">Концепты</a><a href="#/about">Обо мне</a><a href="#/services">Услуги</a><a href="#/contact">Получить оценку</a></nav>
+     </div>
+   </div>
    <a href="#/contact" class="site-nav-cta"><span class="site-nav-cta-long">Получить оценку</span><span class="site-nav-cta-short">Написать</span></a>
  </nav>` }
 
@@ -1379,6 +1460,7 @@ async function renderPublic(seg){
   if (a) html += homeArrowHTML(); /* стрелка «на главную» везде, кроме главной */
   app.innerHTML = html;
 
+  bindMobileNav();
   if (a === 'works' && !b) bindWorks();
   if (a === 'contact') bindContact();
   observeRv();
