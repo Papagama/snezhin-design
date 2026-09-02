@@ -206,3 +206,59 @@ on conflict (slug) do update set
   featured = excluded.featured,
   status = excluded.status,
   updated_at = now();
+
+insert into public.projects (
+  id, title, slug, category, year, client, site_url,
+  short_description, description, cover_image,
+  gallery, desktop_images, mobile_images,
+  services, technologies, featured, status, created_at, updated_at
+)
+values (
+  'p-waypoint',
+  'WAYPOINT — Снаряжение для следующей точки',
+  'waypoint',
+  'ecommerce',
+  2026,
+  'WAYPOINT · концепт',
+  'https://papagama.github.io/waypoint-outdoor-store/',
+  'Интернет-магазин outdoor-снаряжения с каталогом, подбором комплекта, карточками товаров, галереями ракурсов и корзиной.',
+  $case$
+    <h3>Контекст</h3>
+    <p>WAYPOINT — концепт интернет-магазина снаряжения для маршрутов, лагеря и следующей остановки. Задача интерфейса — соединить атмосферу outdoor-бренда с понятным выбором конкретного предмета.</p>
+    <h3>Задача</h3>
+    <p>Собрать e-commerce-сценарий, в котором посетитель быстро находит снаряжение, открывает карточку товара, рассматривает предмет с разных ракурсов и добавляет его в корзину.</p>
+    <h3>Визуальная система</h3>
+    <p>Контрастная типографика, светлая рабочая поверхность и приглушённые природные изображения создают спокойный, функциональный характер. Фотографии в каталоге соотносятся с категорией товара и помогают выбирать без лишнего текста.</p>
+    <h3>UX и функциональность</h3>
+    <p>Каталог содержит 24 товара и фильтры по категориям. Для каждого товара доступна отдельная страница с тремя переключаемыми ракурсами, выбором варианта, счётчиком количества и добавлением в корзину. Дополнительно предусмотрен сценарий сборки комплекта.</p>
+    <h3>Результат</h3>
+    <p>Создан адаптивный демонстрационный интернет-магазин: от первого экрана и каталога до детальной карточки товара и корзины. Коммерческие показатели не заявляются, поскольку проект является концептом.</p>
+  $case$,
+  'assets/cases/waypoint-cover.png',
+  '["assets/cases/waypoint-catalog.png","assets/cases/waypoint-product.png"]'::jsonb,
+  '["assets/cases/waypoint-cover.png","assets/cases/waypoint-catalog.png","assets/cases/waypoint-product.png"]'::jsonb,
+  '[]'::jsonb,
+  '["UX/UI","Web Design","Art Direction","Development","E-commerce"]'::jsonb,
+  '["Next.js","TypeScript","React","HTML/CSS"]'::jsonb,
+  true,
+  'published',
+  now(),
+  now()
+)
+on conflict (slug) do update set
+  title = excluded.title,
+  category = excluded.category,
+  year = excluded.year,
+  client = excluded.client,
+  site_url = excluded.site_url,
+  short_description = excluded.short_description,
+  description = excluded.description,
+  cover_image = excluded.cover_image,
+  gallery = excluded.gallery,
+  desktop_images = excluded.desktop_images,
+  mobile_images = excluded.mobile_images,
+  services = excluded.services,
+  technologies = excluded.technologies,
+  featured = excluded.featured,
+  status = excluded.status,
+  updated_at = now();

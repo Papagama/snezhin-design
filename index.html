@@ -362,7 +362,7 @@ const SOCIALS = {
 
 /* Справочники */
 const CATS     = { landing:'Лендинг', 'multi-page':'Многостраничный', ecommerce:'Интернет-магазин' };
-const CASE_TITLES = { 'amber-soul':'AMBER SOUL — Ювелирная история', 'aero-x1':'AERO X1 — Точность в форме', 'dream-house':'DREAM HOUSE — Сайт строительной компании', 'melnik':'MELNIK — Путь настоящего зерна' };
+const CASE_TITLES = { 'amber-soul':'AMBER SOUL — Ювелирная история', 'aero-x1':'AERO X1 — Точность в форме', 'dream-house':'DREAM HOUSE — Сайт строительной компании', 'melnik':'MELNIK — Путь настоящего зерна', 'waypoint':'WAYPOINT — Снаряжение для следующей точки' };
 const projectTitle = p => CASE_TITLES[p?.slug] || p?.title || '';
 const SERVICES = ['UX/UI','Web Design','Development','Art Direction','Motion','E-commerce'];
 const TECHS    = ['Figma','Webflow','Tilda','React','Next.js','HTML/CSS','JavaScript','GSAP','Three.js'];
@@ -478,6 +478,28 @@ const SEED = [
   }
 ];
 
+/* Кейсы, которые должны быть видны в портфолио независимо от состояния CMS. */
+const PORTFOLIO_CASES = [
+  {
+    id:'p-waypoint', title:'WAYPOINT — Снаряжение для следующей точки', slug:'waypoint',
+    category:'ecommerce', year:2026, client:'WAYPOINT · концепт', site_url:'https://papagama.github.io/waypoint-outdoor-store/',
+    short_description:'Интернет-магазин outdoor-снаряжения с каталогом, подбором комплекта, карточками товаров, галереями ракурсов и корзиной.',
+    description:'<h3>Контекст</h3><p>WAYPOINT — концепт интернет-магазина снаряжения для маршрутов, лагеря и следующей остановки. Задача интерфейса — соединить атмосферу outdoor-бренда с понятным выбором конкретного предмета.</p><h3>Задача</h3><p>Собрать e-commerce-сценарий, в котором посетитель быстро находит снаряжение, открывает карточку товара, рассматривает предмет с разных ракурсов и добавляет его в корзину.</p><h3>Визуальная система</h3><p>Контрастная типографика, светлая рабочая поверхность и приглушённые природные изображения создают спокойный, функциональный характер. Фотографии в каталоге соотносятся с категорией товара и помогают выбирать без лишнего текста.</p><h3>UX и функциональность</h3><p>Каталог содержит 24 товара и фильтры по категориям. Для каждого товара доступна отдельная страница с тремя переключаемыми ракурсами, выбором варианта, счётчиком количества и добавлением в корзину. Дополнительно предусмотрен сценарий сборки комплекта.</p><h3>Результат</h3><p>Создан адаптивный демонстрационный интернет-магазин: от первого экрана и каталога до детальной карточки товара и корзины. Коммерческие показатели не заявляются, поскольку проект является концептом.</p>',
+    cover_image:'assets/cases/waypoint-cover.png',
+    gallery:['assets/cases/waypoint-catalog.png','assets/cases/waypoint-product.png'],
+    desktop_images:['assets/cases/waypoint-cover.png','assets/cases/waypoint-catalog.png','assets/cases/waypoint-product.png'],
+    mobile_images:[],
+    services:['UX/UI','Web Design','Development','Art Direction','E-commerce'], technologies:['Next.js','TypeScript','React','HTML/CSS'],
+    featured:true, status:'published', created_at:'2026-09-02T12:00:00Z', updated_at:'2026-09-02T12:00:00Z'
+  }
+];
+
+const mergePortfolioCases = rows => {
+  const projects = new Map((rows || []).map(project => [project.slug, project]));
+  PORTFOLIO_CASES.forEach(project => { if (!projects.has(project.slug)) projects.set(project.slug, project); });
+  return [...projects.values()].sort((a, b) => String(b.created_at).localeCompare(String(a.created_at)));
+};
+
 /* ════════════════════════════════════════════════════════
    4. БАЗА ДАННЫХ (localStorage или Supabase)
    ════════════════════════════════════════════════════════ */
@@ -520,13 +542,9 @@ const db = {
     return (localRead() || []).sort((a, b) => String(b.created_at).localeCompare(String(a.created_at)));
   },
   async listPublic(){
-    if (await ensureSupabase()) {
-      const result = await sb.from('projects').select('*').eq('status','published').order('created_at', { ascending:false });
-      return resultData(result, 'Не удалось загрузить опубликованные проекты') || [];
-    }
-    return (localRead() || []).filter(p => p.status === 'published');
+    return mergePortfolioCases((await this.listAll()).filter(project => project.status === 'published'));
   },
-  async bySlug(slug){ return (await this.listAll()).find(p => p.slug === slug) || null },
+  async bySlug(slug){ return (await this.listAll()).find(p => p.slug === slug) || PORTFOLIO_CASES.find(p => p.slug === slug) || null },
   async byId(id){ return (await this.listAll()).find(p => p.id === id) || null },
   async create(row){
     row.id = uid(); row.created_at = now(); row.updated_at = now();
@@ -928,6 +946,24 @@ async function viewDetail(slug){
         ['Предложение после истории', 'Когда доверие уже сформировано, пользователь получает понятный и ненавязчивый следующий шаг.']
       ],
       impact: ['Подходит гастрономическим, локальным и ремесленным брендам с сильной историей.', 'Помогает перевести ценность процесса в понятный язык для новой аудитории.', 'Даёт основу для сайта бренда, запуска продукта или сезонной кампании.']
+    },
+    'waypoint': {
+      eyebrow: 'Авторский концепт · интернет-магазин outdoor-снаряжения',
+      summary: 'Как соединить атмосферу outdoor-бренда с понятным выбором снаряжения: от каталога до карточки товара и корзины.',
+      task: 'Собрать e-commerce-сценарий, где посетитель быстро находит нужную категорию, рассматривает конкретный предмет и принимает решение без лишних шагов.',
+      solution: 'Путь «каталог → фильтр → товар → ракурсы → корзина» сочетает предметную подачу с привычной логикой интернет-магазина.',
+      route: 'Сначала выбор категории, затем сравнение в каталоге, детали товара и добавление нужного количества в корзину.',
+      approach: 'Для outdoor-снаряжения важно не только настроение бренда, но и ясность выбора. Поэтому фотография в каталоге привязана к категории, а товарная страница даёт рассмотреть предмет с трёх ракурсов до добавления в корзину.',
+      principles: [
+        ['Каталог как ориентир', 'Фильтры и предметные фотографии помогают быстро сузить выбор среди 24 товаров.'],
+        ['Товар в деталях', 'Три переключаемых ракурса показывают форму, боковой вид и конструктивные особенности предмета.'],
+        ['Корзина без разрыва', 'Количество и вариант выбираются на странице товара, поэтому следующий шаг остаётся очевидным.']
+      ],
+      screens: [
+        ['Каталог с предметной навигацией', 'Фильтры, категории и фотографии помогают найти нужный тип снаряжения без перегруза.'],
+        ['Карточка Ridge 2', 'Галерея из трёх ракурсов, выбор варианта и количество превращают просмотр в понятное решение о покупке.']
+      ],
+      impact: ['Показывает, как атмосферный бренд может оставаться удобным интернет-магазином.', 'Помогает перенести выбор товара из общего каталога в детальную карточку без потери контекста.', 'Даёт основу для дальнейшего развития e-commerce: реальных остатков, доставки и оплаты.']
     }
   };
   const story = CASE_STORIES[p.slug] || {
@@ -937,7 +973,7 @@ async function viewDetail(slug){
     principles: [['Контекст', 'Сначала объясняем, для кого и зачем создаётся продукт.'], ['Сценарий', 'Каждый экран ведёт к следующему логичному действию.'], ['Визуальный язык', 'Детали поддерживают идею, а не спорят с ней.']],
     screens: [], impact: ['Показывает, как можно выстроить понятную коммуникацию.', 'Помогает соединить смысл продукта и визуальную подачу.', 'Создаёт основу для дальнейшей разработки сайта.']
   };
-  const caseSites = { 'amber-soul':'https://papagama.github.io/ambersoul/', 'aero-x1':'https://papagama.github.io/aero-x1-showroom/', 'dream-house':'https://papagama.github.io/dream-house/', 'melnik':'https://papagama.github.io/melnik/' };
+  const caseSites = { 'amber-soul':'https://papagama.github.io/ambersoul/', 'aero-x1':'https://papagama.github.io/aero-x1-showroom/', 'dream-house':'https://papagama.github.io/dream-house/', 'melnik':'https://papagama.github.io/melnik/', 'waypoint':'https://papagama.github.io/waypoint-outdoor-store/' };
   const site = esc(caseSites[p.slug] || p.site_url || '');
   const frames = (p.gallery || []).filter(Boolean);
   const isDreamHouse = p.slug === 'dream-house';
