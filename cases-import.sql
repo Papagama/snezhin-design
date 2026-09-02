@@ -234,9 +234,9 @@ values (
     <h3>Результат</h3>
     <p>Создан адаптивный демонстрационный интернет-магазин: от первого экрана и каталога до детальной карточки товара и корзины. Коммерческие показатели не заявляются, поскольку проект является концептом.</p>
   $case$,
-  'assets/cases/waypoint-cover.png',
+  'assets/cases/waypoint-preview.png',
   '["assets/cases/waypoint-catalog.png","assets/cases/waypoint-product.png"]'::jsonb,
-  '["assets/cases/waypoint-cover.png","assets/cases/waypoint-catalog.png","assets/cases/waypoint-product.png"]'::jsonb,
+  '["assets/cases/waypoint-preview.png","assets/cases/waypoint-catalog.png","assets/cases/waypoint-product.png"]'::jsonb,
   '[]'::jsonb,
   '["UX/UI","Web Design","Art Direction","Development","E-commerce"]'::jsonb,
   '["Next.js","TypeScript","React","HTML/CSS"]'::jsonb,
