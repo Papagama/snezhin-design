@@ -62,11 +62,11 @@ const pageHead = ({ title, description, path, type = 'website', image = '/public
   <meta property="og:image" content="${esc(absolute(image))}">
   <meta name="twitter:card" content="summary_large_image">
   <meta name="theme-color" content="#17113a">
-  <link rel="icon" href="/public/favicon.svg?v=20260905-9" type="image/svg+xml">
-  <link rel="apple-touch-icon" href="/public/favicon.svg?v=20260905-9">
-  <link rel="stylesheet" href="/site.css?v=20260905-9">
+  <link rel="icon" href="/public/favicon.svg?v=20260905-10" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="/public/favicon.svg?v=20260905-10">
+  <link rel="stylesheet" href="/site.css?v=20260905-10">
   ${schemas.filter(Boolean).map(item => `<script type="application/ld+json">${json(item)}</script>`).join('\n  ')}
-  <script src="/site.js?v=20260905-9" defer></script>`;
+  <script src="/site.js?v=20260905-10" defer></script>`;
 };
 
 const header = current => `
@@ -81,7 +81,7 @@ const header = current => `
         <nav class="main-nav" aria-label="Основная навигация">
           ${navigation.map(item => `<a href="${item.href}"${current === item.key ? ' aria-current="page"' : ''}>${item.label}</a>`).join('')}
         </nav>
-        <a class="button button--compact button--ink" href="${emailHref('Обсуждение проекта')}">Обсудить проект <span aria-hidden="true">↗</span></a>
+        <a class="button button--compact button--ink" href="/contact.html">Обсудить проект <span aria-hidden="true">↗</span></a>
       </div>
     </div>
   </header>`;

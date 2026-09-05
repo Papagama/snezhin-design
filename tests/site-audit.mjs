@@ -29,12 +29,14 @@ const css = await readFile(resolve(root, 'site.css'), 'utf8');
 if (!home.includes('class="hero-portrait"') || !home.includes('/assets/profile/kirill-snezhin.png')) issues.push('index.html: missing author portrait in hero');
 if (home.includes('class="hero-feature"') || home.includes('WAYPOINT</strong>')) issues.push('index.html: obsolete featured case remains in hero');
 if (!css.includes('min-height: calc(100svh - 76px)')) issues.push('site.css: desktop viewport-safe hero rule missing');
-if (!home.includes('/public/favicon.svg?v=20260905-9')) issues.push('index.html: current favicon is missing');
+if (!home.includes('/public/favicon.svg?v=20260905-10')) issues.push('index.html: current favicon is missing');
 if (!home.includes('data-stack-reveal')) issues.push('index.html: contextual stacking animation is missing');
 if (!css.includes('--paper: #F6F4EF')) issues.push('site.css: requested base background is missing');
 const homeFooter = home.match(/<footer\b[\s\S]*?<\/footer>/)?.[0] || '';
+const homeHeader = home.match(/<header\b[\s\S]*?<\/header>/)?.[0] || '';
 if (homeFooter.includes('footer-lead') || homeFooter.includes('Давайте обсудим')) issues.push('index.html: duplicate footer CTA remains');
 if (!homeFooter.includes('class="footer-action" href="/contact.html"')) issues.push('index.html: footer contact action is missing');
+if (!homeHeader.includes('Обсудить проект') || !homeHeader.includes('href="/contact.html"')) issues.push('index.html: header contact action must open the contact page');
 
 function targetFor(link) {
   const clean = link.split('#')[0].split('?')[0];
@@ -56,7 +58,8 @@ for (const file of htmlFiles) {
   if (h1Count !== 1) issues.push(`${file}: ${h1Count} H1 elements`);
   if (html.includes('—')) issues.push(`${file}: contains an em dash`);
   if (html.includes('class="project-open"')) issues.push(`${file}: obsolete project badge remains`);
-  if (/<a class="button[^>]*" href="\/contact\.html"/.test(html)) issues.push(`${file}: primary action must use email`);
+  const pageWithoutHeader = html.replace(/<header\b[\s\S]*?<\/header>/, '');
+  if (/<a class="button[^>]*" href="\/contact\.html"/.test(pageWithoutHeader)) issues.push(`${file}: primary action must use email`);
   if (title) {
     if (titles.has(title)) issues.push(`${file}: duplicate title with ${titles.get(title)}`);
     titles.set(title, file);
