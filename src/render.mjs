@@ -61,11 +61,11 @@ const pageHead = ({ title, description, path, type = 'website', image = '/public
   <meta property="og:image" content="${esc(absolute(image))}">
   <meta name="twitter:card" content="summary_large_image">
   <meta name="theme-color" content="#17113a">
-  <link rel="icon" href="/public/favicon.svg?v=20260905-5" type="image/svg+xml">
-  <link rel="apple-touch-icon" href="/public/favicon.svg?v=20260905-5">
-  <link rel="stylesheet" href="/site.css?v=20260905-5">
+  <link rel="icon" href="/public/favicon.svg?v=20260905-6" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="/public/favicon.svg?v=20260905-6">
+  <link rel="stylesheet" href="/site.css?v=20260905-6">
   ${schemas.filter(Boolean).map(item => `<script type="application/ld+json">${json(item)}</script>`).join('\n  ')}
-  <script src="/site.js?v=20260905-5" defer></script>`;
+  <script src="/site.js?v=20260905-6" defer></script>`;
 };
 
 const header = current => `
@@ -231,7 +231,7 @@ export const renderHome = () => {
       <div class="section-action"><a class="text-link text-link--large" href="/blog/">Все статьи <span aria-hidden="true">↗</span></a></div>
     </section>
 
-    <section class="final-cta"><div class="shell"><p class="eyebrow eyebrow--light">Новый проект</p><h2>Есть задача?<br>Давайте обсудим.</h2><p>Можно без готового ТЗ. Опишите продукт, аудиторию и ориентир по сроку — я помогу определить подходящий формат.</p><a class="button button--paper" href="/contact.html">Написать о проекте <span aria-hidden="true">↗</span></a></div></section>`;
+    <section class="final-cta" data-stack-reveal><div class="shell"><p class="eyebrow eyebrow--light">Новый проект</p><h2>Есть задача?<br>Давайте обсудим.</h2><p>Можно без готового ТЗ. Опишите продукт, аудиторию и ориентир по сроку — я помогу определить подходящий формат.</p><a class="button button--paper" href="/contact.html">Написать о проекте <span aria-hidden="true">↗</span></a></div></section>`;
 
   return shell({
     title: 'Веб-дизайнер Кирилл Снежин | Дизайн и разработка сайтов',
@@ -260,7 +260,7 @@ export const renderPortfolio = () => {
       <div class="section-heading"><h2>От вопроса к запуску.</h2><p>В кейсе важна не длина галереи, а способность объяснить задачу, выбор и проверенный результат.</p></div>
       ${processGrid()}
     </section>
-    <section class="final-cta"><div class="shell"><p class="eyebrow eyebrow--light">Следующий проект</p><h2>Есть задача?<br>Давайте обсудим.</h2><a class="button button--paper" href="/contact.html">Начать разговор <span aria-hidden="true">↗</span></a></div></section>`;
+    <section class="final-cta" data-stack-reveal><div class="shell"><p class="eyebrow eyebrow--light">Следующий проект</p><h2>Есть задача?<br>Давайте обсудим.</h2><a class="button button--paper" href="/contact.html">Начать разговор <span aria-hidden="true">↗</span></a></div></section>`;
   return shell({
     title: 'Портфолио веб-дизайнера Кирилла Снежина — сайты и UX/UI',
     description: 'Портфолио Кирилла Снежина: пять авторских концептов сайтов с задачей, UX-логикой, визуальной системой, адаптивом и технологиями.',

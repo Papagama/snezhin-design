@@ -28,7 +28,8 @@ const css = await readFile(resolve(root, 'site.css'), 'utf8');
 if (!home.includes('class="hero-portrait"') || !home.includes('/assets/profile/kirill-snezhin.png')) issues.push('index.html: missing author portrait in hero');
 if (home.includes('class="hero-feature"') || home.includes('WAYPOINT</strong>')) issues.push('index.html: obsolete featured case remains in hero');
 if (!css.includes('min-height: calc(100svh - 76px)')) issues.push('site.css: desktop viewport-safe hero rule missing');
-if (!home.includes('/public/favicon.svg?v=20260905-5')) issues.push('index.html: current favicon is missing');
+if (!home.includes('/public/favicon.svg?v=20260905-6')) issues.push('index.html: current favicon is missing');
+if (!home.includes('data-stack-reveal')) issues.push('index.html: contextual stacking animation is missing');
 
 function targetFor(link) {
   const clean = link.split('#')[0].split('?')[0];

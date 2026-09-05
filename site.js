@@ -60,7 +60,9 @@ if (menuToggle && menuPanel) {
 }
 
 const revealItems = [...document.querySelectorAll('[data-reveal]')];
-if ('IntersectionObserver' in window && !window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+const stackItems = [...document.querySelectorAll('[data-stack-reveal]')];
+const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+if ('IntersectionObserver' in window && !reduceMotion) {
   const revealObserver = new IntersectionObserver(entries => {
     entries.forEach(entry => {
       if (entry.isIntersecting) {
@@ -70,8 +72,18 @@ if ('IntersectionObserver' in window && !window.matchMedia('(prefers-reduced-mot
     });
   }, { rootMargin: '0px 0px -8% 0px', threshold: .08 });
   revealItems.forEach(item => revealObserver.observe(item));
+
+  const stackObserver = new IntersectionObserver(entries => {
+    entries.forEach(entry => {
+      if (!entry.isIntersecting) return;
+      entry.target.classList.add('is-stacked');
+      stackObserver.unobserve(entry.target);
+    });
+  }, { rootMargin: '0px 0px -10% 0px', threshold: .12 });
+  stackItems.forEach(item => stackObserver.observe(item));
 } else {
   revealItems.forEach(item => item.classList.add('is-visible'));
+  stackItems.forEach(item => item.classList.add('is-stacked'));
 }
 
 const routeNav = document.querySelector('[data-case-route]');
