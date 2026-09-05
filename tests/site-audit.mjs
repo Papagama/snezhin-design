@@ -29,11 +29,12 @@ const css = await readFile(resolve(root, 'site.css'), 'utf8');
 if (!home.includes('class="hero-portrait"') || !home.includes('/assets/profile/kirill-snezhin.png')) issues.push('index.html: missing author portrait in hero');
 if (home.includes('class="hero-feature"') || home.includes('WAYPOINT</strong>')) issues.push('index.html: obsolete featured case remains in hero');
 if (!css.includes('min-height: calc(100svh - 76px)')) issues.push('site.css: desktop viewport-safe hero rule missing');
-if (!home.includes('/public/favicon.svg?v=20260905-8')) issues.push('index.html: current favicon is missing');
+if (!home.includes('/public/favicon.svg?v=20260905-9')) issues.push('index.html: current favicon is missing');
 if (!home.includes('data-stack-reveal')) issues.push('index.html: contextual stacking animation is missing');
 if (!css.includes('--paper: #F6F4EF')) issues.push('site.css: requested base background is missing');
 const homeFooter = home.match(/<footer\b[\s\S]*?<\/footer>/)?.[0] || '';
 if (homeFooter.includes('footer-lead') || homeFooter.includes('Давайте обсудим')) issues.push('index.html: duplicate footer CTA remains');
+if (!homeFooter.includes('class="footer-action" href="/contact.html"')) issues.push('index.html: footer contact action is missing');
 
 function targetFor(link) {
   const clean = link.split('#')[0].split('?')[0];

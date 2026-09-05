@@ -136,6 +136,10 @@ em { color: var(--accent); font-family: Georgia, "Times New Roman", serif; font-
 .final-cta p:not(.eyebrow) { margin-bottom: 2rem; font-size: 1.1rem; color: #f8eaff; }
 
 .site-footer { background: #17113a; color: var(--white); padding-top: clamp(2.5rem, 5vw, 4rem); }
+.footer-contact-row { display: flex; align-items: center; justify-content: space-between; gap: 1rem; padding-bottom: 1.5rem; border-bottom: 1px solid #4e3c87; }
+.footer-contact-row .footer-label { margin: 0; }
+.footer-action { display: inline-flex; align-items: center; gap: .6rem; color: var(--white); font-size: 1rem; font-weight: 700; }
+.footer-action:hover { color: var(--lime); }
 .footer-grid { display: grid; grid-template-columns: 6fr 3fr 3fr; gap: 2rem; padding-block: 2.5rem 3rem; }
 .footer-grid p { color: #d0c8ef; font-size: .9rem; }
 .footer-grid nav, .footer-contacts { display: flex; flex-direction: column; align-items: flex-start; gap: .6rem; }
@@ -385,6 +389,7 @@ em { color: var(--accent); font-family: Georgia, "Times New Roman", serif; font-
   .process-step { min-height: 260px; }
   .expertise-list > span { grid-template-columns: 48px 1fr; font-size: 2.1rem; }
   .footer-grid { grid-template-columns: 1fr; }
+  .footer-contact-row { align-items: flex-start; flex-direction: column; }
   .footer-bottom { padding-block: 1.3rem; flex-direction: column; align-items: flex-start; justify-content: center; }
   .page-hero, .article-hero, .legal-page { min-height: auto; padding-block: 3rem 4rem; }
   .page-hero h1 { margin-top: 2rem; font-size: clamp(3.15rem, 13vw, 4.8rem); }
