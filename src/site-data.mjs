@@ -6,7 +6,6 @@ export const site = {
   telegram: 'https://t.me/SnezhinKirill',
   telegramLabel: '@SnezhinKirill',
   vk: 'https://vk.ru/papagama',
-  formspreeId: 'xwleonpz',
   year: 2026
 };
 

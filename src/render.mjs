@@ -132,6 +132,13 @@ const indexLine = (number, label, light = false) => `<div class="index-line${lig
 
 const image = (item, { eager = false, className = '' } = {}) => `<img${className ? ` class="${className}"` : ''} src="${item.src}" alt="${esc(item.alt)}" width="${item.width}" height="${item.height}" loading="${eager ? 'eager' : 'lazy'}" decoding="async">`;
 
+const portrait = {
+  src: '/assets/profile/kirill-snezhin.png',
+  alt: 'Портрет веб-дизайнера Кирилла Снежина',
+  width: 1024,
+  height: 1024
+};
+
 const caseCard = (item, index, variant = '') => `
   <article class="project-card${variant ? ` project-card--${variant}` : ''}" data-reveal>
     <a class="project-image" href="/portfolio/${item.slug}/" aria-label="Открыть кейс ${esc(item.title)}">
@@ -183,15 +190,11 @@ export const renderHome = () => {
           <h1>Сайты, в которых <em>смысл</em> держит форму.</h1>
           <p class="hero-copy">Я — Кирилл Снежин. Проектирую и разрабатываю сайты для бизнеса, которому важно ясно объяснить продукт, показать уровень и привести человека к следующему шагу.</p>
           <div class="button-group"><a class="button button--accent" href="/contact.html">Обсудить задачу <span aria-hidden="true">↗</span></a><a class="text-link" href="/portfolio.html">Смотреть проекты</a></div>
-          <div class="hero-proof">
-            <p class="mono">Независимая работа</p>
-            <dl><div><dt>Фокус</dt><dd>Структура, дизайн, разработка</dd></div><div><dt>Форматы</dt><dd>Лендинги, сайты, e-commerce</dd></div><div><dt>Подход</dt><dd>Один процесс от задачи до QA</dd></div></dl>
-          </div>
         </div>
-        <a class="hero-feature" href="/portfolio/waypoint/" data-reveal>
-          ${image(cases[0].cover, { eager: true })}
-          <span><b>01 / Featured</b><strong>WAYPOINT</strong><small>Интернет-магазин outdoor-снаряжения</small></span>
-        </a>
+        <figure class="hero-portrait">
+          ${image(portrait, { eager: true })}
+          <figcaption><span class="mono">Кирилл Снежин</span><span>Веб-дизайнер + frontend</span></figcaption>
+        </figure>
       </div>
     </section>
 
@@ -415,15 +418,12 @@ export const renderContact = () => {
   const body = `
     <section class="page-hero contact-hero shell">${indexLine('01', 'Первое сообщение')}<h1>Расскажите о задаче. Я помогу определить <em>следующий шаг</em>.</h1><div class="page-hero-copy"><p>Не нужен идеальный бриф. Достаточно нескольких предложений: что вы запускаете, кому это нужно и к какому сроку хотите прийти.</p></div></section>
     <section class="section shell contact-layout">
-      <form class="contact-form" action="https://formspree.io/f/${site.formspreeId}" method="POST" data-contact-form>
-        <input type="hidden" name="_subject" value="Новая заявка с сайта snezhin.design">
-        <div class="field"><label for="name">Ваше имя</label><input id="name" name="name" autocomplete="name" placeholder="Как к вам обращаться"></div>
-        <div class="field"><label for="contact">Почта или Telegram <span aria-hidden="true">*</span></label><input id="contact" name="contact" required autocomplete="email" placeholder="name@example.com или @username"><small>Укажите удобный способ ответа.</small></div>
-        <div class="field"><label for="message">О проекте <span aria-hidden="true">*</span></label><textarea id="message" name="message" required rows="7" placeholder="Что вы запускаете, какая задача и есть ли ориентир по сроку?"></textarea></div>
-        <label class="consent"><input type="checkbox" name="consent" required><span>Я согласен на обработку данных из формы для ответа на обращение. <a href="/privacy.html">Подробнее</a>.</span></label>
-        <button class="button button--accent" type="submit">Отправить заявку <span aria-hidden="true">↗</span></button>
-        <p class="form-note" role="status" data-form-status>Сообщение отправляется через Formspree. Обычно достаточно имени, контакта и короткого описания.</p>
-      </form>
+      <section class="contact-brief" aria-labelledby="contact-brief-title">
+        <p class="eyebrow">Первый контакт</p><h2 id="contact-brief-title">Начнём с короткого сообщения.</h2>
+        <p>Опишите продукт, задачу и ориентир по сроку. Можно прислать ссылку на текущий сайт или несколько предложений — разберём, какой формат работы будет уместен.</p>
+        <div class="button-group"><a class="button button--accent" href="mailto:${site.email}?subject=Новая%20задача%20с%20snezhin.design">Написать письмо <span aria-hidden="true">↗</span></a><a class="text-link" href="${site.telegram}" target="_blank" rel="noopener">Написать в Telegram <span aria-hidden="true">↗</span></a></div>
+        <p class="form-note">На этой странице нет формы и данные не отправляются на сторонний сервис. Вы сами выбираете удобный канал связи. <a href="/privacy.html">Как обрабатываются обращения</a>.</p>
+      </section>
       <aside class="direct-contact"><p class="eyebrow">Напрямую</p><h2>Можно написать в удобный канал.</h2><a href="mailto:${site.email}">${site.email} <span aria-hidden="true">↗</span></a><a href="${site.telegram}" target="_blank" rel="noopener">Telegram: ${site.telegramLabel} <span aria-hidden="true">↗</span></a><a href="${site.vk}" target="_blank" rel="noopener">VK: papagama <span aria-hidden="true">↗</span></a><p>Отправьте ссылку на текущий сайт или просто опишите идею. Начнём с контекста, а не с формального ТЗ.</p><dl><div><dt>Формат</dt><dd>Калининград / удалённо</dd></div><div><dt>Проекты</dt><dd>Лендинги, сайты, e-commerce, UX/UI</dd></div></dl></aside>
     </section>`;
   return shell({
@@ -435,9 +435,9 @@ export const renderContact = () => {
 
 export const renderPrivacy = () => {
   const body = `
-    <article class="legal-page shell"><nav class="breadcrumbs" aria-label="Хлебные крошки"><a href="/">Главная</a><span>/</span><span>Обработка данных</span></nav>${indexLine('Legal', 'Технический черновик')}<h1>Обработка данных из формы</h1><p class="lead-copy">Эта страница описывает фактическую техническую схему формы на сайте. Это черновик для проверки владельцем и юристом, а не юридическая гарантия соответствия конкретной юрисдикции.</p><section><h2>Какие данные отправляются</h2><p>Форма может передавать имя, почту или Telegram, текст сообщения и отметку согласия. Не отправляйте пароли, платёжные данные, медицинскую информацию и другие чувствительные сведения.</p></section><section><h2>Зачем они нужны</h2><p>Данные используются, чтобы прочитать обращение, связаться с отправителем и обсудить возможный проект. Они не должны использоваться для автоматической рассылки без отдельного согласия.</p></section><section><h2>Куда они передаются</h2><p>Форма отправляется через сторонний сервис Formspree. Хостинг и технические журналы также могут обрабатывать IP-адрес и служебные данные запроса. Условия и сроки хранения сторонних сервисов нужно проверить владельцу сайта.</p></section><section><h2>Связь</h2><p>По вопросам удаления или уточнения сообщения напишите на <a href="mailto:${site.email}">${site.email}</a>. Для production-публикации владелец должен подтвердить реквизиты оператора, юрисдикцию, сроки хранения и применимые согласия.</p></section></article>`;
+    <article class="legal-page shell"><nav class="breadcrumbs" aria-label="Хлебные крошки"><a href="/">Главная</a><span>/</span><span>Обработка данных</span></nav>${indexLine('Legal', 'Информация об обработке данных')}<h1>Обработка персональных данных</h1><p class="lead-copy">Актуально на 5 сентября 2026 года. На сайте нет формы, регистрации, аналитики и рекламных cookie: он не передаёт введённые посетителем данные в сторонний сервис.</p><section><h2>Оператор и связь</h2><p>Оператор — Кирилл Снежин. По вопросам, связанным с обращениями и персональными данными, можно написать на <a href="mailto:${site.email}">${site.email}</a>.</p></section><section><h2>Какие данные могут обрабатываться</h2><p>Если вы добровольно пишете на почту или в мессенджер, сообщение может содержать имя, контакт и описание задачи. Не отправляйте через открытые каналы пароли, платёжные данные, документы, медицинскую информацию и иные чувствительные сведения.</p></section><section><h2>Цель и основание</h2><p>Данные из добровольного обращения используются только для ответа, обсуждения возможного проекта и последующей переписки по нему. Для рассылок, передачи данных третьим лицам или публикации обращений сайт их не использует.</p></section><section><h2>Сторонние сервисы и технические данные</h2><p>Переход по ссылке на почту, Telegram или VK открывает выбранный вами внешний сервис; его правила обработки данных действуют отдельно. Статический хостинг может вести технические журналы запросов, включая IP-адрес и сведения браузера. На сайте не подключены счётчики, пиксели и форма Formspree.</p></section><section><h2>Права и срок хранения</h2><p>Вы можете запросить сведения об обращении, уточнение или удаление данных, написав на <a href="mailto:${site.email}">${site.email}</a>. Обращения хранятся не дольше, чем это необходимо для ответа и дальнейшей рабочей переписки, если более длительный срок не требуется законом.</p></section><section><h2>Что требуется подтвердить владельцу</h2><p>Для окончательной юридической проверки нужно подтвердить статус оператора, почтовый адрес для обращений, место хранения переписки и технических журналов, а также применимость требований конкретной юрисдикции. Эта страница описывает фактическую схему сайта, но не заменяет консультацию юриста.</p></section></article>`;
   return shell({
-    title: 'Обработка данных — snezhin.design', description: 'Технический черновик сведений об обработке данных из контактной формы snezhin.design.',
+    title: 'Обработка персональных данных — snezhin.design', description: 'Информация об обработке персональных данных и технических данных посетителей snezhin.design.',
     path: '/privacy.html', current: 'privacy', body, schema: breadcrumbSchema([{ label: 'Главная', href: '/' }, { label: 'Обработка данных', href: '/privacy.html' }])
   });
 };

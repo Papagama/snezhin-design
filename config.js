@@ -7,7 +7,6 @@ window.APP_CONFIG = {
   ADMIN_EMAIL: 'snezhin.design@mail.ru',
   SUPABASE_URL: 'https://kvlrnntvwvupkrzrnivg.supabase.co',
   SUPABASE_PUBLISHABLE_KEY: 'sb_publishable_bQj6siVkwDS9B2wmBA9UCQ_Urtuf0RE',
-  // Formspree form ID из Dashboard → Integration, например: xqazwser.
-  // Это публичный ID формы, не пароль и не API-ключ.
-  FORMSPREE_FORM_ID: 'xwleonpz'
+  // Отправка в Formspree отключена: публичный сайт не передаёт обращения в стороннюю форму.
+  FORMSPREE_FORM_ID: ''
 };

@@ -21,6 +21,12 @@ const htmlFiles = allFiles.filter(file => extname(file) === '.html' && file !== 
 const issues = [];
 const titles = new Map();
 const descriptions = new Map();
+const home = await readFile(resolve(root, 'index.html'), 'utf8');
+const css = await readFile(resolve(root, 'site.css'), 'utf8');
+
+if (!home.includes('class="hero-portrait"') || !home.includes('/assets/profile/kirill-snezhin.png')) issues.push('index.html: missing author portrait in hero');
+if (home.includes('class="hero-feature"') || home.includes('WAYPOINT</strong>')) issues.push('index.html: obsolete featured case remains in hero');
+if (!css.includes('min-height: calc(100svh - 76px)')) issues.push('site.css: desktop viewport-safe hero rule missing');
 
 function targetFor(link) {
   const clean = link.split('#')[0].split('?')[0];
@@ -61,6 +67,7 @@ for (const file of htmlFiles) {
     const target = targetFor(link);
     if (target && !allFiles.includes(target)) issues.push(`${file}: missing target ${link}`);
   }
+  if (html.includes('formspree.io')) issues.push(`${file}: public page contains a Formspree endpoint`);
 }
 
 const sitemap = await readFile(resolve(root, 'sitemap.xml'), 'utf8');
