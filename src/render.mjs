@@ -62,11 +62,11 @@ const pageHead = ({ title, description, path, type = 'website', image = '/public
   <meta property="og:image" content="${esc(absolute(image))}">
   <meta name="twitter:card" content="summary_large_image">
   <meta name="theme-color" content="#17113a">
-  <link rel="icon" href="/public/favicon.svg?v=20260905-7" type="image/svg+xml">
-  <link rel="apple-touch-icon" href="/public/favicon.svg?v=20260905-7">
-  <link rel="stylesheet" href="/site.css?v=20260905-7">
+  <link rel="icon" href="/public/favicon.svg?v=20260905-8" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="/public/favicon.svg?v=20260905-8">
+  <link rel="stylesheet" href="/site.css?v=20260905-8">
   ${schemas.filter(Boolean).map(item => `<script type="application/ld+json">${json(item)}</script>`).join('\n  ')}
-  <script src="/site.js?v=20260905-7" defer></script>`;
+  <script src="/site.js?v=20260905-8" defer></script>`;
 };
 
 const header = current => `
@@ -89,10 +89,6 @@ const header = current => `
 const footer = () => `
   <footer class="site-footer">
     <div class="shell">
-      <div class="footer-lead">
-        <p class="eyebrow eyebrow--light">Есть задача?</p>
-        <a class="footer-title" href="/contact.html">Давайте обсудим <span aria-hidden="true">↗</span></a>
-      </div>
       <div class="footer-grid">
         <div>
           <a class="brand brand--light" href="/">snezhin.design</a>

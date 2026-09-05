@@ -135,11 +135,8 @@ em { color: var(--accent); font-family: Georgia, "Times New Roman", serif; font-
 .final-cta h2 { max-width: 900px; margin: 1.2rem 0 1.6rem; font-size: clamp(3.2rem, 7vw, 6.8rem); line-height: .9; }
 .final-cta p:not(.eyebrow) { margin-bottom: 2rem; font-size: 1.1rem; color: #f8eaff; }
 
-.site-footer { background: #17113a; color: var(--white); padding-top: clamp(4rem, 8vw, 7rem); }
-.footer-lead { padding-bottom: 4rem; border-bottom: 1px solid #4e3c87; }
-.footer-title { display: inline-flex; align-items: baseline; gap: 1rem; margin-top: .8rem; font-size: clamp(3rem, 8vw, 8rem); font-weight: 650; letter-spacing: -.075em; line-height: .9; }
-.footer-title:hover { color: var(--accent); }
-.footer-grid { display: grid; grid-template-columns: 6fr 3fr 3fr; gap: 2rem; padding-block: 4rem; }
+.site-footer { background: #17113a; color: var(--white); padding-top: clamp(2.5rem, 5vw, 4rem); }
+.footer-grid { display: grid; grid-template-columns: 6fr 3fr 3fr; gap: 2rem; padding-block: 2.5rem 3rem; }
 .footer-grid p { color: #d0c8ef; font-size: .9rem; }
 .footer-grid nav, .footer-contacts { display: flex; flex-direction: column; align-items: flex-start; gap: .6rem; }
 .footer-grid nav a, .footer-contacts a { color: #f4f0ff; font-size: .88rem; }
