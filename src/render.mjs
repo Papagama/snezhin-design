@@ -8,6 +8,7 @@ const esc = value => String(value ?? '').replace(/[&<>"']/g, char => ({
 const absolute = path => /^https?:\/\//.test(path) ? path : `${site.baseUrl}${path === '/' ? '/' : path}`;
 const json = value => JSON.stringify(value).replace(/</g, '\\u003c');
 const compactDashes = value => String(value).replaceAll('—', '–');
+const emailHref = (subject = 'Новая задача с snezhin.design') => `mailto:${site.email}?subject=${encodeURIComponent(subject)}`;
 
 const breadcrumbSchema = items => ({
   '@context': 'https://schema.org',
@@ -61,11 +62,11 @@ const pageHead = ({ title, description, path, type = 'website', image = '/public
   <meta property="og:image" content="${esc(absolute(image))}">
   <meta name="twitter:card" content="summary_large_image">
   <meta name="theme-color" content="#17113a">
-  <link rel="icon" href="/public/favicon.svg?v=20260905-6" type="image/svg+xml">
-  <link rel="apple-touch-icon" href="/public/favicon.svg?v=20260905-6">
-  <link rel="stylesheet" href="/site.css?v=20260905-6">
+  <link rel="icon" href="/public/favicon.svg?v=20260905-7" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="/public/favicon.svg?v=20260905-7">
+  <link rel="stylesheet" href="/site.css?v=20260905-7">
   ${schemas.filter(Boolean).map(item => `<script type="application/ld+json">${json(item)}</script>`).join('\n  ')}
-  <script src="/site.js?v=20260905-6" defer></script>`;
+  <script src="/site.js?v=20260905-7" defer></script>`;
 };
 
 const header = current => `
@@ -80,7 +81,7 @@ const header = current => `
         <nav class="main-nav" aria-label="Основная навигация">
           ${navigation.map(item => `<a href="${item.href}"${current === item.key ? ' aria-current="page"' : ''}>${item.label}</a>`).join('')}
         </nav>
-        <a class="button button--compact button--ink" href="/contact.html">Обсудить проект <span aria-hidden="true">↗</span></a>
+        <a class="button button--compact button--ink" href="${emailHref('Обсуждение проекта')}">Обсудить проект <span aria-hidden="true">↗</span></a>
       </div>
     </div>
   </header>`;
@@ -189,7 +190,7 @@ export const renderHome = () => {
         <div class="home-hero-content">
           <h1>Сайты, в которых <em>смысл</em> держит форму.</h1>
           <p class="hero-copy">Меня зовут Кирилл Снежин. Проектирую и разрабатываю сайты для бизнеса, которому важно ясно объяснить продукт, показать уровень и привести человека к следующему шагу.</p>
-          <div class="button-group"><a class="button button--accent" href="/contact.html">Обсудить задачу <span aria-hidden="true">↗</span></a><a class="text-link" href="/portfolio.html">Смотреть проекты</a></div>
+          <div class="button-group"><a class="button button--accent" href="${emailHref('Обсуждение задачи')}">Обсудить задачу <span aria-hidden="true">↗</span></a><a class="text-link" href="/portfolio.html">Смотреть проекты</a></div>
         </div>
         <figure class="hero-portrait">
           ${image(portrait, { eager: true })}
@@ -231,7 +232,7 @@ export const renderHome = () => {
       <div class="section-action"><a class="text-link text-link--large" href="/blog/">Все статьи <span aria-hidden="true">↗</span></a></div>
     </section>
 
-    <section class="final-cta" data-stack-reveal><div class="shell"><p class="eyebrow eyebrow--light">Новый проект</p><h2>Есть задача?<br>Давайте обсудим.</h2><p>Можно без готового ТЗ. Опишите продукт, аудиторию и ориентир по сроку — я помогу определить подходящий формат.</p><a class="button button--paper" href="/contact.html">Написать о проекте <span aria-hidden="true">↗</span></a></div></section>`;
+    <section class="final-cta" data-stack-reveal><div class="shell"><p class="eyebrow eyebrow--light">Новый проект</p><h2>Есть задача?<br>Давайте обсудим.</h2><p>Можно без готового ТЗ. Опишите продукт, аудиторию и ориентир по сроку — я помогу определить подходящий формат.</p><a class="button button--paper" href="${emailHref('Новый проект')}">Написать о проекте <span aria-hidden="true">↗</span></a></div></section>`;
 
   return shell({
     title: 'Веб-дизайнер Кирилл Снежин | Дизайн и разработка сайтов',
@@ -245,7 +246,7 @@ export const renderPortfolio = () => {
     <section class="page-hero shell">
       ${indexLine('01', 'Портфолио / авторские концепты')}
       <h1>Проекты, в которых видна <em>логика</em>.</h1>
-      <div class="page-hero-copy"><p>Пять концептов для разных типов бизнеса: e-commerce, технологичный продукт, тренировочный зал, ювелирный и гастрономический бренды.</p><a class="button button--ink" href="/contact.html">Обсудить похожую задачу <span aria-hidden="true">↗</span></a></div>
+      <div class="page-hero-copy"><p>Пять концептов для разных типов бизнеса: e-commerce, технологичный продукт, тренировочный зал, ювелирный и гастрономический бренды.</p><a class="button button--ink" href="${emailHref('Похожая задача')}">Обсудить похожую задачу <span aria-hidden="true">↗</span></a></div>
     </section>
     <section class="section shell">
       ${indexLine('02', 'Все проекты')}
@@ -260,7 +261,7 @@ export const renderPortfolio = () => {
       <div class="section-heading"><h2>От вопроса к запуску.</h2><p>В кейсе важна не длина галереи, а способность объяснить задачу, выбор и проверенный результат.</p></div>
       ${processGrid()}
     </section>
-    <section class="final-cta" data-stack-reveal><div class="shell"><p class="eyebrow eyebrow--light">Следующий проект</p><h2>Есть задача?<br>Давайте обсудим.</h2><a class="button button--paper" href="/contact.html">Начать разговор <span aria-hidden="true">↗</span></a></div></section>`;
+    <section class="final-cta" data-stack-reveal><div class="shell"><p class="eyebrow eyebrow--light">Следующий проект</p><h2>Есть задача?<br>Давайте обсудим.</h2><a class="button button--paper" href="${emailHref('Новый проект')}">Начать разговор <span aria-hidden="true">↗</span></a></div></section>`;
   return shell({
     title: 'Портфолио веб-дизайнера Кирилла Снежина — сайты и UX/UI',
     description: 'Портфолио Кирилла Снежина: пять авторских концептов сайтов с задачей, UX-логикой, визуальной системой, адаптивом и технологиями.',
@@ -294,7 +295,7 @@ export const renderCase = (item, index) => {
       <section class="case-section shell"><div class="case-copy split-copy"><div><p class="eyebrow">Responsive</p><h2>Один сценарий на разных экранах</h2></div><p>${item.responsive}</p></div><div class="tech-row">${item.technologies.map(tech => `<span>${tech}</span>`).join('')}</div></section>
       <section class="case-section case-result" id="result"><div class="shell">${indexLine('07', 'Результат', true)}<div class="case-copy case-copy--light"><h2>Что создано</h2><ul class="result-list">${item.result.map(text => `<li>${text}</li>`).join('')}</ul><a class="button button--paper" href="${item.liveUrl}" target="_blank" rel="noopener">Посмотреть концепт <span aria-hidden="true">↗</span></a></div></div></section>
       <nav class="case-pagination shell" aria-label="Навигация по кейсам"><a href="/portfolio/${previous.slug}/"><span class="mono">← Предыдущий</span><strong>${previous.title}</strong></a><a href="/portfolio/${next.slug}/"><span class="mono">Следующий →</span><strong>${next.title}</strong></a></nav>
-      <section class="final-cta"><div class="shell"><p class="eyebrow eyebrow--light">Похожая задача</p><h2>Обсудим ваш проект.</h2><a class="button button--paper" href="/contact.html">Написать о задаче <span aria-hidden="true">↗</span></a></div></section>
+      <section class="final-cta"><div class="shell"><p class="eyebrow eyebrow--light">Похожая задача</p><h2>Обсудим ваш проект.</h2><a class="button button--paper" href="${emailHref('Похожая задача')}">Написать о задаче <span aria-hidden="true">↗</span></a></div></section>
     </article>`;
 
   const creativeSchema = {
@@ -317,12 +318,12 @@ export const renderServices = () => {
     ['Что происходит после заявки?', 'Я уточняю контекст, предлагаю подходящий формат и фиксирую состав, срок и стоимость. Только после этого принимаем решение о старте.']
   ];
   const body = `
-    <section class="page-hero shell">${indexLine('01', 'Услуги / форматы работы')}<h1>Понятный состав работ <em>до старта</em>.</h1><div class="page-hero-copy"><p>Проект ведётся цельно: исследование, структура, дизайн, адаптивная разработка и проверка. Стартовые цены сохранены из текущего сайта и требуют подтверждения владельца перед публикацией.</p><a class="button button--accent" href="/contact.html">Получить оценку <span aria-hidden="true">↗</span></a></div></section>
+    <section class="page-hero shell">${indexLine('01', 'Услуги / форматы работы')}<h1>Понятный состав работ <em>до старта</em>.</h1><div class="page-hero-copy"><p>Проект ведётся цельно: исследование, структура, дизайн, адаптивная разработка и проверка. Стартовые цены сохранены из текущего сайта и требуют подтверждения владельца перед публикацией.</p><a class="button button--accent" href="${emailHref('Оценка проекта')}">Получить оценку <span aria-hidden="true">↗</span></a></div></section>
     <section class="section shell">${indexLine('02', 'Направления')} ${servicesList()}</section>
     <section class="section section--dark"><div class="shell">${indexLine('03', 'Формат', true)}<div class="section-heading section-heading--light"><h2>Не пакет ради пакета. Объём следует задаче.</h2><p>Можно начать с аудита и прототипа, заказать только дизайн или пройти полный путь до готовой сборки. Границы фиксируются заранее.</p></div><div class="format-grid"><article><span class="mono">A</span><h3>Стратегия + дизайн</h3><p>Когда разработка уже есть в команде, но нужно проверить структуру и собрать систему макетов.</p></article><article><span class="mono">B</span><h3>Дизайн + frontend</h3><p>Цельный путь для лендинга или сайта: от прототипа до адаптивной реализации и QA.</p></article><article><span class="mono">C</span><h3>Редизайн</h3><p>Аудит текущих URL, контента и UX, затем последовательное обновление без потери работающих страниц.</p></article></div></div></section>
     <section class="section shell">${indexLine('04', 'Этапы')}<div class="section-heading"><h2>Что происходит после первого сообщения.</h2><p>Без навязчивой продажи: сначала контекст и подходящий объём, затем прозрачное решение о старте.</p></div>${processGrid()}</section>
     <section class="section shell">${indexLine('05', 'Вопросы')}<div class="section-heading"><h2>До начала проекта.</h2></div>${faqBlock(faqs)}</section>
-    <section class="final-cta"><div class="shell"><p class="eyebrow eyebrow--light">Оценка проекта</p><h2>Опишите задачу обычными словами.</h2><p>Я помогу определить формат, состав и следующий шаг.</p><a class="button button--paper" href="/contact.html">Получить оценку <span aria-hidden="true">↗</span></a></div></section>`;
+    <section class="final-cta"><div class="shell"><p class="eyebrow eyebrow--light">Оценка проекта</p><h2>Опишите задачу обычными словами.</h2><p>Я помогу определить формат, состав и следующий шаг.</p><a class="button button--paper" href="${emailHref('Оценка проекта')}">Получить оценку <span aria-hidden="true">↗</span></a></div></section>`;
   return shell({
     title: 'Услуги и цены — веб-дизайнер Кирилл Снежин',
     description: 'Лендинги от 45 000 ₽, корпоративные сайты от 90 000 ₽, интернет-магазины от 150 000 ₽, UX/UI и frontend-разработка.',
@@ -340,13 +341,13 @@ export const renderServicePage = item => {
     offers: { '@type': 'Offer', priceCurrency: 'RUB', description: `${item.price}; точная стоимость после брифа` }
   };
   const body = `
-    <section class="page-hero service-hero shell"><nav class="breadcrumbs" aria-label="Хлебные крошки"><a href="/">Главная</a><span>/</span><a href="/services.html">Услуги</a><span>/</span><span>${item.eyebrow}</span></nav>${indexLine('01', item.eyebrow)}<h1>${item.title}</h1><div class="page-hero-copy"><p>${item.lead}</p><a class="button button--accent" href="/contact.html">Обсудить задачу <span aria-hidden="true">↗</span></a></div><dl class="offer-strip"><div><dt>Стоимость</dt><dd>${item.price}</dd></div><div><dt>Срок</dt><dd>${item.time}</dd></div><div><dt>Формат</dt><dd>Поэтапно, с проверкой</dd></div></dl></section>
+    <section class="page-hero service-hero shell"><nav class="breadcrumbs" aria-label="Хлебные крошки"><a href="/">Главная</a><span>/</span><a href="/services.html">Услуги</a><span>/</span><span>${item.eyebrow}</span></nav>${indexLine('01', item.eyebrow)}<h1>${item.title}</h1><div class="page-hero-copy"><p>${item.lead}</p><a class="button button--accent" href="${emailHref('Обсуждение услуги')}">Обсудить задачу <span aria-hidden="true">↗</span></a></div><dl class="offer-strip"><div><dt>Стоимость</dt><dd>${item.price}</dd></div><div><dt>Срок</dt><dd>${item.time}</dd></div><div><dt>Формат</dt><dd>Поэтапно, с проверкой</dd></div></dl></section>
     <section class="section shell">${indexLine('02', 'Кому подходит')}<div class="section-heading"><h2>Когда этот формат уместен.</h2></div><div class="audience-list">${item.audience.map((label, index) => `<span><small class="mono">${String(index + 1).padStart(2, '0')}</small>${label}</span>`).join('')}</div></section>
     <section class="section section--dark"><div class="shell">${indexLine('03', 'Что входит', true)}<div class="deliverables"><div><h2>Результат работы</h2><p>${item.outcome}</p></div><ol>${item.deliverables.map((label, index) => `<li><span class="mono">${String(index + 1).padStart(2, '0')}</span>${label}</li>`).join('')}</ol></div></div></section>
     <section class="section shell">${indexLine('04', 'Процесс')}<div class="section-heading"><h2>От задачи до проверенного результата.</h2></div>${processGrid(6)}</section>
     <section class="section shell">${indexLine('05', 'Связанный кейс')}<div class="related-case">${caseCard(related, 0, 'wide')}</div></section>
     <section class="section shell">${indexLine('06', 'FAQ')}<div class="section-heading"><h2>Частые вопросы.</h2></div>${faqBlock(item.faqs)}</section>
-    <section class="final-cta"><div class="shell"><p class="eyebrow eyebrow--light">Первый шаг</p><h2>Получите оценку под вашу задачу.</h2><p>Напишите, что запускаете, кому это нужно и к какому сроку хотите прийти.</p><a class="button button--paper" href="/contact.html">Обсудить проект <span aria-hidden="true">↗</span></a></div></section>`;
+    <section class="final-cta"><div class="shell"><p class="eyebrow eyebrow--light">Первый шаг</p><h2>Получите оценку под вашу задачу.</h2><p>Напишите, что запускаете, кому это нужно и к какому сроку хотите прийти.</p><a class="button button--paper" href="${emailHref('Обсуждение услуги')}">Обсудить проект <span aria-hidden="true">↗</span></a></div></section>`;
   return shell({
     title: item.metaTitle, description: item.description, path, current: 'services', body,
     schema: [serviceSchema, faqSchema(item.faqs), breadcrumbSchema([{ label: 'Главная', href: '/' }, { label: 'Услуги', href: '/services.html' }, { label: item.eyebrow, href: path }])]
@@ -355,13 +356,13 @@ export const renderServicePage = item => {
 
 export const renderAbout = () => {
   const body = `
-    <section class="page-hero about-hero shell">${indexLine('01', 'Обо мне / Кирилл Снежин')}<h1>Дизайнер, который отвечает не только за <em>картинку</em>.</h1><div class="page-hero-copy"><p>Работаю на стыке структуры, визуального дизайна и frontend. Мне интересны задачи, где сайт должен ясно объяснить продукт и при этом иметь собственный характер.</p><a class="button button--ink" href="/contact.html">Обсудить задачу <span aria-hidden="true">↗</span></a></div></section>
+    <section class="page-hero about-hero shell">${indexLine('01', 'Обо мне / Кирилл Снежин')}<h1>Дизайнер, который отвечает не только за <em>картинку</em>.</h1><div class="page-hero-copy"><p>Работаю на стыке структуры, визуального дизайна и frontend. Мне интересны задачи, где сайт должен ясно объяснить продукт и при этом иметь собственный характер.</p><a class="button button--ink" href="${emailHref('Обсуждение задачи')}">Обсудить задачу <span aria-hidden="true">↗</span></a></div></section>
     <section class="section shell">${indexLine('02', 'Мой подход')}<div class="manifesto-grid"><p class="eyebrow">Один процесс</p><blockquote>Сначала разбираюсь, что должен понять человек. Затем строю структуру, визуальную систему и реализацию.</blockquote><div><p>Так дизайн не отрывается от контента, а код — от макета. Я не обещаю метрики без данных и честно отмечаю, где проект является концептом.</p></div></div></section>
     <section class="section section--ink"><div class="shell">${indexLine('03', 'Навыки и инструменты', true)}<div class="skill-columns"><div><h2>Что делаю</h2>${expertise.map(item => `<span>${item}</span>`).join('')}</div><div><h2>С чем работаю</h2>${['Figma', 'HTML / CSS', 'JavaScript', 'React', 'Next.js', 'GSAP', 'Three.js', 'Git'].map(item => `<span>${item}</span>`).join('')}</div></div></div></section>
     <section class="section shell">${indexLine('04', 'Ценности')}<div class="values-grid"><article><span class="mono">01</span><h2>Прозрачно</h2><p>До старта обсуждаем состав, срок, зависимости и следующий шаг. Неясное фиксируется, а не маскируется.</p></article><article><span class="mono">02</span><h2>Вдумчиво</h2><p>Сначала задача и факты, затем визуальное направление. Референс — источник принципа, а не макет для копирования.</p></article><article><span class="mono">03</span><h2>Цельно</h2><p>Структура, дизайн, адаптив и разработка работают как одна система, а не как набор независимых экранов.</p></article></div></section>
     <section class="section shell">${indexLine('05', 'Как работаю')}<div class="section-heading"><h2>Понятные этапы и результат каждого.</h2></div>${processGrid()}</section>
     <section class="section shell">${indexLine('06', 'Проекты')}<div class="projects-editorial">${cases.slice(0, 3).map((item, index) => caseCard(item, index, index === 0 ? 'wide' : '')).join('')}</div></section>
-    <section class="final-cta"><div class="shell"><p class="eyebrow eyebrow--light">Контакт</p><h2>Есть проект или пока только идея?</h2><p>Можно начать с нескольких предложений. Я помогу определить подходящий формат.</p><a class="button button--paper" href="/contact.html">Написать о задаче <span aria-hidden="true">↗</span></a></div></section>`;
+    <section class="final-cta"><div class="shell"><p class="eyebrow eyebrow--light">Контакт</p><h2>Есть проект или пока только идея?</h2><p>Можно начать с нескольких предложений. Я помогу определить подходящий формат.</p><a class="button button--paper" href="${emailHref('Обсуждение задачи')}">Написать о задаче <span aria-hidden="true">↗</span></a></div></section>`;
   return shell({
     title: 'Обо мне — веб-дизайнер Кирилл Снежин',
     description: 'Кирилл Снежин — веб-дизайнер и frontend-разработчик. Подход, навыки, инструменты, этапы работы и авторские проекты.',
@@ -375,7 +376,7 @@ export const renderBlog = () => {
   const body = `
     <section class="page-hero shell">${indexLine('01', 'Блог / практика')}<h1>О сайтах — <em>понятно</em> и по делу.</h1><div class="page-hero-copy"><p>Стоимость, сроки, выбор формата, подготовка, конверсия и SEO. Материалы для предпринимателя, который хочет понимать решение до вложения бюджета.</p></div></section>
     <section class="section shell">${indexLine('02', `Статьи / ${articles.length}`)}<div class="article-grid article-grid--all">${articles.map(article => articleCard(article)).join('')}</div></section>
-    <section class="final-cta"><div class="shell"><p class="eyebrow eyebrow--light">Нужен не совет, а проект?</p><h2>Обсудим вашу задачу.</h2><a class="button button--paper" href="/contact.html">Написать <span aria-hidden="true">↗</span></a></div></section>`;
+    <section class="final-cta"><div class="shell"><p class="eyebrow eyebrow--light">Нужен не совет, а проект?</p><h2>Обсудим вашу задачу.</h2><a class="button button--paper" href="${emailHref('Обсуждение задачи')}">Написать <span aria-hidden="true">↗</span></a></div></section>`;
   return shell({
     title: 'Блог о веб-дизайне, сайтах и разработке | Кирилл Снежин',
     description: 'Практические статьи о стоимости и сроках сайта, выборе дизайнера, редизайне, SEO, конверсии и подготовке к разработке.',
@@ -402,7 +403,7 @@ export const renderArticle = (article, index) => {
           ${article.sections.map((section, sectionIndex) => `<section id="part-${sectionIndex + 1}"><span class="mono">${String(sectionIndex + 1).padStart(2, '0')}</span><h2>${section.heading}</h2>${section.paragraphs.map(paragraph => `<p>${paragraph}</p>`).join('')}</section>`).join('')}
           ${article.conclusion ? `<section class="article-conclusion"><span class="mono">Вывод</span><h2>Коротко</h2><p>${article.conclusion}</p></section>` : ''}
           <section id="faq"><span class="mono">FAQ</span><h2>Частые вопросы</h2>${faqBlock(article.faq)}</section>
-          <section class="article-cta"><p class="eyebrow">Следующий шаг</p><h2>Нужен сайт под вашу задачу?</h2><p>Посмотрите связанный кейс или опишите проект — я помогу определить подходящий формат и состав.</p><div class="button-group"><a class="button button--accent" href="/contact.html">Обсудить проект <span aria-hidden="true">↗</span></a><a class="text-link" href="${article.relatedService}">Посмотреть услугу</a></div></section>
+          <section class="article-cta"><p class="eyebrow">Следующий шаг</p><h2>Нужен сайт под вашу задачу?</h2><p>Посмотрите связанный кейс или опишите проект — я помогу определить подходящий формат и состав.</p><div class="button-group"><a class="button button--accent" href="${emailHref('Обсуждение проекта')}">Обсудить проект <span aria-hidden="true">↗</span></a><a class="text-link" href="${article.relatedService}">Посмотреть услугу</a></div></section>
         </div>
       </div>
       <section class="section shell">${indexLine('Case', 'Связанный проект')}<div class="related-case">${caseCard(related, 0, 'wide')}</div></section>

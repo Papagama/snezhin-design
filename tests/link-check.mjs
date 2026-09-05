@@ -6,6 +6,7 @@ const skip = new Set(['dist', 'node_modules', '.git', '.playwright-cli', 'output
 const issues = [];
 const externalLinks = new Set();
 const mailtoLinks = new Set();
+const projectEmail = 'snezhin.design@mail.ru';
 
 async function walk(directory, relative = '') {
   const files = [];
@@ -31,6 +32,7 @@ for (const link of mailtoLinks) {
   let recipient = '';
   try { recipient = decodeURIComponent(link.slice('mailto:'.length).split('?')[0]); } catch { /* reported below */ }
   if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(recipient)) issues.push(`Invalid email action: ${link}`);
+  if (recipient !== projectEmail) issues.push(`Unexpected email action: ${link}`);
 }
 
 const results = await Promise.all([...externalLinks].map(async link => {
