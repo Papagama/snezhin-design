@@ -5,6 +5,7 @@
   "scripts": {
     "build": "node build-site.mjs",
     "check": "node tests/site-audit.mjs",
+    "check:links": "node tests/link-check.mjs",
     "test": "npm run build && npm run check"
   }
 }

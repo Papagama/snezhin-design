@@ -21,6 +21,7 @@ const htmlFiles = allFiles.filter(file => extname(file) === '.html' && file !== 
 const issues = [];
 const titles = new Map();
 const descriptions = new Map();
+const mailtoLinks = new Set();
 const home = await readFile(resolve(root, 'index.html'), 'utf8');
 const css = await readFile(resolve(root, 'site.css'), 'utf8');
 
@@ -63,12 +64,22 @@ for (const file of htmlFiles) {
   }
   for (const match of html.matchAll(/(?:href|src)="([^"]+)"/g)) {
     const link = match[1];
-    if (/^(https?:|mailto:|tel:|data:|#)/.test(link)) continue;
+    if (link.startsWith('mailto:')) {
+      mailtoLinks.add(link);
+      continue;
+    }
+    if (/^(https?:|tel:|data:|#)/.test(link)) continue;
     const target = targetFor(link);
     if (target && !allFiles.includes(target)) issues.push(`${file}: missing target ${link}`);
   }
   if (html.includes('formspree.io')) issues.push(`${file}: public page contains a Formspree endpoint`);
 }
+
+for (const link of mailtoLinks) {
+  const recipient = decodeURIComponent(link.slice('mailto:'.length).split('?')[0]);
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(recipient)) issues.push(`invalid email action ${link}`);
+}
+if (!mailtoLinks.size) issues.push('public pages: no mailto actions found');
 
 const sitemap = await readFile(resolve(root, 'sitemap.xml'), 'utf8');
 const sitemapCount = (sitemap.match(/<url>/g) || []).length;
@@ -82,4 +93,4 @@ if (issues.length) {
   process.exit(1);
 }
 
-console.log(`Audit passed: ${htmlFiles.length} public HTML pages, ${sitemapCount} sitemap URLs, no broken root-relative links.`);
+console.log(`Audit passed: ${htmlFiles.length} public HTML pages, ${sitemapCount} sitemap URLs, no broken root-relative links and ${mailtoLinks.size} valid email actions.`);

@@ -155,7 +155,7 @@ export const articlesA = [
       ['Когда можно публиковать сайт?', 'После проверки контента, форм, домена, мобильной версии, метаданных, юридических текстов и доступов. Готовый код сам по себе не означает готовность к публикации.']
     ],
     relatedService: '/website-development/',
-    relatedCase: 'dream-house'
+    relatedCase: 'pulse'
   },
   {
     slug: 'landing-ili-mnogostranichnyi-sait',

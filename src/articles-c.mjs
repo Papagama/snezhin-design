@@ -96,7 +96,7 @@ export const articlesC = [
       ['Какая форма лучше?', 'Короткая и честная: только поля, нужные для первого ответа, понятные ошибки и подтверждение после отправки.']
     ],
     relatedService: '/sozdanie-saitov-kaliningrad/',
-    relatedCase: 'dream-house'
+    relatedCase: 'pulse'
   },
   {
     slug: 'nuzhen-li-biznesu-sait-v-2026',

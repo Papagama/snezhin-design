@@ -5,7 +5,7 @@ const esc = value => String(value ?? '').replace(/[&<>"']/g, char => ({
   '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
 }[char]));
 
-const absolute = path => `${site.baseUrl}${path === '/' ? '/' : path}`;
+const absolute = path => /^https?:\/\//.test(path) ? path : `${site.baseUrl}${path === '/' ? '/' : path}`;
 const json = value => JSON.stringify(value).replace(/</g, '\\u003c');
 
 const breadcrumbSchema = items => ({
@@ -62,9 +62,9 @@ const pageHead = ({ title, description, path, type = 'website', image = '/public
   <link rel="icon" href="/public/favicon.svg" type="image/svg+xml">
   <link rel="alternate icon" href="/public/favicon.ico" sizes="any">
   <link rel="apple-touch-icon" href="/public/apple-touch-icon.png">
-  <link rel="stylesheet" href="/site.css?v=20260905-3">
+  <link rel="stylesheet" href="/site.css?v=20260905-4">
   ${schemas.filter(Boolean).map(item => `<script type="application/ld+json">${json(item)}</script>`).join('\n  ')}
-  <script src="/site.js?v=20260905-3" defer></script>`;
+  <script src="/site.js?v=20260905-4" defer></script>`;
 };
 
 const header = current => `
