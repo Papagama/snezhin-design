@@ -7,6 +7,7 @@ const esc = value => String(value ?? '').replace(/[&<>"']/g, char => ({
 
 const absolute = path => /^https?:\/\//.test(path) ? path : `${site.baseUrl}${path === '/' ? '/' : path}`;
 const json = value => JSON.stringify(value).replace(/</g, '\\u003c');
+const compactDashes = value => String(value).replaceAll('—', '–');
 
 const breadcrumbSchema = items => ({
   '@context': 'https://schema.org',
@@ -59,12 +60,12 @@ const pageHead = ({ title, description, path, type = 'website', image = '/public
   <meta property="og:url" content="${esc(canonical)}">
   <meta property="og:image" content="${esc(absolute(image))}">
   <meta name="twitter:card" content="summary_large_image">
-  <link rel="icon" href="/public/favicon.svg" type="image/svg+xml">
-  <link rel="alternate icon" href="/public/favicon.ico" sizes="any">
-  <link rel="apple-touch-icon" href="/public/apple-touch-icon.png">
-  <link rel="stylesheet" href="/site.css?v=20260905-4">
+  <meta name="theme-color" content="#17113a">
+  <link rel="icon" href="/public/favicon.svg?v=20260905-5" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="/public/favicon.svg?v=20260905-5">
+  <link rel="stylesheet" href="/site.css?v=20260905-5">
   ${schemas.filter(Boolean).map(item => `<script type="application/ld+json">${json(item)}</script>`).join('\n  ')}
-  <script src="/site.js?v=20260905-4" defer></script>`;
+  <script src="/site.js?v=20260905-5" defer></script>`;
 };
 
 const header = current => `
@@ -116,7 +117,7 @@ const footer = () => `
     </div>
   </footer>`;
 
-const shell = ({ current, title, description, path, body, bodyClass = '', type, image, schema }) => `<!doctype html>
+const shell = ({ current, title, description, path, body, bodyClass = '', type, image, schema }) => compactDashes(`<!doctype html>
 <html lang="ru">
 <head>${pageHead({ title, description, path, type, image, schema })}
 </head>
@@ -126,9 +127,9 @@ ${header(current)}
 ${footer()}
 </body>
 </html>
-`;
+`);
 
-const indexLine = (number, label, light = false) => `<div class="index-line${light ? ' index-line--light' : ''}"><span>${number}</span><span>${esc(label)}</span></div>`;
+const indexLine = (_number, label, light = false) => `<p class="index-line${light ? ' index-line--light' : ''}">${esc(label)}</p>`;
 
 const image = (item, { eager = false, className = '' } = {}) => `<img${className ? ` class="${className}"` : ''} src="${item.src}" alt="${esc(item.alt)}" width="${item.width}" height="${item.height}" loading="${eager ? 'eager' : 'lazy'}" decoding="async">`;
 
@@ -143,11 +144,10 @@ const caseCard = (item, index, variant = '') => `
   <article class="project-card${variant ? ` project-card--${variant}` : ''}" data-reveal>
     <a class="project-image" href="/portfolio/${item.slug}/" aria-label="Открыть кейс ${esc(item.title)}">
       ${image(item.cover, { eager: index < 1 })}
-      <span class="project-open">Кейс <span aria-hidden="true">↗</span></span>
     </a>
     <div class="project-meta">
-      <p class="mono">${item.number} / ${esc(item.category)} / ${item.year}</p>
-      <h3><a href="/portfolio/${item.slug}/">${esc(item.title)} — ${esc(item.subtitle)}</a></h3>
+      <p class="project-kind">${esc(item.category)} · ${item.year}</p>
+      <h3><a href="/portfolio/${item.slug}/"><span>${esc(item.title)}</span><small>${esc(item.subtitle)}</small></a></h3>
       <p>${esc(item.summary)}</p>
     </div>
   </article>`;
@@ -188,7 +188,7 @@ export const renderHome = () => {
       <div class="home-hero-stage">
         <div class="home-hero-content">
           <h1>Сайты, в которых <em>смысл</em> держит форму.</h1>
-          <p class="hero-copy">Я — Кирилл Снежин. Проектирую и разрабатываю сайты для бизнеса, которому важно ясно объяснить продукт, показать уровень и привести человека к следующему шагу.</p>
+          <p class="hero-copy">Меня зовут Кирилл Снежин. Проектирую и разрабатываю сайты для бизнеса, которому важно ясно объяснить продукт, показать уровень и привести человека к следующему шагу.</p>
           <div class="button-group"><a class="button button--accent" href="/contact.html">Обсудить задачу <span aria-hidden="true">↗</span></a><a class="text-link" href="/portfolio.html">Смотреть проекты</a></div>
         </div>
         <figure class="hero-portrait">
@@ -200,7 +200,7 @@ export const renderHome = () => {
 
     <section class="section shell">
       ${indexLine('01', 'Избранные проекты')}
-      <div class="section-heading"><h2>Работы — не галерея. Это ход решения.</h2><p>Пять авторских концептов показывают, как я соединяю пользовательский сценарий, визуальный характер и реализацию. Без выдуманных клиентов и метрик.</p></div>
+      <div class="section-heading"><h2>Работы с понятной логикой.</h2><p>Пять авторских концептов показывают, как я соединяю пользовательский сценарий, визуальный характер и реализацию. Без выдуманных клиентов и метрик.</p></div>
       <div class="projects-editorial">${featured.map((item, index) => caseCard(item, index, index === 0 ? 'wide' : index === 3 ? 'tall' : '')).join('')}</div>
       <div class="section-action"><a class="text-link text-link--large" href="/portfolio.html">Все проекты <span aria-hidden="true">↗</span></a></div>
     </section>
@@ -226,7 +226,7 @@ export const renderHome = () => {
 
     <section class="section shell">
       ${indexLine('05', 'Практический блог')}
-      <div class="section-heading"><h2>До заявки — ответы на нормальные вопросы.</h2><p>Стоимость, сроки, выбор формата, подготовка и ошибки сайта без маркетингового тумана.</p></div>
+      <div class="section-heading"><h2>Ответы на нормальные вопросы.</h2><p>Стоимость, сроки, выбор формата, подготовка и ошибки сайта без маркетингового тумана.</p></div>
       <div class="article-grid">${articles.slice(0, 3).map(article => articleCard(article)).join('')}</div>
       <div class="section-action"><a class="text-link text-link--large" href="/blog/">Все статьи <span aria-hidden="true">↗</span></a></div>
     </section>
@@ -244,8 +244,8 @@ export const renderPortfolio = () => {
   const body = `
     <section class="page-hero shell">
       ${indexLine('01', 'Портфолио / авторские концепты')}
-      <h1>Проекты, в которых виден не только экран, но и <em>логика</em>.</h1>
-      <div class="page-hero-copy"><p>Пять концептов для разных типов бизнеса: e-commerce, технологичный продукт, строительство, ювелирный и гастрономический бренды.</p><a class="button button--ink" href="/contact.html">Обсудить похожую задачу <span aria-hidden="true">↗</span></a></div>
+      <h1>Проекты, в которых видна <em>логика</em>.</h1>
+      <div class="page-hero-copy"><p>Пять концептов для разных типов бизнеса: e-commerce, технологичный продукт, тренировочный зал, ювелирный и гастрономический бренды.</p><a class="button button--ink" href="/contact.html">Обсудить похожую задачу <span aria-hidden="true">↗</span></a></div>
     </section>
     <section class="section shell">
       ${indexLine('02', 'Все проекты')}
@@ -442,4 +442,4 @@ export const renderPrivacy = () => {
   });
 };
 
-export const render404 = () => `<!doctype html><html lang="ru"><head>${pageHead({ title: 'Страница не найдена — snezhin.design', description: 'Запрошенная страница не найдена.', path: '/404.html' })}<meta name="robots" content="noindex"></head><body>${header('')}<main id="main"><section class="not-found shell">${indexLine('404', 'Страница не найдена')}<h1>Здесь ничего нет.</h1><p>Возможно, адрес изменился или в ссылке опечатка.</p><div class="button-group"><a class="button button--accent" href="/">На главную</a><a class="text-link" href="/portfolio.html">Портфолио</a></div></section></main>${footer()}</body></html>`;
+export const render404 = () => compactDashes(`<!doctype html><html lang="ru"><head>${pageHead({ title: 'Страница не найдена — snezhin.design', description: 'Запрошенная страница не найдена.', path: '/404.html' })}<meta name="robots" content="noindex"></head><body>${header('')}<main id="main"><section class="not-found shell">${indexLine('404', 'Страница не найдена')}<h1>Здесь ничего нет.</h1><p>Возможно, адрес изменился или в ссылке опечатка.</p><div class="button-group"><a class="button button--accent" href="/">На главную</a><a class="text-link" href="/portfolio.html">Портфолио</a></div></section></main>${footer()}</body></html>`);
