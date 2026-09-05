@@ -5,3 +5,5 @@ dist/
 .env.*
 1.env
 .codex-audit/
+.playwright-cli/
+output/
