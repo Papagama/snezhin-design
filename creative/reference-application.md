@@ -32,4 +32,4 @@
 
 ## Reference-set fingerprint
 
-`editorial-ledger + oversized-offer + asymmetric-proof-images + numbered-process + restrained-utility-nav + joyful-ink/electric-blue/pink/yellow/lime`
+`editorial-ledger + viewport-fit-offer + asymmetric-proof-image + numbered-process + restrained-utility-nav + joyful-ink/electric-blue/yellow/lime`

@@ -62,9 +62,9 @@ const pageHead = ({ title, description, path, type = 'website', image = '/public
   <link rel="icon" href="/public/favicon.svg" type="image/svg+xml">
   <link rel="alternate icon" href="/public/favicon.ico" sizes="any">
   <link rel="apple-touch-icon" href="/public/apple-touch-icon.png">
-  <link rel="stylesheet" href="/site.css?v=20260905-2">
+  <link rel="stylesheet" href="/site.css?v=20260905-3">
   ${schemas.filter(Boolean).map(item => `<script type="application/ld+json">${json(item)}</script>`).join('\n  ')}
-  <script src="/site.js?v=20260905-2" defer></script>`;
+  <script src="/site.js?v=20260905-3" defer></script>`;
 };
 
 const header = current => `
@@ -178,21 +178,21 @@ export const renderHome = () => {
   const body = `
     <section class="home-hero shell">
       ${indexLine('00', 'Веб-дизайн + frontend / Калининград и удалённо')}
-      <div class="home-hero-grid">
-        <div>
+      <div class="home-hero-stage">
+        <div class="home-hero-content">
           <h1>Сайты, в которых <em>смысл</em> держит форму.</h1>
           <p class="hero-copy">Я — Кирилл Снежин. Проектирую и разрабатываю сайты для бизнеса, которому важно ясно объяснить продукт, показать уровень и привести человека к следующему шагу.</p>
           <div class="button-group"><a class="button button--accent" href="/contact.html">Обсудить задачу <span aria-hidden="true">↗</span></a><a class="text-link" href="/portfolio.html">Смотреть проекты</a></div>
+          <div class="hero-proof">
+            <p class="mono">Независимая работа</p>
+            <dl><div><dt>Фокус</dt><dd>Структура, дизайн, разработка</dd></div><div><dt>Форматы</dt><dd>Лендинги, сайты, e-commerce</dd></div><div><dt>Подход</dt><dd>Один процесс от задачи до QA</dd></div></dl>
+          </div>
         </div>
-        <div class="hero-proof">
-          <p class="mono">Независимая работа</p>
-          <dl><div><dt>Фокус</dt><dd>Структура, дизайн, разработка</dd></div><div><dt>Форматы</dt><dd>Лендинги, сайты, e-commerce</dd></div><div><dt>Подход</dt><dd>Один процесс от задачи до QA</dd></div></dl>
-        </div>
+        <a class="hero-feature" href="/portfolio/waypoint/" data-reveal>
+          ${image(cases[0].cover, { eager: true })}
+          <span><b>01 / Featured</b><strong>WAYPOINT</strong><small>Интернет-магазин outdoor-снаряжения</small></span>
+        </a>
       </div>
-      <a class="hero-feature" href="/portfolio/waypoint/" data-reveal>
-        ${image(cases[0].cover, { eager: true })}
-        <span><b>01 / Featured</b><strong>WAYPOINT</strong><small>Интернет-магазин outdoor-снаряжения</small></span>
-      </a>
     </section>
 
     <section class="section shell">

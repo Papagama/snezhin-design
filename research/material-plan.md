@@ -15,7 +15,7 @@
 - Brand assets: текстовый знак `snezhin.design`, favicon, OG-изображение.
 - Existing images and rights: изображения пяти авторских концептов, предоставленные в репозитории владельца.
 - Selected references: D/arte, HJM Studio, Büro, Ania Melnik, Studio Herrström, Stōkt.
-- Type and colour constraints: современная кириллица без внешней зависимости; тёплая светлая основа, глубокий индиго и управляемые action-pink, electric-blue, жёлтый и лайм для акцентов и навигационного ритма.
+- Type and colour constraints: современная кириллица без внешней зависимости; тёплая светлая основа, глубокий индиго и управляемые action-blue, electric-blue, жёлтый и лайм для акцентов и навигационного ритма. Розовые декоративные оттенки исключены.
 - What the client likes: minimal / brutalist / Swiss / contemporary, large typography, image-led и typography-led layouts.
 - What would feel wrong: AI SaaS, бессмысленный glass, одинаковые карточки, декоративная перегрузка.
 
