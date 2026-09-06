@@ -122,3 +122,61 @@ if (contactForm) {
     event.target.removeAttribute('aria-invalid');
   });
 }
+
+const emailDialog = document.querySelector('[data-email-dialog]');
+const emailLinks = [...document.querySelectorAll('a[href^="mailto:"]')];
+
+if (emailDialog?.showModal && emailLinks.length) {
+  const recipient = emailDialog.querySelector('[data-email-recipient]');
+  const gmailLink = emailDialog.querySelector('[data-email-gmail]');
+  const systemLink = emailDialog.querySelector('[data-email-system]');
+  const copyButton = emailDialog.querySelector('[data-email-copy]');
+  const status = emailDialog.querySelector('[data-email-status]');
+  let activeLink = null;
+  let email = '';
+
+  const updateStatus = text => { status.textContent = text; };
+
+  const copyEmail = async () => {
+    try {
+      await navigator.clipboard.writeText(email);
+    } catch {
+      const field = document.createElement('textarea');
+      field.value = email;
+      field.setAttribute('readonly', '');
+      field.style.position = 'fixed';
+      field.style.opacity = '0';
+      document.body.append(field);
+      field.select();
+      document.execCommand('copy');
+      field.remove();
+    }
+    updateStatus('Адрес скопирован. Вставьте его в любое письмо.');
+    copyButton.textContent = 'Адрес скопирован';
+  };
+
+  emailLinks.forEach(link => {
+    link.addEventListener('click', event => {
+      if (event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
+      event.preventDefault();
+      activeLink = link;
+      const [address, query = ''] = link.getAttribute('href').slice('mailto:'.length).split('?');
+      const subject = new URLSearchParams(query).get('subject') || 'Новая задача с snezhin.design';
+      email = decodeURIComponent(address);
+      recipient.textContent = email;
+      gmailLink.href = `https://mail.google.com/mail/?view=cm&fs=1&to=${encodeURIComponent(email)}&su=${encodeURIComponent(subject)}`;
+      systemLink.href = link.getAttribute('href');
+      copyButton.innerHTML = 'Скопировать адрес <span aria-hidden="true">⧉</span>';
+      updateStatus('Адрес можно скопировать или открыть в удобной почте.');
+      emailDialog.showModal();
+      emailDialog.querySelector('.email-dialog__close').focus();
+    });
+  });
+
+  copyButton.addEventListener('click', copyEmail);
+  emailDialog.addEventListener('click', event => {
+    const bounds = emailDialog.getBoundingClientRect();
+    if (event.clientX < bounds.left || event.clientX > bounds.right || event.clientY < bounds.top || event.clientY > bounds.bottom) emailDialog.close();
+  });
+  emailDialog.addEventListener('close', () => activeLink?.focus());
+}

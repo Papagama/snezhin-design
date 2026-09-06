@@ -303,6 +303,19 @@ em { color: var(--accent); font-family: Georgia, "Times New Roman", serif; font-
 .direct-contact dt { color: #bdc0b6; font-family: var(--mono); font-size: .62rem; text-transform: uppercase; }
 .direct-contact dd { margin: 0; font-size: .85rem; }
 
+.email-dialog { width: min(calc(100% - 2.5rem), 510px); border: 0; padding: 0; background: transparent; color: var(--ink); }
+.email-dialog::backdrop { background: rgb(21 21 18 / 58%); backdrop-filter: blur(3px); }
+.email-dialog__panel { position: relative; margin: 0; padding: clamp(1.5rem, 5vw, 2.5rem); border-radius: 5px; background: var(--paper); box-shadow: 0 20px 70px rgb(0 0 0 / 24%); }
+.email-dialog__close { position: absolute; top: 1rem; right: 1rem; display: grid; width: 38px; height: 38px; place-items: center; border: 1px solid var(--line); border-radius: 50%; background: transparent; color: var(--ink); font-size: 1.6rem; line-height: 1; }
+.email-dialog__close:hover { background: var(--ink); color: var(--white); }
+.email-dialog h2 { max-width: 390px; margin: 1rem 0 .65rem; font-size: clamp(2rem, 7vw, 3.1rem); }
+.email-dialog__address { margin: 0 0 1.75rem; color: var(--muted); font-size: 1.05rem; overflow-wrap: anywhere; }
+.email-dialog__actions { display: grid; gap: .7rem; }
+.email-dialog__actions .button { width: 100%; justify-content: space-between; }
+.button--copy { background: transparent; border-color: var(--line); color: var(--ink); }
+.button--copy:hover { border-color: var(--ink); }
+.email-dialog__status { min-height: 1.6em; margin: 1.2rem 0 0; color: var(--muted); font-size: .85rem; }
+
 .legal-page { min-height: calc(100svh - 76px); padding-top: clamp(2rem, 5vh, 4rem); padding-bottom: var(--section); }
 .legal-page h1 { max-width: 950px; margin: clamp(2rem, 5vh, 4rem) 0 1.5rem; font-size: clamp(3.3rem, 6.8vw, 7rem); }
 .legal-page > .lead-copy { max-width: 800px; color: var(--muted); font-size: 1.25rem; }

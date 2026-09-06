@@ -114,5 +114,20 @@
       </div>
     </div>
   </footer>
+
+  <dialog class="email-dialog" data-email-dialog aria-labelledby="email-dialog-title">
+    <form class="email-dialog__panel" method="dialog">
+      <button class="email-dialog__close" type="submit" aria-label="Закрыть окно">×</button>
+      <p class="eyebrow">Написать письмо</p>
+      <h2 id="email-dialog-title">Выберите способ связи</h2>
+      <p class="email-dialog__address" data-email-recipient></p>
+      <div class="email-dialog__actions">
+        <a class="button button--accent" data-email-gmail target="_blank" rel="noopener">Открыть Gmail <span aria-hidden="true">↗</span></a>
+        <a class="button button--ink" data-email-system>Открыть почтовое приложение <span aria-hidden="true">↗</span></a>
+        <button class="button button--copy" type="button" data-email-copy>Скопировать адрес <span aria-hidden="true">⧉</span></button>
+      </div>
+      <p class="email-dialog__status" data-email-status aria-live="polite">Адрес можно скопировать или открыть в удобной почте.</p>
+    </form>
+  </dialog>
 </body>
 </html>
