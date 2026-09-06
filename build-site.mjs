@@ -2,6 +2,7 @@ import { cp, mkdir, readFile, rm, writeFile } from 'node:fs/promises';
 import { dirname, resolve } from 'node:path';
 import { cases, servicePages, site } from './src/site-data.mjs';
 import { articles } from './src/articles.mjs';
+import { notes } from './src/notes.mjs';
 import {
   render404,
   renderAbout,
@@ -10,6 +11,7 @@ import {
   renderCase,
   renderContact,
   renderHome,
+  renderNote,
   renderPortfolio,
   renderPrivacy,
   renderServicePage,
@@ -48,6 +50,9 @@ const pages = [
   })),
   ...articles.map((item, index) => ({
     file: `blog/${item.slug}/index.html`, path: `/blog/${item.slug}/`, html: renderArticle(item, index), priority: '0.7'
+  })),
+  ...notes.map((item, index) => ({
+    file: `blog/${item.slug}/index.html`, path: `/blog/${item.slug}/`, html: renderNote(item, index), priority: '0.6'
   }))
 ];
 
@@ -131,4 +136,4 @@ await writeFile(resolve(server, 'index.js'), worker.trimStart(), 'utf8');
 const builtIndex = await readFile(resolve(client, 'index.html'), 'utf8');
 if (!builtIndex.includes('/site.css') || !builtIndex.includes('/site.js')) throw new Error('Shared site assets are missing from index.html');
 
-console.log(`Built ${pages.length} HTML pages, ${articles.length} articles and ${cases.length} case studies.`);
+console.log(`Built ${pages.length} HTML pages, ${articles.length} articles, ${notes.length} author notes and ${cases.length} case studies.`);

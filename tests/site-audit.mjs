@@ -22,6 +22,8 @@ const issues = [];
 const titles = new Map();
 const descriptions = new Map();
 const mailtoLinks = new Set();
+const pageIds = new Map();
+const fragments = [];
 const projectEmail = 'snezhin.design@mail.ru';
 const home = await readFile(resolve(root, 'index.html'), 'utf8');
 const css = await readFile(resolve(root, 'site.css'), 'utf8');
@@ -36,7 +38,7 @@ const homeFooter = home.match(/<footer\b[\s\S]*?<\/footer>/)?.[0] || '';
 const homeHeader = home.match(/<header\b[\s\S]*?<\/header>/)?.[0] || '';
 if (homeFooter.includes('footer-lead') || homeFooter.includes('Давайте обсудим')) issues.push('index.html: duplicate footer CTA remains');
 if (!homeFooter.includes('class="footer-action" href="/contact.html"')) issues.push('index.html: footer contact action is missing');
-if (!homeHeader.includes('Обсудить проект') || !homeHeader.includes('href="/contact.html"')) issues.push('index.html: header contact action must open the contact page');
+if (!homeHeader.includes('Напишите мне') || !homeHeader.includes('href="/contact.html"')) issues.push('index.html: header contact action must open the contact page');
 
 function targetFor(link) {
   const clean = link.split('#')[0].split('?')[0];
@@ -55,6 +57,11 @@ for (const file of htmlFiles) {
   if (!title) issues.push(`${file}: missing title`);
   if (!description) issues.push(`${file}: missing description`);
   if (!canonical) issues.push(`${file}: missing canonical`);
+  const expectedPath = file === 'index.html' ? '/' : `/${file.replace(/\/index\.html$/, '/')}`;
+  if (canonical !== `https://design.kirill-verstak.ru${expectedPath}`) issues.push(`${file}: canonical does not match its public route`);
+  const ids = [...html.matchAll(/\bid="([^"]+)"/g)].map(match => match[1]);
+  if (new Set(ids).size !== ids.length) issues.push(`${file}: duplicate element IDs`);
+  pageIds.set(file, new Set(ids));
   if (h1Count !== 1) issues.push(`${file}: ${h1Count} H1 elements`);
   if (html.includes('—')) issues.push(`${file}: contains an em dash`);
   if (html.includes('class="project-open"')) issues.push(`${file}: obsolete project badge remains`);
@@ -77,6 +84,11 @@ for (const file of htmlFiles) {
   }
   for (const match of html.matchAll(/(?:href|src)="([^"]+)"/g)) {
     const link = match[1];
+    if ((link.startsWith('/') || link.startsWith('#')) && link.includes('#') && !link.includes('#/')) {
+      const [route, fragment] = link.split('#');
+      const target = route ? targetFor(route) : file;
+      if (fragment && target?.endsWith('.html')) fragments.push({ file, target, fragment });
+    }
     if (link.startsWith('mailto:')) {
       mailtoLinks.add(link);
       continue;
@@ -88,6 +100,10 @@ for (const file of htmlFiles) {
   if (html.includes('formspree.io')) issues.push(`${file}: public page contains a Formspree endpoint`);
 }
 
+for (const { file, target, fragment } of fragments) {
+  if (!pageIds.get(target)?.has(decodeURIComponent(fragment))) issues.push(`${file}: missing anchor ${target}#${fragment}`);
+}
+
 for (const link of mailtoLinks) {
   const recipient = decodeURIComponent(link.slice('mailto:'.length).split('?')[0]);
   if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(recipient)) issues.push(`invalid email action ${link}`);
@@ -97,7 +113,7 @@ if (!mailtoLinks.size) issues.push('public pages: no mailto actions found');
 
 const sitemap = await readFile(resolve(root, 'sitemap.xml'), 'utf8');
 const sitemapCount = (sitemap.match(/<url>/g) || []).length;
-if (sitemapCount !== 30) issues.push(`sitemap.xml: expected 30 URLs, received ${sitemapCount}`);
+if (sitemapCount !== 33) issues.push(`sitemap.xml: expected 33 URLs, received ${sitemapCount}`);
 
 const robots = await readFile(resolve(root, 'robots.txt'), 'utf8');
 if (!robots.includes('Sitemap: https://design.kirill-verstak.ru/sitemap.xml')) issues.push('robots.txt: missing sitemap URL');
