@@ -64,9 +64,9 @@ const pageHead = ({ title, description, path, type = 'website', image = '/public
   <meta name="theme-color" content="#F6F4EF">
   <link rel="icon" href="/public/favicon.svg?v=20260906-redesign" type="image/svg+xml">
   <link rel="apple-touch-icon" href="/public/apple-touch-icon.png">
-  <link rel="stylesheet" href="/site.css?v=20260906-redesign">
+  <link rel="stylesheet" href="/site.css?v=20260906-email-actions">
   ${schemas.filter(Boolean).map(item => `<script type="application/ld+json">${json(item)}</script>`).join('\n  ')}
-  <script src="/site.js?v=20260906-redesign" defer></script>`;
+  <script src="/site.js?v=20260906-email-actions" defer></script>`;
 };
 
 const header = current => `
