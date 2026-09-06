@@ -62,9 +62,9 @@ const pageHead = ({ title, description, path, type = 'website', image = '/public
   <meta property="og:image" content="${esc(absolute(image))}">
   <meta name="twitter:card" content="summary_large_image">
   <meta name="theme-color" content="#F6F4EF">
-  <link rel="icon" href="/public/favicon.svg?v=20260906-redesign" type="image/svg+xml">
-  <link rel="apple-touch-icon" href="/public/apple-touch-icon.png">
-  <link rel="stylesheet" href="/site.css?v=20260906-email-actions">
+  <link rel="icon" href="/public/favicon.svg?v=20260906-jura" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="/public/apple-touch-icon.png?v=20260906-jura">
+  <link rel="stylesheet" href="/site.css?v=20260906-jura">
   ${schemas.filter(Boolean).map(item => `<script type="application/ld+json">${json(item)}</script>`).join('\n  ')}
   <script src="/site.js?v=20260906-email-actions" defer></script>`;
 };
@@ -73,7 +73,7 @@ const header = current => `
   <a class="skip-link" href="#main">К содержанию</a>
   <header class="site-header" data-header>
     <div class="shell header-inner">
-      <a class="brand" href="/" aria-label="snezhin.design — главная"><span class="brand-symbol" aria-hidden="true">s.</span>snezhin<span class="brand-domain">.design</span></a>
+      <a class="brand" href="/" aria-label="snezhin.design — главная"><span class="brand-symbol" aria-hidden="true">S</span>snezhin<span class="brand-domain">.design</span></a>
       <button class="menu-toggle" type="button" aria-expanded="false" aria-controls="site-menu" aria-label="Открыть меню" data-menu-toggle>
         <span></span><span></span>
       </button>

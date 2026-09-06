@@ -1,5 +1,7 @@
 @font-face { font-family: "Onest"; font-style: normal; font-weight: 100 900; font-display: swap; src: url('/assets/fonts/onest-cyrillic.woff2') format('woff2'); unicode-range: U+0301,U+0400-045F,U+0490-0491,U+04B0-04B1,U+2116; }
 @font-face { font-family: "Onest"; font-style: normal; font-weight: 100 900; font-display: swap; src: url('/assets/fonts/onest-latin.woff2') format('woff2'); unicode-range: U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD; }
+@font-face { font-family: "Jura"; font-style: normal; font-weight: 400; font-display: swap; src: url('/assets/fonts/jura-regular.ttf') format('truetype'); }
+@font-face { font-family: "Jura"; font-style: normal; font-weight: 600; font-display: swap; src: url('/assets/fonts/jura-semibold.ttf') format('truetype'); }
 :root {
   --paper: #F6F4EF;
   --paper-2: #eeebe4;
@@ -18,6 +20,7 @@
   --pad: clamp(1.25rem, 4.8vw, 4.5rem);
   --section: clamp(4.5rem, 8vw, 8rem);
   --sans: "Onest", "Helvetica Neue", Arial, system-ui, -apple-system, sans-serif;
+  --accent-display: "Jura", "Onest", "Helvetica Neue", Arial, sans-serif;
   --mono: "SFMono-Regular", Consolas, "Liberation Mono", monospace;
 }
 
@@ -31,7 +34,7 @@ button { cursor: pointer; }
 h1, h2, h3, p, blockquote, figure, dl, dd { margin-top: 0; }
 h1, h2, h3 { letter-spacing: -.055em; line-height: .96; }
 p { max-width: 72ch; }
-em { color: var(--accent); font-family: Georgia, "Times New Roman", serif; font-weight: 400; }
+em { color: var(--accent); font-family: var(--accent-display); font-size: .66em; font-style: normal; font-weight: 600; letter-spacing: .065em; line-height: 1.16; text-transform: uppercase; }
 ::selection { background: var(--accent); color: var(--white); }
 
 :focus-visible { outline: 2px solid var(--accent); outline-offset: 4px; }
@@ -447,13 +450,13 @@ em { color: var(--accent); font-family: Georgia, "Times New Roman", serif; font-
 /* Portfolio edition: an author-led typographic opening and an asymmetric archive. */
 body { overflow-x: clip; -webkit-font-smoothing: antialiased; }
 h1, h2, h3 { font-weight: 500; line-height: 1.08; letter-spacing: -.055em; }
-em { letter-spacing: -.065em; }
+em { letter-spacing: .065em; }
 :focus-visible { outline-width: 3px; outline-offset: 5px; }
 .mono, .eyebrow, .index-line, .footer-label { font-size: .75rem; letter-spacing: .035em; }
 .site-header { background: var(--paper); border: 0; backdrop-filter: none; }
 .header-inner { min-height: 88px; }
 .brand { font-size: 1.2rem; white-space: nowrap; }
-.brand-symbol { width: 35px; height: 35px; display: inline-flex; align-items: center; justify-content: center; margin-right: .65rem; padding-bottom: 3px; color: var(--paper); background: var(--ink); font: italic 1.7rem/1 Georgia, serif; }
+.brand-symbol { width: 35px; height: 35px; display: inline-flex; align-items: center; justify-content: center; margin-right: .65rem; color: var(--paper); background: var(--ink); font-family: var(--accent-display); font-size: .9rem; font-weight: 600; letter-spacing: 0; line-height: 1; }
 .brand-domain { font-weight: 400; }
 .main-nav a { font-size: .875rem; font-weight: 400; letter-spacing: 0; text-transform: none; }
 .menu-toggle { border-radius: 3px; border-color: var(--line); }
@@ -483,7 +486,7 @@ em { letter-spacing: -.065em; }
 .hero-topline { padding-top: 1.2rem; border-top: 1px solid var(--line); }
 .hero-topline .eyebrow { letter-spacing: .015em; }
 .home-hero h1 { max-width: none; margin: clamp(3rem, 5.8vw, 5.5rem) 0 clamp(2.5rem, 4.8vw, 4.5rem); font-size: clamp(3.4rem, 7.5vw, 7.1rem); font-weight: 500; letter-spacing: -.065em; line-height: 1.09; }
-.home-hero h1 em { font-size: 1.02em; letter-spacing: -.075em; }
+.home-hero h1 em { font-size: .64em; letter-spacing: .07em; }
 .hero-introduction { display: grid; grid-template-columns: 3fr 4.3fr 2.4fr; gap: clamp(2rem, 4vw, 4rem); align-items: center; padding-bottom: 3rem; }
 .hero-portrait { display: flex; align-items: center; gap: 1rem; min-width: 0; min-height: 0; aspect-ratio: auto; margin: 0; }
 .hero-portrait img { width: 80px; height: 96px; flex-shrink: 0; object-fit: cover; border-radius: 2px; }
@@ -637,11 +640,11 @@ em { letter-spacing: -.065em; }
 @media (max-width: 600px) {
   :root { --pad: 1.25rem; --section: 4.5rem; }
   .brand { font-size: 1.1rem; }
-  .brand-symbol { width: 30px; height: 30px; font-size: 1.5rem; }
+  .brand-symbol { width: 30px; height: 30px; font-size: .76rem; }
   .home-hero { padding-top: .75rem; }
   .hero-topline .eyebrow { max-width: 270px; font-size: .68rem; line-height: 1.6; }
   .home-hero h1 { margin: 2.6rem 0 2.2rem; font-size: clamp(2.3rem, 8.6vw, 3.5rem); letter-spacing: -.06em; line-height: 1.16; }
-  .home-hero h1 em { letter-spacing: -.075em; }
+  .home-hero h1 em { letter-spacing: .07em; }
   .hero-introduction { grid-template-columns: 1fr; gap: 1.5rem; padding-bottom: 2rem; }
   .hero-portrait img { width: 54px; height: 64px; }
   .hero-portrait figcaption { flex-direction: column; align-items: flex-start; gap: .1rem; }
