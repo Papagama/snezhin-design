@@ -68,9 +68,9 @@ const pageHead = ({ title, description, path, type = 'website', image = '/public
   <link rel="preload" href="/assets/fonts/onest-cyrillic.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="preload" href="/assets/fonts/onest-latin.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="preload" href="/assets/fonts/jura-semibold.ttf" as="font" type="font/ttf" crossorigin>
-  <link rel="stylesheet" href="/site.css?v=20260906-personal">
+  <link rel="stylesheet" href="/site.css?v=20260906-typewriter">
   ${schemas.filter(Boolean).map(item => `<script type="application/ld+json">${json(item)}</script>`).join('\n  ')}
-  <script src="/site.js?v=20260906-email-actions" defer></script>`;
+  <script src="/site.js?v=20260906-typewriter" defer></script>`;
 };
 
 const header = current => `
@@ -214,7 +214,7 @@ export const renderHome = () => {
   const body = `
     <section class="home-hero shell">
       <div class="hero-topline"><p class="eyebrow">Независимый веб-дизайнер и разработчик</p><span>Калининград · Работаю удалённо</span></div>
-      <h1>Я Кирилл.<br><em>Придумываю и собираю сайты.</em></h1>
+      <h1>Я Кирилл.<br><em data-typewriter>Придумываю и собираю сайты.</em></h1>
       <div class="hero-introduction">
         <figure class="hero-portrait">${image(portrait, { eager: true })}<figcaption><strong>Кирилл Снежин</strong><span>Дизайн и разработка</span></figcaption></figure>
         <p class="hero-copy">Люблю, когда всё складывается: текст, фотографии, шрифт. Делаю сайты спокойными и понятными, но почти всегда оставляю место для небольшой необычной детали.</p>

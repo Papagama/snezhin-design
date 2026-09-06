@@ -444,6 +444,7 @@ h1 em, h2 em, h3 em, blockquote em { color: var(--accent); font-family: var(--ac
   html { scroll-behavior: auto; }
   *, *::before, *::after { animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; }
   .js [data-reveal], .js [data-stack-reveal] .shell { opacity: 1; transform: none; }
+  .home-hero h1 em[data-typewriter].is-typing::after { display: none; }
 }
 
 /* Portfolio edition: an author-led typographic opening and an asymmetric archive. */
@@ -486,6 +487,9 @@ em { letter-spacing: .065em; }
 .hero-topline .eyebrow { letter-spacing: .015em; }
 .home-hero h1 { max-width: none; margin: clamp(3rem, 5.8vw, 5.5rem) 0 clamp(2.5rem, 4.8vw, 4.5rem); font-size: clamp(3.4rem, 7.5vw, 7.1rem); font-weight: 500; letter-spacing: -.065em; line-height: 1.09; }
 .home-hero h1 em { font-size: .64em; letter-spacing: .07em; }
+.home-hero h1 em[data-typewriter] { position: relative; }
+.home-hero h1 em[data-typewriter].is-typing::after { content: ""; display: inline-block; width: .075em; height: .86em; margin-left: .12em; vertical-align: -.08em; background: currentColor; animation: typewriter-caret .8s steps(1, end) infinite; }
+@keyframes typewriter-caret { 0%, 48% { opacity: 1; } 49%, 100% { opacity: 0; } }
 .hero-introduction { display: grid; grid-template-columns: 3fr 4.3fr 2.4fr; gap: clamp(2rem, 4vw, 4rem); align-items: center; padding-bottom: 3rem; }
 .hero-portrait { display: flex; align-items: center; gap: 1rem; min-width: 0; min-height: 0; aspect-ratio: auto; margin: 0; }
 .hero-portrait img { width: 80px; height: 96px; flex-shrink: 0; object-fit: cover; border-radius: 2px; }

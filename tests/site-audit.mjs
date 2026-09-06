@@ -33,6 +33,8 @@ if (home.includes('class="hero-feature"') || home.includes('WAYPOINT</strong>'))
 if (!css.includes('min-height: calc(100svh - 76px)')) issues.push('site.css: desktop viewport-safe hero rule missing');
 if (!/rel="icon" href="\/public\/favicon\.svg\?v=[^"]+"/.test(home)) issues.push('index.html: versioned favicon is missing');
 if (!home.includes('data-stack-reveal')) issues.push('index.html: contextual stacking animation is missing');
+if (!home.includes('data-typewriter')) issues.push('index.html: hero typewriter marker is missing');
+if (!css.includes('typewriter-caret')) issues.push('site.css: typewriter caret animation is missing');
 if (!css.includes('--paper: #F6F4EF')) issues.push('site.css: requested base background is missing');
 const homeFooter = home.match(/<footer\b[\s\S]*?<\/footer>/)?.[0] || '';
 const homeHeader = home.match(/<header\b[\s\S]*?<\/header>/)?.[0] || '';

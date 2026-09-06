@@ -111,6 +111,29 @@ if (routeNav && 'IntersectionObserver' in window) {
   sections.forEach(section => sectionObserver.observe(section));
 }
 
+const typewriterItems = [...document.querySelectorAll('[data-typewriter]')];
+if (typewriterItems.length && !reduceMotion) {
+  typewriterItems.forEach(item => {
+    const text = item.textContent;
+    let index = 0;
+    item.classList.add('is-typing');
+    item.textContent = '';
+
+    const typeNext = () => {
+      item.textContent = text.slice(0, index);
+      index += 1;
+      if (index <= text.length) {
+        window.setTimeout(typeNext, index === 1 ? 180 : 46);
+      } else {
+        item.classList.remove('is-typing');
+        item.classList.add('is-typed');
+      }
+    };
+
+    window.requestAnimationFrame(typeNext);
+  });
+}
+
 const contactForm = document.querySelector('[data-contact-form]');
 if (contactForm) {
   const status = contactForm.querySelector('[data-form-status]');
