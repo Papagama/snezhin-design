@@ -81,7 +81,7 @@ for (const page of pages) {
   await writeFile(resolve(root, page.file), page.html, 'utf8');
 }
 
-const lastModified = '2026-09-05';
+const lastModified = '2026-09-06';
 const sitemapEntries = pages
   .filter(page => page.sitemap !== false)
   .map(page => `  <url><loc>${site.baseUrl}${page.path}</loc><lastmod>${lastModified}</lastmod><changefreq>${page.path.startsWith('/blog/') ? 'monthly' : 'monthly'}</changefreq><priority>${page.priority}</priority></url>`)

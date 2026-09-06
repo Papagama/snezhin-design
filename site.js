@@ -49,13 +49,25 @@ if (menuToggle && menuPanel) {
     if (event.target.closest('a')) closeMenu();
   });
   document.addEventListener('keydown', event => {
+    if (menuToggle.getAttribute('aria-expanded') !== 'true') return;
     if (event.key === 'Escape') {
       closeMenu();
       menuToggle.focus();
     }
+    if (event.key === 'Tab') {
+      const items = [menuToggle, ...menuPanel.querySelectorAll('a[href]')];
+      const first = items[0], last = items.at(-1);
+      if (event.shiftKey && document.activeElement === first) {
+        event.preventDefault();
+        last.focus();
+      } else if (!event.shiftKey && document.activeElement === last) {
+        event.preventDefault();
+        first.focus();
+      }
+    }
   });
   window.addEventListener('resize', () => {
-    if (window.innerWidth > 760) closeMenu();
+    if (window.innerWidth > 850) closeMenu();
   });
 }
 
