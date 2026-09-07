@@ -3,6 +3,8 @@ import { dirname, resolve } from 'node:path';
 import { cases, servicePages, site } from './src/site-data.mjs';
 import { articles } from './src/articles.mjs';
 import { notes } from './src/notes.mjs';
+import { localPage } from './src/local-page.mjs';
+import { validateProjectTrust } from './src/project-trust.mjs';
 import {
   render404,
   renderAbout,
@@ -11,6 +13,7 @@ import {
   renderCase,
   renderContact,
   renderHome,
+  renderLocalPage,
   renderNote,
   renderPortfolio,
   renderPrivacy,
@@ -26,8 +29,11 @@ const server = resolve(dist, 'server');
 const generatedDirectories = [
   'portfolio',
   'blog',
+  localPage.slug,
   ...servicePages.map(item => item.slug)
 ];
+
+validateProjectTrust(cases);
 
 for (const directory of generatedDirectories) {
   await rm(resolve(root, directory), { recursive: true, force: true });
@@ -42,11 +48,12 @@ const pages = [
   { file: 'privacy.html', path: '/privacy.html', html: renderPrivacy(), priority: '0.2' },
   { file: '404.html', path: '/404.html', html: render404(), priority: '0.1', sitemap: false },
   { file: 'blog/index.html', path: '/blog/', html: renderBlog(), priority: '0.8' },
+  { file: `${localPage.slug}/index.html`, path: localPage.path, html: renderLocalPage(), priority: '0.9' },
   ...cases.map((item, index) => ({
     file: `portfolio/${item.slug}/index.html`, path: `/portfolio/${item.slug}/`, html: renderCase(item, index), priority: '0.8'
   })),
   ...servicePages.map(item => ({
-    file: `${item.slug}/index.html`, path: `/${item.slug}/`, html: renderServicePage(item), priority: item.slug === 'sozdanie-saitov-kaliningrad' ? '0.9' : '0.8'
+    file: `${item.slug}/index.html`, path: `/${item.slug}/`, html: renderServicePage(item), priority: '0.8'
   })),
   ...articles.map((item, index) => ({
     file: `blog/${item.slug}/index.html`, path: `/blog/${item.slug}/`, html: renderArticle(item, index), priority: '0.7'
@@ -86,7 +93,7 @@ for (const page of pages) {
   await writeFile(resolve(root, page.file), page.html, 'utf8');
 }
 
-const lastModified = '2026-09-06';
+const lastModified = '2026-09-07';
 const sitemapEntries = pages
   .filter(page => page.sitemap !== false)
   .map(page => `  <url><loc>${site.baseUrl}${page.path}</loc><lastmod>${lastModified}</lastmod><changefreq>${page.path.startsWith('/blog/') ? 'monthly' : 'monthly'}</changefreq><priority>${page.priority}</priority></url>`)
@@ -127,7 +134,8 @@ export default {
       response = await env.ASSETS.fetch(assetRequest(request, pathname + 'index.html'));
     }
     if (response.status !== 404) return response;
-    return env.ASSETS.fetch(assetRequest(request, '/404.html'));
+    const notFound = await env.ASSETS.fetch(assetRequest(request, '/404.html'));
+    return new Response(notFound.body, { status: 404, headers: notFound.headers });
   }
 };
 `;

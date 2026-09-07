@@ -1,5 +1,7 @@
 # Передача редизайна
 
+Обновление 7 сентября 2026: локальная страница сохранена по `/sozdanie-saitov-kaliningrad/`, данные вынесены в `src/local-page.mjs`, шаблон — `renderLocalPage`. Тематические группы и связи статей/заметок редактируются в `src/content-links.mjs`. Статусы проектов находятся в `src/site-data.mjs`, необязательные подтверждённые отзывы — в `src/project-trust.mjs`; правила заполнения и проверки описаны в `docs/local-seo-report.md`. План внешних размещений: `docs/seo-backlinks-plan.md`. `npm test` включает отдельный тест локального SEO; все 33 адреса sitemap сохранены. GitHub Pages по-прежнему публикует main/root на существующий домен.
+
 Дата: 2026-09-06. Исходная версия: b58da9a. Публикация: GitHub Pages, репозиторий Papagama/snezhin-design, ветка main, корень. Домен: https://design.kirill-verstak.ru/.
 
 Авторская правка поверх 967a556: личные заметки редактируются в src/notes.mjs, общая разметка в renderNote / noteList / marginNote файла src/render.mjs. Стили находятся под комментарием Personal edition в site.css. Чтобы добавить заметку, заполнить объект по существующему формату и выполнить npm run test; её маршрут, список и sitemap создаются сборкой. Дату и личные утверждения согласовывать с владельцем. После добавления страницы обновить ожидаемое число URL в tests/site-audit.mjs.

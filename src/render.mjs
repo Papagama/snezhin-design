@@ -1,6 +1,9 @@
-import { site, navigation, expertise, processSteps, services, cases, getCase } from './site-data.mjs';
+import { site, navigation, expertise, processSteps, services, cases, servicePages, getCase } from './site-data.mjs';
 import { articles } from './articles.mjs';
 import { notes } from './notes.mjs';
+import { localPage } from './local-page.mjs';
+import { articleClusters, relatedArticleSlugs, localArticleLinks, noteConnections, articleServiceOverrides } from './content-links.mjs';
+import { projectStatusLabels, testimonials } from './project-trust.mjs';
 
 const esc = value => String(value ?? '').replace(/[&<>"']/g, char => ({
   '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
@@ -22,21 +25,20 @@ const breadcrumbSchema = items => ({
   }))
 });
 
-const professionalSchema = {
+const websiteSchema = {
   '@context': 'https://schema.org',
-  '@type': 'ProfessionalService',
+  '@type': 'WebSite',
+  '@id': `${site.baseUrl}/#website`,
   name: site.name,
-  url: site.baseUrl,
-  image: `${site.baseUrl}/public/og.png`,
-  email: site.email,
-  founder: { '@type': 'Person', name: site.author },
-  areaServed: ['Калининград', 'Россия', 'Удалённо'],
-  sameAs: [site.telegram, site.vk]
+  url: `${site.baseUrl}/`,
+  inLanguage: 'ru-RU',
+  publisher: { '@id': `${site.baseUrl}/#kirill` }
 };
 
 const personSchema = {
   '@context': 'https://schema.org',
   '@type': 'Person',
+  '@id': `${site.baseUrl}/#kirill`,
   name: site.author,
   url: site.baseUrl,
   jobTitle: 'Веб-дизайнер и frontend-разработчик',
@@ -44,7 +46,7 @@ const personSchema = {
   sameAs: [site.telegram, site.vk]
 };
 
-const pageHead = ({ title, description, path, type = 'website', image = '/public/og.png', schema = [] }) => {
+const pageHead = ({ title, description, path, type = 'website', image = '/public/og.png', schema = [], robots = 'index, follow, max-image-preview:large' }) => {
   const canonical = absolute(path);
   const schemas = Array.isArray(schema) ? schema : [schema];
   return `
@@ -52,7 +54,7 @@ const pageHead = ({ title, description, path, type = 'website', image = '/public
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <title>${esc(title)}</title>
   <meta name="description" content="${esc(description)}">
-  <meta name="robots" content="index, follow, max-image-preview:large">
+  <meta name="robots" content="${esc(robots)}">
   <link rel="canonical" href="${esc(canonical)}">
   <meta property="og:type" content="${esc(type)}">
   <meta property="og:locale" content="ru_RU">
@@ -62,13 +64,16 @@ const pageHead = ({ title, description, path, type = 'website', image = '/public
   <meta property="og:url" content="${esc(canonical)}">
   <meta property="og:image" content="${esc(absolute(image))}">
   <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="${esc(title)}">
+  <meta name="twitter:description" content="${esc(description)}">
+  <meta name="twitter:image" content="${esc(absolute(image))}">
   <meta name="theme-color" content="#F6F4EF">
   <link rel="icon" href="/public/favicon.svg?v=20260906-jura" type="image/svg+xml">
   <link rel="apple-touch-icon" href="/public/apple-touch-icon.png?v=20260906-jura">
   <link rel="preload" href="/assets/fonts/onest-cyrillic.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="preload" href="/assets/fonts/onest-latin.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="preload" href="/assets/fonts/jura-semibold.ttf" as="font" type="font/ttf" crossorigin>
-  <link rel="stylesheet" href="/site.css?v=20260906-typewriter">
+  <link rel="stylesheet" href="/site.css?v=20260907-local-seo">
   ${schemas.filter(Boolean).map(item => `<script type="application/ld+json">${json(item)}</script>`).join('\n  ')}
   <script src="/site.js?v=20260906-typewriter" defer></script>`;
 };
@@ -164,6 +169,13 @@ const portrait = {
 
 const marginNote = (text, className = '') => `<aside class="margin-note ${className}" aria-label="Заметка Кирилла"><span class="margin-note__mark" aria-hidden="true">К.</span><p>${esc(text)}</p></aside>`;
 
+export const renderProjectTestimonial = (item, entries = testimonials) => {
+  if (item.status !== 'client') return '';
+  const review = entries.find(entry => entry.caseSlug === item.slug && entry.approved === true && entry.permissionGranted === true);
+  if (!review) return '';
+  return `<section class="section shell project-testimonial" aria-labelledby="testimonial-title"><h2 id="testimonial-title">Отзыв о совместной работе</h2><blockquote><p>${esc(review.text)}</p><footer>${esc(review.author)}${review.role ? `, ${esc(review.role)}` : ''} · ${esc(item.client.name)}</footer></blockquote><a class="text-link" href="${esc(review.sourceUrl)}" target="_blank" rel="noopener">Источник отзыва</a></section>`;
+};
+
 const contactCta = ({ title = 'Можно начать с идеи.', text = 'Расскажите, что хотите сделать. Сначала разберёмся, нужен ли здесь сайт и какой формат подойдёт.', subject = 'Идея для сайта' } = {}) => `<section class="final-cta" data-stack-reveal><div class="shell"><p class="eyebrow eyebrow--light">На связи · Кирилл</p><h2>${esc(title)}</h2><p>${esc(text)}</p><a class="button button--paper" href="${emailHref(subject)}">Напишите мне <span aria-hidden="true">↗</span></a></div></section>`;
 
 const noteList = () => `<div class="note-list">${notes.map((note, index) => `<article class="note-row"><span class="note-row__index" aria-hidden="true">${String(index + 1).padStart(2, '0')}</span><div><p class="eyebrow">Заметка · ${note.readTime}</p><h3><a href="/blog/${note.slug}/">${esc(note.title)}<span aria-hidden="true">↗</span></a></h3><p>${esc(note.description)}</p></div></article>`).join('')}</div>`;
@@ -175,7 +187,7 @@ const caseCard = (item, index, variant = '') => `
       <span class="project-view" aria-hidden="true">↗</span>
     </a>
     <div class="project-meta">
-      <p class="project-kind"><span>${esc(item.category)} · Концепт</span><span>${item.year}</span></p>
+      <p class="project-kind"><span>${esc(item.category)} · ${esc(projectStatusLabels[item.status])}</span><span>${item.year}</span></p>
       <h3><a href="/portfolio/${item.slug}/"><span>${esc(item.title)}</span><small>${esc(item.subtitle)}</small></a></h3>
       <p>${esc(item.summary)}</p>
     </div>
@@ -235,6 +247,7 @@ export const renderHome = () => {
         ${indexLine('02', 'Услуги и ориентиры', true)}
         <div class="section-heading section-heading--light"><h2>Чем могу<br><em>помочь.</em></h2><p>Могу придумать дизайн, собрать готовые макеты или сделать сайт целиком. Цены ниже помогают сориентироваться. Сначала я всё равно спрошу, для чего вам сайт.</p></div>
         ${servicesList()}
+        <p class="local-entry-line"><a class="text-link" href="${localPage.path}">Как работаю с бизнесом Калининграда и области</a></p>
       </div>
     </section>
 
@@ -262,7 +275,7 @@ export const renderHome = () => {
   return shell({
     title: 'Веб-дизайнер Кирилл Снежин | Дизайн и разработка сайтов',
     description: 'Кирилл Снежин — веб-дизайнер и frontend-разработчик. Лендинги, корпоративные сайты, интернет-магазины и UX/UI: от структуры до адаптивной разработки.',
-    path: '/', current: 'home', body, bodyClass: 'home-page', schema: [professionalSchema, personSchema]
+    path: '/', current: 'home', body, bodyClass: 'home-page', schema: [websiteSchema, personSchema]
   });
 };
 
@@ -306,7 +319,7 @@ export const renderCase = (item, index) => {
         <h1>${item.title}<small>${item.subtitle}</small></h1>
         <p class="case-summary">${item.summary}</p>
         <div class="case-actions"><a class="button button--accent" href="${item.liveUrl}" target="_blank" rel="noopener">Открыть сайт <span aria-hidden="true">↗</span></a><a class="text-link" href="${item.serviceHref}">Связанная услуга</a></div>
-        <dl class="case-facts"><div><dt>Тип</dt><dd>${item.type}</dd></div><div><dt>Год</dt><dd>${item.year}</dd></div><div><dt>Роль</dt><dd>${item.role}</dd></div><div><dt>Статус</dt><dd>Авторский концепт</dd></div></dl>
+        <dl class="case-facts"><div><dt>Тип</dt><dd>${item.type}</dd></div><div><dt>Год</dt><dd>${item.year}</dd></div><div><dt>Роль</dt><dd>${item.role}</dd></div><div><dt>Статус</dt><dd>${esc(projectStatusLabels[item.status])}</dd></div></dl>
       </header>
       <figure class="case-cover shell shell--wide">${image(item.cover, { eager: true })}<figcaption>Главный визуальный кадр проекта ${item.title}</figcaption></figure>
       <nav class="case-route" aria-label="Разделы кейса" data-case-route><div class="shell"><a href="#overview">Контекст</a><a href="#challenge">Задача</a><a href="#research">Логика</a><a href="#solution">Решение</a><a href="#system">Система</a><a href="#screens">Экраны</a><a href="#result">Результат</a></div></nav>
@@ -318,8 +331,8 @@ export const renderCase = (item, index) => {
       <section class="case-section case-system" id="system"><div class="shell">${indexLine('05', 'Визуальная система')}<div class="system-grid"><div><h2>Типографика</h2><p>${item.visual.typography}</p></div><div><h2>Компоненты</h2><p>${item.visual.components}</p></div><div><h2>Палитра</h2><div class="swatches">${item.visual.colors.map(color => `<span style="--swatch:${color}"><i></i><small class="mono">${color}</small></span>`).join('')}</div></div></div></div></section>
       <section class="case-section shell shell--wide" id="screens">${indexLine('06', 'Ключевые экраны')}<div class="screen-list">${item.screens.map((screen, itemIndex) => `<figure data-reveal><div class="screen-frame">${image(screen)}</div><figcaption><span class="mono">${String(itemIndex + 1).padStart(2, '0')}</span><div><h3>${screen.title}</h3><p>${screen.caption}</p></div></figcaption></figure>`).join('')}</div></section>
       <section class="case-section shell"><div class="case-copy split-copy"><div><p class="eyebrow">Responsive</p><h2>Один сценарий на разных экранах</h2></div><p>${item.responsive}</p></div><div class="tech-row">${item.technologies.map(tech => `<span>${tech}</span>`).join('')}</div></section>
-      <section class="case-section case-result" id="result"><div class="shell">${indexLine('07', 'Результат', true)}<div class="case-copy case-copy--light"><h2>Что создано</h2><ul class="result-list">${item.result.map(text => `<li>${text}</li>`).join('')}</ul><a class="button button--paper" href="${item.liveUrl}" target="_blank" rel="noopener">Посмотреть концепт <span aria-hidden="true">↗</span></a></div></div></section>
-      <nav class="case-pagination shell" aria-label="Навигация по кейсам"><a href="/portfolio/${previous.slug}/"><span class="mono">← Предыдущий</span><strong>${previous.title}</strong></a><a href="/portfolio/${next.slug}/"><span class="mono">Следующий →</span><strong>${next.title}</strong></a></nav>
+      <section class="case-section case-result" id="result"><div class="shell">${indexLine('07', 'Результат', true)}<div class="case-copy case-copy--light"><h2>Что создано</h2><ul class="result-list">${item.result.map(text => `<li>${text}</li>`).join('')}</ul><a class="button button--paper" href="${item.liveUrl}" target="_blank" rel="noopener">${item.status === 'concept' ? 'Посмотреть концепт' : 'Открыть проект'} <span aria-hidden="true">↗</span></a></div></div></section>
+      ${renderProjectTestimonial(item)}<nav class="case-pagination shell" aria-label="Навигация по кейсам"><a href="/portfolio/${previous.slug}/"><span class="mono">← Предыдущий</span><strong>${previous.title}</strong></a><a href="/portfolio/${next.slug}/"><span class="mono">Следующий →</span><strong>${next.title}</strong></a></nav>
       ${contactCta({ title: 'Хотите спросить об этой работе?', text: `Можно написать о ${item.title} или рассказать о своей идее. Объясню, как устроен этот концепт и что может пригодиться вам.`, subject: `Вопрос о ${item.title}` })}
     </article>`;
 
@@ -344,7 +357,7 @@ export const renderServices = () => {
   ];
   const body = `
     <section class="page-hero shell">${indexLine('01', 'Услуги / дизайн и разработка')}<h1>Какой сайт<br><em>вам нужен?</em></h1><div class="page-hero-copy"><p>Сначала хочу понять задачу. Возможно, достаточно одной страницы. Возможно, нужны каталог и несколько разделов. Ниже есть ориентиры по формату и цене, а точную стоимость обсудим после знакомства.</p><a class="button button--accent" href="${emailHref('Оценка проекта')}">Рассказать о задаче <span aria-hidden="true">↗</span></a></div></section>
-    <section class="section shell">${indexLine('02', 'Направления')} ${servicesList()}</section>
+    <section class="section shell">${indexLine('02', 'Направления')} ${servicesList()}<p class="local-entry-line"><a class="text-link" href="${localPage.path}">Работаю с бизнесом в Калининграде и удалённо</a></p></section>
     <section class="section section--dark"><div class="shell">${indexLine('03', 'Формат', true)}<div class="section-heading section-heading--light"><h2>Можно сделать<br>только нужную часть.</h2><p>Если у вас уже есть разработчик или готовые макеты, не нужно начинать заново. Посмотрю, что есть, и предложу, где могу помочь.</p></div><div class="format-grid"><article><span class="mono">A</span><h3>Структура и дизайн</h3><p>Придумаю, что и в каком порядке показать, подготовлю макеты для вашего разработчика.</p></article><article><span class="mono">B</span><h3>Дизайн и разработка</h3><p>Пройду с вами от первой идеи до сайта, который можно открыть в браузере.</p></article><article><span class="mono">C</span><h3>Редизайн</h3><p>Разберусь, что стоит сохранить в нынешнем сайте и что мешает. После этого обновлю нужные части.</p></article></div></div></section>
     <section class="section shell">${indexLine('04', 'Как работаю')}<div class="section-heading"><h2>От первого вопроса<br>до готового сайта.</h2><p>Мне важно сначала собрать общую идею. Потом можно пробовать детали и постепенно доводить их до результата.</p></div>${processGrid()}</section>
     <section class="section shell">${indexLine('05', 'Вопросы')}<div class="section-heading"><h2>До начала проекта.</h2></div>${faqBlock(faqs)}</section>
@@ -353,7 +366,7 @@ export const renderServices = () => {
     title: 'Услуги и цены — веб-дизайнер Кирилл Снежин',
     description: 'Лендинги от 45 000 ₽, корпоративные сайты от 90 000 ₽, интернет-магазины от 150 000 ₽, UX/UI и frontend-разработка.',
     path: '/services.html', current: 'services', body,
-    schema: [professionalSchema, faqSchema(faqs), breadcrumbSchema([{ label: 'Главная', href: '/' }, { label: 'Услуги', href: '/services.html' }])]
+    schema: [personSchema, faqSchema(faqs), breadcrumbSchema([{ label: 'Главная', href: '/' }, { label: 'Услуги', href: '/services.html' }])]
   });
 };
 
@@ -379,6 +392,39 @@ export const renderServicePage = item => {
   });
 };
 
+export const renderLocalPage = () => {
+  const path = localPage.path;
+  const rows = items => `<dl class="local-rows">${items.map(([title, text]) => `<div><dt>${esc(title)}</dt><dd>${esc(text)}</dd></div>`).join('')}</dl>`;
+  const body = `
+    <section class="page-hero shell local-hero">
+      <nav class="breadcrumbs" aria-label="Хлебные крошки"><a href="/">Главная</a><span aria-hidden="true">/</span><span aria-current="page">Калининград и область</span></nav>
+      <h1>Создание сайтов <br><em>в Калининграде</em></h1>
+      <div class="local-hero-bottom"><p>Я Кирилл Снежин, веб-дизайнер из Калининграда. Помогаю местному бизнесу рассказать о себе так, чтобы человеку было понятно, где вы работаете и как к вам обратиться. Встречу можно обсудить заранее, а весь проект — пройти удалённо.</p><div><a class="button button--accent" href="${emailHref('Сайт для бизнеса в Калининграде')}">Обсудить проект <span aria-hidden="true">↗</span></a><a class="text-link" href="/contact.html">Все способы связи</a></div></div>
+      <nav class="local-jump" aria-label="На этой странице"><a href="#local-context">Местный спрос</a><a href="#local-communication">Как общаемся</a><a href="#local-seo">Подготовка к поиску</a><a href="#local-faq">Вопросы</a></nav>
+    </section>
+    <section class="section shell local-section" id="local-context" aria-labelledby="local-context-title">
+      <div class="local-split"><div><h2 id="local-context-title">Человек ищет рядом.<br>И хочет разобраться быстро.</h2>${marginNote('До первого макета хочу понять, как ваши клиенты выбирают и о чём спрашивают.')}</div><div class="local-prose"><p>Запрос «ремонт квартиры Калининград» и поиск кафе рядом ведут к разным решениям. В одном случае нужно сравнить подход и договориться о выезде. В другом — открыть меню, найти вход и понять, можно ли зайти сейчас.</p><p>Посетитель может прийти с телефона, из карты или обычного поиска. В каждом случае ему нужны конкретные ответы: вы работаете в его районе, какие условия действуют и как связаться. Они должны быть заметны раньше подробной истории компании.</p><p>Если предложения похожи, помогают проверяемые детали: свои фотографии, понятные условия и реальные отзывы. Перед разработкой посмотрим, что показывают конкуренты именно в вашей нише и каких ответов человеку не хватает.</p></div></div>
+    </section>
+    <section class="section shell local-section" id="local-business" aria-labelledby="local-business-title">
+      <div class="section-heading"><h2 id="local-business-title">Узнаёте<br>свою задачу?</h2><p>Это примеры ситуаций, с которыми можно прийти. Для каждой сферы сначала разберём, как человек выбирает и какая информация помогает ему решить.</p></div>${rows(localPage.niches)}
+    </section>
+    <section class="section local-communication local-section" id="local-communication" aria-labelledby="local-communication-title"><div class="shell local-split"><div><h2 id="local-communication-title">В городе или онлайн.<br>Договорённости — письменно.</h2><p>Можно задать вопрос без готового задания. Важно, чтобы нам обоим было понятно, что уже решено и что нужно посмотреть дальше.</p><p><a class="text-link" href="/services.html">Форматы работы и ориентиры стоимости</a></p></div><ol class="local-dialogue">${localPage.communication.map(([title, text]) => `<li><h3>${esc(title)}</h3><p>${esc(text)}</p></li>`).join('')}</ol></div></section>
+    <section class="section section--dark local-section" id="local-seo" aria-labelledby="local-seo-title"><div class="shell"><div class="section-heading section-heading--light"><h2 id="local-seo-title">Чтобы вас<br><em>могли найти.</em></h2><p>Локальное SEO помогает поиску понять, что вы предлагаете и где работаете. Подготовку сайта можно заложить сразу; дальнейшее продвижение требует отдельной работы и наблюдения.</p></div><div class="local-seo-columns">
+      <article><h3>Понятная структура</h3><p>Выбираем запросы под реальные задачи: услугу, товар, город или зону выезда. Каждому намерению нужна подходящая страница. Отдельные страницы услуг помогают раскрыть детали, а региональная — условия работы на месте.</p><p>Настраиваю заголовки, title и description, canonical, sitemap и robots. Это названия и описания страниц, основной адрес и правила обхода сайта. Внутренние ссылки помогают человеку и поисковику находить связанные материалы.</p></article>
+      <article><h3>Сайт и карты вместе</h3><p>Проверяем, совпадают ли название, контакты и условия на сайте и в Яндекс Бизнесе. Если есть реальное место приёма, можно связать страницу с карточкой в Яндекс Картах и маршрутом. Для выездной работы отдельно описываем географию.</p><p>Google Business Profile рассматриваем, если бизнес подходит под правила сервиса и может пройти подтверждение. Сама страница сайта может появляться в поиске Яндекса и Google независимо от наличия карточки.</p></article>
+      <article><h3>Работа после запуска</h3><p>Проверяем мобильную версию, скорость загрузки и доступность страниц. Для оценки поиска нужны Яндекс Вебмастер и Google Search Console: в них видно, какие страницы найдены и по каким запросам появляются.</p><p>Подключение аналитики согласуем отдельно: сначала определим нужные события, например обращение или переход к маршруту. По данным решаем, что улучшить. Фиксированных позиций и числа заявок заранее не обещаю.</p></article>
+    </div><p class="local-reading">С чего начать с содержанием: <a href="/blog/chto-dolzhno-byt-na-saite-malogo-biznesa/">что должно быть на сайте малого бизнеса</a>.</p></div></section>
+    <section class="section shell local-section" id="local-specialist" aria-labelledby="local-specialist-title"><div class="local-split"><div><h2 id="local-specialist-title">Обсуждаете сайт<br>с тем, кто его делает.</h2></div><div class="local-prose"><p>Я нахожусь в Калининграде и сам отвечаю на сообщения. Можно обсудить местные ориентиры, посмотреть выдачу по городу, а при необходимости договориться о встрече. Вопросы о дизайне и реализации остаются в одном разговоре.</p><p>Ваш рынок всё равно нужно изучить отдельно. Расскажите, откуда приходят люди, что спрашивают по телефону и почему выбирают вас. На этой основе проще подготовить тексты для конкретной аудитории.</p><p>Как я работаю с визуальной подачей, можно посмотреть в <a href="/portfolio.html">портфолио с пояснениями к проектам</a>. Текущие работы обозначены как авторские концепты.</p></div></div></section>
+    <section class="section shell local-section" id="local-details" aria-labelledby="local-details-title"><div class="section-heading"><h2 id="local-details-title">Пять вопросов<br>перед обращением.</h2><p>Проверка для сайта бизнеса в городе и области. Прочитайте страницу с телефона и попробуйте найти эти ответы без подсказок.</p></div>${rows(localPage.checklist)}<p class="local-reading">Если вопросов слишком много для одной страницы, пригодится разбор <a href="/blog/landing-ili-mnogostranichnyi-sait/">выбора между лендингом и многостраничным сайтом</a>.</p></section>
+    <section class="section shell local-section" id="local-faq" aria-labelledby="local-faq-title"><div class="section-heading"><h2 id="local-faq-title">О городе,<br>встречах и поиске.</h2><p>Вопросы о локальном формате работы.</p></div>${faqBlock(localPage.faqs)}</section>
+    ${contactCta({title:'Обсудим сайт для вашего бизнеса?',text:'Если у вас бизнес в Калининграде или области, расскажите, чем вы занимаетесь. Я помогу понять, какой сайт нужен и как лучше построить работу.',subject:'Проект в Калининграде и области'})}`;
+  return shell({title:localPage.title,description:localPage.description,path,current:'local',body,bodyClass:'local-page',schema:[
+    personSchema, websiteSchema,
+    {'@context':'https://schema.org','@type':'WebPage','@id':absolute(path)+'#page',url:absolute(path),name:localPage.title,description:localPage.description,inLanguage:'ru-RU',isPartOf:{'@id':`${site.baseUrl}/#website`},author:{'@id':`${site.baseUrl}/#kirill`},about:[{'@type':'City',name:'Калининград'},{'@type':'AdministrativeArea',name:'Калининградская область'}]},
+    breadcrumbSchema([{label:'Главная',href:'/'},{label:'Калининград и область',href:path}])
+  ]});
+};
+
 export const renderAbout = () => {
   const body = `
     <section class="page-hero about-hero shell">${indexLine('01', 'Обо мне / Кирилл Снежин')}<h1>Люблю порядок.<br><em>И немного фантазии.</em></h1><div class="page-hero-copy"><p>Я Кирилл, веб-дизайнер и разработчик. Больше всего люблю придумывать, как будет выглядеть сайт. Потом собираю его в коде и смотрю, складывается ли всё в одну картинку.</p></div></section>
@@ -394,13 +440,20 @@ export const renderAbout = () => {
   });
 };
 
-const articleCard = article => `<article class="article-card" data-reveal><div><span class="mono">${new Intl.DateTimeFormat('ru-RU', { day: '2-digit', month: '2-digit', year: 'numeric' }).format(new Date(`${article.date}T12:00:00Z`))}</span><span class="mono">${article.readTime}</span></div><h3><a href="/blog/${article.slug}/">${article.title}</a></h3><p>${article.description}</p><a class="text-link" href="/blog/${article.slug}/">Читать статью <span aria-hidden="true">↗</span></a></article>`;
+const articleCard = (article, headingTag = 'h3') => `<article class="article-card" data-reveal><div><span class="mono">${new Intl.DateTimeFormat('ru-RU', { day: '2-digit', month: '2-digit', year: 'numeric' }).format(new Date(`${article.date}T12:00:00Z`))}</span><span class="mono">${article.readTime}</span></div><${headingTag}><a href="/blog/${article.slug}/">${article.title}</a></${headingTag}><p>${article.description}</p><a class="text-link" href="/blog/${article.slug}/">Читать статью <span aria-hidden="true">↗</span></a></article>`;
+
+const relatedReading = (items, title = 'Продолжить по теме') => `<nav class="related-reading" aria-label="${esc(title)}"><h2>${esc(title)}</h2><ul>${items.map(item => `<li><a href="/blog/${item.slug}/">${esc(item.title)}</a><p>${esc(item.description)}</p></li>`).join('')}</ul></nav>`;
+
+const noteContext = note => {
+  const connection = noteConnections[note.slug];
+  return `<aside class="note-practice" aria-label="Из заметки в работу"><p>${esc(connection.prefix)} <a href="${connection.service}">${esc(connection.serviceLabel)}</a>. <a href="/portfolio/${connection.caseSlug}/">${esc(connection.caseText)}</a></p></aside>`;
+};
 
 export const renderBlog = () => {
   const body = `
     <section class="page-hero shell">${indexLine('01', 'Блог / Кирилл Снежин')}<h1>О сайтах.<br><em>И о том, как я их делаю.</em></h1><div class="page-hero-copy"><p>Здесь соседствуют мои заметки и практические разборы. В одних рассказываю, как смотрю на дизайн. В других разбираюсь с вопросами о стоимости, сроках и подготовке сайта.</p></div><nav class="blog-jump-links" aria-label="Разделы блога"><a class="text-link" href="#notes">Заметки · ${notes.length}</a><a class="text-link" href="#articles">Практические статьи · ${articles.length}</a></nav></section>
     <section class="section shell" id="notes" aria-labelledby="notes-title">${indexLine('02', 'Личное')}<div class="section-heading"><h2 id="notes-title">Заметки</h2><p>Про первые варианты, открытые вкладки и ощущение, что сайт наконец сложился.</p></div>${noteList()}</section>
-    <section class="section shell" id="articles" aria-labelledby="articles-title">${indexLine('03', `Практика / ${articles.length} статей`)}<div class="section-heading"><h2 id="articles-title">Перед заказом сайта</h2><p>Что входит в работу, как выбрать формат и какие материалы подготовить. Можно начать с того вопроса, который сейчас важнее.</p></div><div class="article-grid article-grid--all">${articles.map(article => articleCard(article)).join('')}</div></section>
+    <section class="section shell" id="articles" aria-labelledby="articles-title">${indexLine('03', `Практика / ${articles.length} статей`)}<div class="section-heading"><h2 id="articles-title">Перед заказом сайта</h2><p>Что входит в работу, как выбрать формат и какие материалы подготовить. Можно начать с того вопроса, который сейчас важнее.</p></div><nav class="cluster-links" aria-label="Темы статей">${articleClusters.map(cluster => `<a href="#cluster-${cluster.id}">${esc(cluster.title)}</a>`).join('')}</nav>${articleClusters.map(cluster => `<section class="article-cluster" id="cluster-${cluster.id}" aria-labelledby="cluster-title-${cluster.id}"><div class="cluster-heading"><h3 id="cluster-title-${cluster.id}">${esc(cluster.title)}</h3><p>${esc(cluster.description)}</p></div><div class="article-grid article-grid--all">${cluster.slugs.map(slug => articleCard(articles.find(article => article.slug === slug), 'h4')).join('')}</div></section>`).join('')}</section>
     ${contactCta({ title: 'Остался вопрос?', text: 'Напишите, что неясно. Постараюсь объяснить на примере вашей задачи.' })}`;
   return shell({
     title: 'Блог о веб-дизайне, сайтах и разработке | Кирилл Снежин',
@@ -412,11 +465,15 @@ export const renderBlog = () => {
 export const renderArticle = (article, index) => {
   const path = `/blog/${article.slug}/`;
   const related = getCase(article.relatedCase);
-  const next = articles[(index + 1) % articles.length];
+  const neighbours = relatedArticleSlugs[article.slug].map(slug => articles.find(item => item.slug === slug));
+  const serviceHref = articleServiceOverrides[article.slug] || article.relatedService;
+  const service = servicePages.find(item => `/${item.slug}/` === serviceHref);
+  const cluster = articleClusters.find(item => item.slugs.includes(article.slug));
+  const localLink = localArticleLinks[article.slug];
   const articleSchema = {
     '@context': 'https://schema.org', '@type': 'Article', headline: article.title, description: article.description,
-    datePublished: article.date, dateModified: article.date, author: { '@type': 'Person', name: site.author, url: `${site.baseUrl}/about.html` },
-    publisher: { '@type': 'Organization', name: site.name, logo: { '@type': 'ImageObject', url: `${site.baseUrl}/public/og.png` } },
+    datePublished: article.date, dateModified: '2026-09-07', articleSection: cluster.title, author: { '@type': 'Person', name: site.author, url: `${site.baseUrl}/about.html` },
+    publisher: { '@type': 'Person', '@id': `${site.baseUrl}/#kirill`, name: site.author },
     mainEntityOfPage: absolute(path), image: `${site.baseUrl}/public/og.png`
   };
   const body = `
@@ -425,14 +482,14 @@ export const renderArticle = (article, index) => {
       <div class="article-layout shell">
         <aside class="article-aside"><span class="mono">Содержание</span><nav>${article.sections.map((section, sectionIndex) => `<a href="#part-${sectionIndex + 1}">${String(sectionIndex + 1).padStart(2, '0')} ${section.heading}</a>`).join('')}<a href="#faq">FAQ</a></nav></aside>
         <div class="article-body">
-          ${article.sections.map((section, sectionIndex) => `<section id="part-${sectionIndex + 1}"><span class="mono">${String(sectionIndex + 1).padStart(2, '0')}</span><h2>${section.heading}</h2>${section.paragraphs.map(paragraph => `<p>${paragraph}</p>`).join('')}</section>`).join('')}
+          ${article.sections.map((section, sectionIndex) => `<section id="part-${sectionIndex + 1}"><span class="mono">${String(sectionIndex + 1).padStart(2, '0')}</span><h2>${section.heading}</h2>${section.paragraphs.map(paragraph => `<p>${paragraph}</p>`).join('')}${localLink?.heading === section.heading ? `<p class="article-local-context">${localLink.html}</p>` : ''}</section>`).join('')}
           ${article.conclusion ? `<section class="article-conclusion"><span class="mono">Вывод</span><h2>Коротко</h2><p>${article.conclusion}</p></section>` : ''}
           <section id="faq"><span class="mono">FAQ</span><h2>Частые вопросы</h2>${faqBlock(article.faq)}</section>
-          <section class="article-cta"><p class="eyebrow">Если остались вопросы</p><h2>Можно спросить меня.</h2><p>Расскажите, над чем сейчас думаете. Помогу разобраться, как это относится к вашему сайту.</p><div class="button-group"><a class="button button--accent" href="${emailHref('Вопрос о сайте')}">Напишите мне <span aria-hidden="true">↗</span></a><a class="text-link" href="${article.relatedService}">Посмотреть услугу</a></div></section>
+          ${relatedReading(neighbours)}
+          <section class="article-cta"><p class="eyebrow">Если остались вопросы</p><h2>Можно спросить меня.</h2><p>Расскажите, над чем сейчас думаете. Помогу разобраться, как это относится к вашему сайту. Состав работ можно посмотреть в разделе <a href="${serviceHref}">${esc(service.eyebrow)}</a>.</p><div class="button-group"><a class="button button--accent" href="${emailHref('Вопрос о сайте')}">Напишите мне <span aria-hidden="true">↗</span></a></div></section>
         </div>
       </div>
       <section class="section shell">${indexLine('Case', 'Связанный проект')}<div class="related-case">${caseCard(related, 0, 'wide')}</div></section>
-      <nav class="next-article shell"><span class="mono">Следующая статья</span><a href="/blog/${next.slug}/">${next.title} <span aria-hidden="true">↗</span></a></nav>
     </article>`;
   return shell({
     title: article.metaTitle, description: article.description, path, current: 'blog', body, type: 'article',
@@ -443,14 +500,15 @@ export const renderArticle = (article, index) => {
 export const renderNote = (note, index) => {
   const path = `/blog/${note.slug}/`;
   const next = notes[(index + 1) % notes.length];
+  const previous = notes[(index + notes.length - 1) % notes.length];
   const date = new Intl.DateTimeFormat('ru-RU', { day: 'numeric', month: 'long', year: 'numeric' }).format(new Date(`${note.date}T12:00:00Z`));
   const body = `<article class="personal-note">
     <header class="article-hero shell"><nav class="breadcrumbs" aria-label="Хлебные крошки"><a href="/">Главная</a><span>/</span><a href="/blog/#notes">Заметки</a></nav>${indexLine('К.', 'Личная заметка')}<h1>${esc(note.title)}</h1><p class="note-lead">${esc(note.lead)}</p><p class="note-byline">Кирилл Снежин <span aria-hidden="true">/</span> <time datetime="${note.date}">${date}</time> <span aria-hidden="true">/</span> ${note.readTime}</p></header>
     <div class="note-layout shell">${marginNote(note.aside)}<div class="article-body note-body">${note.sections.map((section, i) => `<section id="part-${i + 1}"><h2>${esc(section.heading)}</h2>${section.paragraphs.map(paragraph => `<p>${esc(paragraph)}</p>`).join('')}</section>`).join('')}<p class="note-signoff"><span class="margin-note__mark" aria-hidden="true">К.</span> Кирилл Снежин</p><p class="note-conversation">А как это ощущается вам? <a class="text-link" href="${emailHref(`О заметке: ${note.title}`)}">Можно написать мне</a>.</p></div></div>
-    <nav class="next-article shell" aria-label="Другие заметки"><span class="mono">Ещё одна мысль</span><a href="/blog/${next.slug}/">${esc(next.title)} <span aria-hidden="true">↗</span></a><a class="text-link" href="/blog/#notes">Все заметки</a></nav>
+    <div class="shell note-links">${noteContext(note)}${relatedReading([next, previous], 'Ещё две мысли')}<a class="text-link" href="/blog/#notes">Все заметки</a></div>
   </article>`;
   return shell({ title: note.metaTitle, description: note.description, path, current: 'blog', body, type: 'article', schema: [
-    { '@context': 'https://schema.org', '@type': 'BlogPosting', headline: note.title, description: note.description, datePublished: note.date, dateModified: note.date, articleSection: 'Заметки', inLanguage: 'ru-RU', author: { '@type': 'Person', name: site.author, url: absolute('/about.html') }, mainEntityOfPage: absolute(path), image: absolute('/public/og.png') },
+    { '@context': 'https://schema.org', '@type': 'BlogPosting', headline: note.title, description: note.description, datePublished: note.date, dateModified: '2026-09-07', articleSection: 'Заметки', inLanguage: 'ru-RU', author: { '@type': 'Person', name: site.author, url: absolute('/about.html') }, mainEntityOfPage: absolute(path), image: absolute('/public/og.png') },
     breadcrumbSchema([{ label: 'Главная', href: '/' }, { label: 'Блог', href: '/blog/' }, { label: note.title, href: path }])
   ] });
 };
@@ -483,4 +541,4 @@ export const renderPrivacy = () => {
   });
 };
 
-export const render404 = () => compactDashes(`<!doctype html><html lang="ru"><head>${pageHead({ title: 'Страница не найдена — snezhin.design', description: 'Запрошенная страница не найдена.', path: '/404.html' })}<meta name="robots" content="noindex"></head><body>${header('')}<main id="main"><section class="not-found shell">${indexLine('404', 'Страница не найдена')}<h1>Здесь ничего нет.</h1><p>Возможно, адрес изменился или в ссылке опечатка.</p><div class="button-group"><a class="button button--accent" href="/">На главную</a><a class="text-link" href="/portfolio.html">Портфолио</a></div></section></main>${footer()}</body></html>`);
+export const render404 = () => compactDashes(`<!doctype html><html lang="ru"><head>${pageHead({ title: 'Страница не найдена — snezhin.design', description: 'Запрошенная страница не найдена.', path: '/404.html', robots: 'noindex, follow' })}</head><body>${header('')}<main id="main"><section class="not-found shell">${indexLine('404', 'Страница не найдена')}<h1>Здесь ничего нет.</h1><p>Возможно, адрес изменился или в ссылке опечатка.</p><div class="button-group"><a class="button button--accent" href="/">На главную</a><a class="text-link" href="/portfolio.html">Портфолио</a></div></section></main>${footer()}</body></html>`);

@@ -4,7 +4,7 @@
   "type": "module",
   "scripts": {
     "build": "node build-site.mjs",
-    "check": "node tests/site-audit.mjs",
+    "check": "node tests/site-audit.mjs && node tests/local-seo.mjs",
     "check:links": "node tests/link-check.mjs",
     "test": "npm run build && npm run check"
   }
