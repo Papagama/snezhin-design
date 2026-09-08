@@ -90,7 +90,7 @@ const header = current => `
         <nav class="main-nav" aria-label="Основная навигация">
           ${navigation.map(item => `<a href="${item.href}"${current === item.key ? ' aria-current="page"' : ''}>${item.label}</a>`).join('')}
         </nav>
-        <a class="button button--compact button--ink" href="/contact.html">Напишите мне <span aria-hidden="true">↗</span></a>
+        <a class="button button--compact button--ink" href="${emailHref('Новая задача с snezhin.design')}">Напишите мне <span aria-hidden="true">↗</span></a>
       </div>
     </div>
   </header>`;
@@ -100,7 +100,7 @@ const footer = () => `
     <div class="shell">
       <div class="footer-contact-row">
         <span class="footer-label">Есть задача?</span>
-        <a class="footer-action" href="/contact.html">Связаться <span aria-hidden="true">↗</span></a>
+        <a class="footer-action" href="${emailHref('Новая задача с snezhin.design')}">Связаться <span aria-hidden="true">↗</span></a>
       </div>
       <div class="footer-grid">
         <div>
@@ -114,7 +114,7 @@ const footer = () => `
         </nav>
         <div class="footer-contacts">
           <span class="footer-label">Связь</span>
-          <a href="mailto:${site.email}">${site.email}</a>
+          <a href="${emailHref('Новая задача с snezhin.design')}">${site.email}</a>
           <a href="${site.telegram}" target="_blank" rel="noopener">Telegram</a>
           <a href="${site.vk}" target="_blank" rel="noopener">VK</a>
         </div>
@@ -127,22 +127,6 @@ const footer = () => `
     </div>
   </footer>`;
 
-const emailDialog = () => `
-  <dialog class="email-dialog" data-email-dialog aria-labelledby="email-dialog-title">
-    <form class="email-dialog__panel" method="dialog">
-      <button class="email-dialog__close" type="submit" aria-label="Закрыть окно">×</button>
-      <p class="eyebrow">Написать письмо</p>
-      <h2 id="email-dialog-title">Выберите способ связи</h2>
-      <p class="email-dialog__address" data-email-recipient></p>
-      <div class="email-dialog__actions">
-        <a class="button button--accent" data-email-gmail target="_blank" rel="noopener">Открыть Gmail <span aria-hidden="true">↗</span></a>
-        <a class="button button--ink" data-email-system>Открыть почтовое приложение <span aria-hidden="true">↗</span></a>
-        <button class="button button--copy" type="button" data-email-copy>Скопировать адрес <span aria-hidden="true">⧉</span></button>
-      </div>
-      <p class="email-dialog__status" data-email-status aria-live="polite">Адрес можно скопировать или открыть в удобной почте.</p>
-    </form>
-  </dialog>`;
-
 const shell = ({ current, title, description, path, body, bodyClass = '', type, image, schema }) => compactDashes(`<!doctype html>
 <html lang="ru">
 <head>${pageHead({ title, description, path, type, image, schema })}
@@ -151,7 +135,6 @@ const shell = ({ current, title, description, path, body, bodyClass = '', type, 
 ${header(current)}
 <main id="main">${body}</main>
 ${footer()}
-${emailDialog()}
 </body>
 </html>
 `);
@@ -225,7 +208,7 @@ export const renderHome = () => {
   const featured = cases.slice(0, 4);
   const body = `
     <section class="home-hero shell">
-      <div class="hero-topline"><p class="eyebrow">Независимый веб-дизайнер и разработчик</p><span>Калининград · Работаю удалённо</span></div>
+      <div class="hero-topline"><p class="eyebrow">Дизайн, структура и разработка</p><span>Калининград · Работаю удалённо</span></div>
       <h1>Я Кирилл.<br><em data-typewriter>Придумываю и собираю сайты.</em></h1>
       <div class="hero-introduction">
         <figure class="hero-portrait">${image(portrait, { eager: true })}<figcaption><strong>Кирилл Снежин</strong><span>Дизайн и разработка</span></figcaption></figure>
@@ -236,7 +219,7 @@ export const renderHome = () => {
     </section>
 
     <section class="section shell selected-work" id="projects">
-      ${indexLine('01', 'Избранные проекты')}
+      ${indexLine('01', 'Работы')}
       <div class="section-heading"><h2>Пробую разное.<br><em>Вот что получается.</em></h2><p>Здесь мои концепты сайтов: от магазина снаряжения до истории янтаря. На них я пробую разные стили, композиции и способы рассказать о продукте.</p></div>
       <div class="projects-editorial">${featured.map((item, index) => caseCard(item, index, index === 0 ? 'wide' : index === 3 ? 'tall' : '')).join('')}</div>
       <div class="section-action"><a class="text-link text-link--large" href="/portfolio.html">Все проекты <span aria-hidden="true">↗</span></a></div>

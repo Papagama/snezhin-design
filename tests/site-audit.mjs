@@ -39,8 +39,9 @@ if (!css.includes('--paper: #F6F4EF')) issues.push('site.css: requested base bac
 const homeFooter = home.match(/<footer\b[\s\S]*?<\/footer>/)?.[0] || '';
 const homeHeader = home.match(/<header\b[\s\S]*?<\/header>/)?.[0] || '';
 if (homeFooter.includes('footer-lead') || homeFooter.includes('Давайте обсудим')) issues.push('index.html: duplicate footer CTA remains');
-if (!homeFooter.includes('class="footer-action" href="/contact.html"')) issues.push('index.html: footer contact action is missing');
-if (!homeHeader.includes('Напишите мне') || !homeHeader.includes('href="/contact.html"')) issues.push('index.html: header contact action must open the contact page');
+if (!homeFooter.includes('class="footer-action" href="mailto:')) issues.push('index.html: footer contact action must open the mail client');
+if (!homeHeader.includes('Напишите мне') || !homeHeader.includes('href="mailto:')) issues.push('index.html: header contact action must open the mail client');
+if (home.includes('data-email-dialog') || home.includes('email-dialog')) issues.push('index.html: obsolete email dialog remains');
 
 function targetFor(link) {
   const clean = link.split('#')[0].split('?')[0];
