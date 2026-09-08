@@ -73,9 +73,9 @@ const pageHead = ({ title, description, path, type = 'website', image = '/public
   <link rel="preload" href="/assets/fonts/onest-cyrillic.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="preload" href="/assets/fonts/onest-latin.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="preload" href="/assets/fonts/jura-semibold.ttf" as="font" type="font/ttf" crossorigin>
-  <link rel="stylesheet" href="/site.css?v=20260907-local-seo">
+  <link rel="stylesheet" href="/site.css?v=20260908-contact-flow">
   ${schemas.filter(Boolean).map(item => `<script type="application/ld+json">${json(item)}</script>`).join('\n  ')}
-  <script src="/site.js?v=20260906-typewriter" defer></script>`;
+  <script src="/site.js?v=20260908-contact-flow" defer></script>`;
 };
 
 const header = current => `
@@ -90,7 +90,7 @@ const header = current => `
         <nav class="main-nav" aria-label="Основная навигация">
           ${navigation.map(item => `<a href="${item.href}"${current === item.key ? ' aria-current="page"' : ''}>${item.label}</a>`).join('')}
         </nav>
-        <a class="button button--compact button--ink" href="${emailHref('Новая задача с snezhin.design')}">Напишите мне <span aria-hidden="true">↗</span></a>
+        <a class="button button--compact button--ink" href="${emailHref('Новая задача с snezhin.design')}">Связаться <span aria-hidden="true">↗</span></a>
       </div>
     </div>
   </header>`;
@@ -127,6 +127,22 @@ const footer = () => `
     </div>
   </footer>`;
 
+const emailDialog = () => `
+  <dialog class="email-dialog" data-email-dialog aria-labelledby="email-dialog-title">
+    <form class="email-dialog__panel" method="dialog">
+      <button class="email-dialog__close" type="submit" aria-label="Закрыть окно">×</button>
+      <p class="eyebrow">Написать письмо</p>
+      <h2 id="email-dialog-title">Выберите способ связи</h2>
+      <p class="email-dialog__address" data-email-recipient></p>
+      <div class="email-dialog__actions">
+        <a class="button button--accent" data-email-gmail target="_blank" rel="noopener">Открыть Gmail <span aria-hidden="true">↗</span></a>
+        <a class="button button--ink" data-email-system>Открыть почтовое приложение <span aria-hidden="true">↗</span></a>
+        <button class="button button--copy" type="button" data-email-copy>Скопировать адрес <span aria-hidden="true">⧉</span></button>
+      </div>
+      <p class="email-dialog__status" data-email-status aria-live="polite">Адрес можно скопировать или открыть в удобной почте.</p>
+    </form>
+  </dialog>`;
+
 const shell = ({ current, title, description, path, body, bodyClass = '', type, image, schema }) => compactDashes(`<!doctype html>
 <html lang="ru">
 <head>${pageHead({ title, description, path, type, image, schema })}
@@ -135,6 +151,7 @@ const shell = ({ current, title, description, path, body, bodyClass = '', type, 
 ${header(current)}
 <main id="main">${body}</main>
 ${footer()}
+${emailDialog()}
 </body>
 </html>
 `);
