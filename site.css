@@ -425,6 +425,12 @@ h1 em, h2 em, h3 em, blockquote em { color: var(--accent); font-family: var(--ac
   .button:hover { transform: none; }
 }
 
+@media (hover: hover) and (pointer: fine) {
+  html, body { cursor: url('/public/cursor-default.svg') 5 4, auto; }
+  a, button, summary, label[for], select, input[type="checkbox"], input[type="radio"] { cursor: url('/public/cursor-link.svg') 16 16, pointer; }
+  input:not([type="checkbox"]):not([type="radio"]), textarea { cursor: text; }
+}
+
 @media (prefers-reduced-motion: reduce) {
   html { scroll-behavior: auto; }
   *, *::before, *::after { animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; }
