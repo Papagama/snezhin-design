@@ -12,7 +12,7 @@ const esc = value => String(value ?? '').replace(/[&<>"']/g, char => ({
 const absolute = path => /^https?:\/\//.test(path) ? path : `${site.baseUrl}${path === '/' ? '/' : path}`;
 const json = value => JSON.stringify(value).replace(/</g, '\\u003c');
 const compactDashes = value => String(value).replaceAll('—', '–');
-const emailHref = (subject = 'Новая задача с snezhin.design') => `mailto:${site.email}?subject=${encodeURIComponent(subject)}`;
+const emailHref = (subject = 'Новая задача с snezhin.design') => `https://mail.google.com/mail/?view=cm&amp;fs=1&amp;to=${encodeURIComponent(site.email)}&amp;su=${encodeURIComponent(subject)}`;
 
 const breadcrumbSchema = items => ({
   '@context': 'https://schema.org',
@@ -73,9 +73,9 @@ const pageHead = ({ title, description, path, type = 'website', image = '/public
   <link rel="preload" href="/assets/fonts/onest-cyrillic.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="preload" href="/assets/fonts/onest-latin.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="preload" href="/assets/fonts/jura-semibold.ttf" as="font" type="font/ttf" crossorigin>
-  <link rel="stylesheet" href="/site.css?v=20260908-contact-flow">
+  <link rel="stylesheet" href="/site.css?v=20260909-webmail">
   ${schemas.filter(Boolean).map(item => `<script type="application/ld+json">${json(item)}</script>`).join('\n  ')}
-  <script src="/site.js?v=20260908-contact-flow" defer></script>`;
+  <script src="/site.js?v=20260909-webmail" defer></script>`;
 };
 
 const header = current => `
@@ -127,22 +127,6 @@ const footer = () => `
     </div>
   </footer>`;
 
-const emailDialog = () => `
-  <dialog class="email-dialog" data-email-dialog aria-labelledby="email-dialog-title">
-    <form class="email-dialog__panel" method="dialog">
-      <button class="email-dialog__close" type="submit" aria-label="Закрыть окно">×</button>
-      <p class="eyebrow">Написать письмо</p>
-      <h2 id="email-dialog-title">Выберите способ связи</h2>
-      <p class="email-dialog__address" data-email-recipient></p>
-      <div class="email-dialog__actions">
-        <a class="button button--accent" data-email-gmail target="_blank" rel="noopener">Открыть Gmail <span aria-hidden="true">↗</span></a>
-        <a class="button button--ink" data-email-system>Открыть почтовое приложение <span aria-hidden="true">↗</span></a>
-        <button class="button button--copy" type="button" data-email-copy>Скопировать адрес <span aria-hidden="true">⧉</span></button>
-      </div>
-      <p class="email-dialog__status" data-email-status aria-live="polite">Адрес можно скопировать или открыть в удобной почте.</p>
-    </form>
-  </dialog>`;
-
 const shell = ({ current, title, description, path, body, bodyClass = '', type, image, schema }) => compactDashes(`<!doctype html>
 <html lang="ru">
 <head>${pageHead({ title, description, path, type, image, schema })}
@@ -151,7 +135,6 @@ const shell = ({ current, title, description, path, body, bodyClass = '', type, 
 ${header(current)}
 <main id="main">${body}</main>
 ${footer()}
-${emailDialog()}
 </body>
 </html>
 `);
@@ -520,10 +503,10 @@ export const renderContact = () => {
       <section class="contact-brief" aria-labelledby="contact-brief-title">
         <p class="eyebrow">Для первого сообщения</p><h2 id="contact-brief-title">Пары предложений хватит.</h2>
         <p>Например: «У меня небольшая мастерская. Хочу показать работы и дать людям возможность написать. Пока не знаю, какой сайт нужен».</p><p>Если сайт уже есть, пришлите ссылку и расскажите, что в нём не устраивает. Сначала спрошу о задаче, посетителях и сроках. После этого смогу предложить формат и оценить работу.</p>
-        <div class="button-group"><a class="button button--accent" href="mailto:${site.email}?subject=Новая%20задача%20с%20snezhin.design">Написать письмо <span aria-hidden="true">↗</span></a><a class="text-link" href="${site.telegram}" target="_blank" rel="noopener">Написать в Telegram <span aria-hidden="true">↗</span></a></div>
+        <div class="button-group"><a class="button button--accent" href="${emailHref()}">Написать письмо <span aria-hidden="true">↗</span></a><a class="text-link" href="${site.telegram}" target="_blank" rel="noopener">Написать в Telegram <span aria-hidden="true">↗</span></a></div>
         <p class="form-note">Отвечаю сам. <a href="/privacy.html">Как обрабатываются обращения</a>.</p>
       </section>
-      <aside class="direct-contact"><p class="eyebrow">Где меня найти</p><h2>Почта или мессенджер.</h2><a href="mailto:${site.email}">${site.email} <span aria-hidden="true">↗</span></a><a href="${site.telegram}" target="_blank" rel="noopener">Telegram: ${site.telegramLabel} <span aria-hidden="true">↗</span></a><a href="${site.vk}" target="_blank" rel="noopener">VK: papagama <span aria-hidden="true">↗</span></a><p>Выберите, где вам удобнее переписываться. Написать можно и с вопросом о работе из портфолио.</p><dl><div><dt>Где работаю</dt><dd>Калининград / удалённо</dd></div><div><dt>Чем занимаюсь</dt><dd>Веб-дизайн и разработка сайтов</dd></div></dl></aside>
+      <aside class="direct-contact"><p class="eyebrow">Где меня найти</p><h2>Почта или мессенджер.</h2><a href="${emailHref()}">${site.email} <span aria-hidden="true">↗</span></a><a href="${site.telegram}" target="_blank" rel="noopener">Telegram: ${site.telegramLabel} <span aria-hidden="true">↗</span></a><a href="${site.vk}" target="_blank" rel="noopener">VK: papagama <span aria-hidden="true">↗</span></a><p>Выберите, где вам удобнее переписываться. Написать можно и с вопросом о работе из портфолио.</p><dl><div><dt>Где работаю</dt><dd>Калининград / удалённо</dd></div><div><dt>Чем занимаюсь</dt><dd>Веб-дизайн и разработка сайтов</dd></div></dl></aside>
     </section>`;
   return shell({
     title: 'Контакты веб-дизайнера Кирилла Снежина — написать о сайте',
@@ -534,7 +517,7 @@ export const renderContact = () => {
 
 export const renderPrivacy = () => {
   const body = `
-    <article class="legal-page shell"><nav class="breadcrumbs" aria-label="Хлебные крошки"><a href="/">Главная</a><span>/</span><span>Обработка данных</span></nav>${indexLine('Legal', 'Информация об обработке данных')}<h1>Обработка персональных данных</h1><p class="lead-copy">Актуально на 5 сентября 2026 года. На сайте нет формы, регистрации, аналитики и рекламных cookie: он не передаёт введённые посетителем данные в сторонний сервис.</p><section><h2>Оператор и связь</h2><p>Оператор — Кирилл Снежин. По вопросам, связанным с обращениями и персональными данными, можно написать на <a href="mailto:${site.email}">${site.email}</a>.</p></section><section><h2>Какие данные могут обрабатываться</h2><p>Если вы добровольно пишете на почту или в мессенджер, сообщение может содержать имя, контакт и описание задачи. Не отправляйте через открытые каналы пароли, платёжные данные, документы, медицинскую информацию и иные чувствительные сведения.</p></section><section><h2>Цель и основание</h2><p>Данные из добровольного обращения используются только для ответа, обсуждения возможного проекта и последующей переписки по нему. Для рассылок, передачи данных третьим лицам или публикации обращений сайт их не использует.</p></section><section><h2>Сторонние сервисы и технические данные</h2><p>Переход по ссылке на почту, Telegram или VK открывает выбранный вами внешний сервис; его правила обработки данных действуют отдельно. Статический хостинг может вести технические журналы запросов, включая IP-адрес и сведения браузера. На сайте не подключены счётчики, пиксели и форма Formspree.</p></section><section><h2>Права и срок хранения</h2><p>Вы можете запросить сведения об обращении, уточнение или удаление данных, написав на <a href="mailto:${site.email}">${site.email}</a>. Обращения хранятся не дольше, чем это необходимо для ответа и дальнейшей рабочей переписки, если более длительный срок не требуется законом.</p></section><section><h2>Что требуется подтвердить владельцу</h2><p>Для окончательной юридической проверки нужно подтвердить статус оператора, почтовый адрес для обращений, место хранения переписки и технических журналов, а также применимость требований конкретной юрисдикции. Эта страница описывает фактическую схему сайта, но не заменяет консультацию юриста.</p></section></article>`;
+    <article class="legal-page shell"><nav class="breadcrumbs" aria-label="Хлебные крошки"><a href="/">Главная</a><span>/</span><span>Обработка данных</span></nav>${indexLine('Legal', 'Информация об обработке данных')}<h1>Обработка персональных данных</h1><p class="lead-copy">Актуально на 5 сентября 2026 года. На сайте нет формы, регистрации, аналитики и рекламных cookie: он не передаёт введённые посетителем данные в сторонний сервис.</p><section><h2>Оператор и связь</h2><p>Оператор — Кирилл Снежин. По вопросам, связанным с обращениями и персональными данными, можно написать на <a href="${emailHref()}">${site.email}</a>.</p></section><section><h2>Какие данные могут обрабатываться</h2><p>Если вы добровольно пишете на почту или в мессенджер, сообщение может содержать имя, контакт и описание задачи. Не отправляйте через открытые каналы пароли, платёжные данные, документы, медицинскую информацию и иные чувствительные сведения.</p></section><section><h2>Цель и основание</h2><p>Данные из добровольного обращения используются только для ответа, обсуждения возможного проекта и последующей переписки по нему. Для рассылок, передачи данных третьим лицам или публикации обращений сайт их не использует.</p></section><section><h2>Сторонние сервисы и технические данные</h2><p>Переход по ссылке на почту, Telegram или VK открывает выбранный вами внешний сервис; его правила обработки данных действуют отдельно. Статический хостинг может вести технические журналы запросов, включая IP-адрес и сведения браузера. На сайте не подключены счётчики, пиксели и форма Formspree.</p></section><section><h2>Права и срок хранения</h2><p>Вы можете запросить сведения об обращении, уточнение или удаление данных, написав на <a href="${emailHref()}">${site.email}</a>. Обращения хранятся не дольше, чем это необходимо для ответа и дальнейшей рабочей переписки, если более длительный срок не требуется законом.</p></section><section><h2>Что требуется подтвердить владельцу</h2><p>Для окончательной юридической проверки нужно подтвердить статус оператора, почтовый адрес для обращений, место хранения переписки и технических журналов, а также применимость требований конкретной юрисдикции. Эта страница описывает фактическую схему сайта, но не заменяет консультацию юриста.</p></section></article>`;
   return shell({
     title: 'Обработка персональных данных — snezhin.design', description: 'Информация об обработке персональных данных и технических данных посетителей snezhin.design.',
     path: '/privacy.html', current: 'privacy', body, schema: breadcrumbSchema([{ label: 'Главная', href: '/' }, { label: 'Обработка данных', href: '/privacy.html' }])
