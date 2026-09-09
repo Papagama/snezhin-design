@@ -39,7 +39,7 @@ if (!css.includes('--paper: #F6F4EF')) issues.push('site.css: requested base bac
 const homeFooter = home.match(/<footer\b[\s\S]*?<\/footer>/)?.[0] || '';
 const homeHeader = home.match(/<header\b[\s\S]*?<\/header>/)?.[0] || '';
 if (homeFooter.includes('footer-lead') || homeFooter.includes('Давайте обсудим')) issues.push('index.html: duplicate footer CTA remains');
-if (!homeFooter.includes('class="footer-action" href="https://mail.google.com/')) issues.push('index.html: footer contact action must open the email chooser');
+if (!homeFooter.includes('class="footer-action" href="https://e.mail.ru/compose/')) issues.push('index.html: footer contact action must open Mail.ru compose');
 if (!homeHeader.includes('Связаться') || !homeHeader.includes('href="/contact.html"')) issues.push('index.html: header contact action must open the contact page');
 if (home.includes('data-email-dialog')) issues.push('index.html: obsolete email chooser remains');
 
@@ -112,7 +112,7 @@ for (const link of mailtoLinks) {
   if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(recipient)) issues.push(`invalid email action ${link}`);
   if (recipient !== projectEmail) issues.push(`unexpected email action ${link}`);
 }
-if (!home.includes('https://mail.google.com/mail/?view=cm')) issues.push('public pages: no browser email actions found');
+if (!home.includes('https://e.mail.ru/compose/?to=')) issues.push('public pages: no browser email actions found');
 
 const sitemap = await readFile(resolve(root, 'sitemap.xml'), 'utf8');
 const sitemapCount = (sitemap.match(/<url>/g) || []).length;

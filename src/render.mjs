@@ -12,7 +12,7 @@ const esc = value => String(value ?? '').replace(/[&<>"']/g, char => ({
 const absolute = path => /^https?:\/\//.test(path) ? path : `${site.baseUrl}${path === '/' ? '/' : path}`;
 const json = value => JSON.stringify(value).replace(/</g, '\\u003c');
 const compactDashes = value => String(value).replaceAll('—', '–');
-const emailHref = (subject = 'Новая задача с snezhin.design') => `https://mail.google.com/mail/?view=cm&amp;fs=1&amp;to=${encodeURIComponent(site.email)}&amp;su=${encodeURIComponent(subject)}`;
+const emailHref = (subject = 'Новая задача с snezhin.design') => `https://e.mail.ru/compose/?to=${encodeURIComponent(site.email)}&amp;subject=${encodeURIComponent(subject)}`;
 
 const breadcrumbSchema = items => ({
   '@context': 'https://schema.org',
