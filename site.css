@@ -312,9 +312,7 @@ h1 em, h2 em, h3 em, blockquote em { color: var(--accent); font-family: var(--ac
 .legal-page section h2 { font-size: clamp(1.8rem, 3vw, 3rem); }
 .legal-page section p { color: var(--muted); }
 .legal-page section a { border-bottom: 1px solid currentColor; }
-.not-found { min-height: 70vh; padding-top: 5rem; padding-bottom: 8rem; }
-.not-found h1 { margin: 5rem 0 1rem; font-size: clamp(4rem, 12vw, 12rem); }
-.not-found p { color: var(--muted); font-size: 1.2rem; }
+.not-found{position:relative;display:grid;align-items:center;min-height:calc(100svh - 76px);padding-top:5rem;padding-bottom:8rem;overflow:hidden}.not-found__copy{position:relative;z-index:1;max-width:43rem}.not-found h1{margin:3rem 0 1.5rem;font-size:clamp(3.5rem,8.5vw,8.5rem);letter-spacing:-.075em;line-height:.92;text-wrap:balance}.not-found h1 em{color:var(--accent)}.not-found__copy>p{max-width:34rem;color:var(--muted);font-size:1.05rem;line-height:1.65}.not-found__actions{display:flex;align-items:center;flex-wrap:wrap;gap:1.15rem 1.75rem;margin-top:2.5rem}.not-found__number{position:absolute;right:-.045em;bottom:-.19em;margin:0;color:rgba(35,35,32,.055);font:600 clamp(13rem,35vw,37rem)/.78 Jura, sans-serif;letter-spacing:-.1em;user-select:none}.not-found-page .site-footer{position:relative;z-index:1}@media(max-width:700px){.not-found{min-height:calc(100svh - 68px);padding-top:3rem;padding-bottom:5rem}.not-found h1{font-size:clamp(3.2rem,15vw,5.2rem)}.not-found__actions{align-items:flex-start;flex-direction:column;gap:1rem}.not-found__number{right:-.1em;bottom:-.05em;font-size:17rem}}
 
 @media (max-width: 1024px) {
   .home-hero-stage { grid-template-columns: minmax(0, 1fr) minmax(280px, .8fr); }
