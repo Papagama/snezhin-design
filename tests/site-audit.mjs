@@ -40,7 +40,7 @@ const homeFooter = home.match(/<footer\b[\s\S]*?<\/footer>/)?.[0] || '';
 const homeHeader = home.match(/<header\b[\s\S]*?<\/header>/)?.[0] || '';
 if (homeFooter.includes('footer-lead') || homeFooter.includes('Давайте обсудим')) issues.push('index.html: duplicate footer CTA remains');
 if (!homeFooter.includes('class="footer-action" href="mailto:')) issues.push('index.html: footer contact action must open the email chooser');
-if (!homeHeader.includes('Связаться') || !homeHeader.includes('href="mailto:')) issues.push('index.html: header contact action must open the email chooser');
+if (!homeHeader.includes('Связаться') || !homeHeader.includes('href="/contact.html"')) issues.push('index.html: header contact action must open the contact page');
 if (!home.includes('data-email-dialog')) issues.push('index.html: email chooser is missing');
 
 function targetFor(link) {

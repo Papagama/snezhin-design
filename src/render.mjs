@@ -90,7 +90,7 @@ const header = current => `
         <nav class="main-nav" aria-label="Основная навигация">
           ${navigation.map(item => `<a href="${item.href}"${current === item.key ? ' aria-current="page"' : ''}>${item.label}</a>`).join('')}
         </nav>
-        <a class="button button--compact button--ink" href="${emailHref('Новая задача с snezhin.design')}">Связаться <span aria-hidden="true">↗</span></a>
+        <a class="button button--compact button--ink" href="/contact.html">Связаться <span aria-hidden="true">↗</span></a>
       </div>
     </div>
   </header>`;
