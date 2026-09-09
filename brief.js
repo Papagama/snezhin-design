@@ -22,7 +22,6 @@ function scheduleExpiry() {
   clearTimeout(expiryTimer);
   expiryTimer = setTimeout(() => {
     removeDraft();
-    byId('brief-draft-status').textContent = 'Срок хранения черновика истёк. Ответы в открытой вкладке доступны до её закрытия.';
   }, Math.max(0, expiresAt - Date.now()));
 }
 function save() {
@@ -31,7 +30,7 @@ function save() {
   try {
     if (!storage) throw new Error('Storage unavailable');
     storage.setItem(DRAFT_KEY, JSON.stringify({ expiresAt, answers: answers() }));
-  } catch { byId('brief-draft-status').textContent = 'Браузер не разрешает сохранить черновик. Ответы останутся только в открытой вкладке.'; }
+  } catch {}
 }
 function syncOther() {
   for (const f of fields.filter(f => f.options?.includes('Другое'))) {
@@ -87,7 +86,6 @@ if (draft) {
       else el.value = value;
     });
   }
-  byId('brief-draft-status').textContent = 'Черновик восстановлен. Он хранится только в этом браузере до ' + new Date(expiresAt).toLocaleDateString('ru-RU') + '. На общем компьютере удалите его после заполнения.';
 }
 scheduleExpiry();
 syncOther();
@@ -103,13 +101,6 @@ form.addEventListener('change', event => {
 });
 byId('brief-next').addEventListener('click', () => { if (check(current)) showStep(current + 1); });
 byId('brief-back').addEventListener('click', () => { clearErrors(); showStep(current - 1); });
-byId('brief-clear').addEventListener('click', () => {
-  form.reset(); removeDraft(); clearErrors(); syncOther();
-  expiresAt = Date.now() + DRAFT_TTL; scheduleExpiry();
-  byId('brief-send-error').hidden = true;
-  byId('brief-draft-status').textContent = 'Черновик удалён. Новые ответы будут сохраняться в этом браузере на 7 дней.';
-  showStep(0);
-});
 form.addEventListener('keydown', event => {
   if (event.key === 'Enter' && event.target.matches('input:not([type=checkbox]):not([type=radio])')) event.preventDefault();
 });
