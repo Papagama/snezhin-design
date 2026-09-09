@@ -116,7 +116,7 @@ if (!home.includes('https://e.mail.ru/compose/?to=')) issues.push('public pages:
 
 const sitemap = await readFile(resolve(root, 'sitemap.xml'), 'utf8');
 const sitemapCount = (sitemap.match(/<url>/g) || []).length;
-if (sitemapCount !== 33) issues.push(`sitemap.xml: expected 33 URLs, received ${sitemapCount}`);
+if (sitemapCount !== 34) issues.push(`sitemap.xml: expected 34 URLs, received ${sitemapCount}`);
 
 const robots = await readFile(resolve(root, 'robots.txt'), 'utf8');
 if (!robots.includes('Sitemap: https://design.kirill-verstak.ru/sitemap.xml')) issues.push('robots.txt: missing sitemap URL');

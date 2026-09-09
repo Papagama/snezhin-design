@@ -7,6 +7,6 @@ window.APP_CONFIG = {
   ADMIN_EMAIL: 'snezhin.design@mail.ru',
   SUPABASE_URL: 'https://kvlrnntvwvupkrzrnivg.supabase.co',
   SUPABASE_PUBLISHABLE_KEY: 'sb_publishable_bQj6siVkwDS9B2wmBA9UCQ_Urtuf0RE',
-  // Отправка в Formspree отключена: публичный сайт не передаёт обращения в стороннюю форму.
-  FORMSPREE_FORM_ID: ''
+  // Публичный ID формы Formspree. Пароли и приватные ключи сюда не добавляются.
+  FORMSPREE_FORM_ID: 'xwleonpz'
 };

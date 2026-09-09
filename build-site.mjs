@@ -9,6 +9,7 @@ import {
   render404,
   renderAbout,
   renderArticle,
+  renderBrief,
   renderBlog,
   renderCase,
   renderContact,
@@ -29,6 +30,7 @@ const server = resolve(dist, 'server');
 const generatedDirectories = [
   'portfolio',
   'blog',
+  'brief',
   localPage.slug,
   ...servicePages.map(item => item.slug)
 ];
@@ -45,6 +47,7 @@ const pages = [
   { file: 'services.html', path: '/services.html', html: renderServices(), priority: '0.9' },
   { file: 'about.html', path: '/about.html', html: renderAbout(), priority: '0.7' },
   { file: 'contact.html', path: '/contact.html', html: renderContact(), priority: '0.8' },
+  { file: 'brief/index.html', path: '/brief/', html: renderBrief(), priority: '0.7' },
   { file: 'privacy.html', path: '/privacy.html', html: renderPrivacy(), priority: '0.2' },
   { file: '404.html', path: '/404.html', html: render404(), priority: '0.1', sitemap: false },
   { file: 'blog/index.html', path: '/blog/', html: renderBlog(), priority: '0.8' },
@@ -110,7 +113,7 @@ await mkdir(server, { recursive: true });
 
 const rootFiles = [
   'index.html', 'portfolio.html', 'services.html', 'about.html', 'contact.html', 'privacy.html', '404.html',
-  'site.css', 'site.js', 'robots.txt', 'sitemap.xml', 'CNAME', 'config.js', 'legacy-admin.html'
+  'site.css', 'site.js', 'brief.css', 'brief.js', 'brief-model.mjs', 'robots.txt', 'sitemap.xml', 'CNAME', 'config.js', 'legacy-admin.html'
 ];
 for (const filename of rootFiles) await cp(resolve(root, filename), resolve(client, filename));
 for (const directory of ['assets', 'public', ...generatedDirectories]) {
